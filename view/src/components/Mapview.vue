@@ -8,7 +8,7 @@ import  'leaflet/dist/leaflet.css'
 import  L from 'leaflet'
 
 export default {
-    mounted() {
+    mounted:function() {
         L.map( 'mapv', { center: L.latLng( 35.6825, 139.752778 ), zoom: 15 } ).addLayer(
             L.tileLayer( 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' )
         )
@@ -17,6 +17,5 @@ export default {
 </script>
 
 <style>
-html, body, #mapv { width: 50%; height: 50%; }
-body { margin: 0 }
+#mapv { width: 100%; height: 300px; z-index: 0;}
 </style>

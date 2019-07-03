@@ -3,8 +3,7 @@
     <v-navigation-drawer
       v-model="drawer"
       clipped
-      fixed
-      app
+      absolute
     >
       <v-list dense>
         <v-list-tile @click="">
@@ -27,18 +26,13 @@
     </v-navigation-drawer>
     <v-toolbar color="amber" app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>paon</v-toolbar-title>
+      <v-toolbar-title class="font-weight-light">paon</v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <v-container grid-list-xl>
-        <v-layout v-bind="binding">
+      <v-container>
+        <v-layout v-bind="binding" align-space-around justify-space-around column fill-height>
           <v-flex>
-               <v-card>
-                <v-card-title primary-title>
-                  <div id=mapv>
-                  </div>
-                </v-card-title>
-              </v-card>
+            <Mapview/>
           </v-flex>
           <v-flex>
               <template>
@@ -131,14 +125,13 @@
       </v-container>
     </v-content>
     <v-footer app fixed>
-      <span>&copy; 2019, PAON</span>
+      <span>&copy; 2019, paon</span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
-import  'leaflet/dist/leaflet.css'
-import  L from 'leaflet'
+import Mapview from './Mapview'
 
   export default {
     data: () => ({
@@ -281,17 +274,11 @@ import  L from 'leaflet'
         alert(event.title)
       }
     },
-    mounted: function () {
-        L.map( 'mapv', { center: L.latLng( 35.6825, 139.752778 ), zoom: 15 } ).addLayer(
-            L.tileLayer( 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' )
-        )
+    components: {
+      Mapview
     }
   }
 </script>
-
-<style>
-#mapv { width: 80%; height: 300px; }
-</style>
 
 <style lang="stylus" scoped>
   .my-event {
