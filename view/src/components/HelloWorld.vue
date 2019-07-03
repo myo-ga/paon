@@ -27,11 +27,19 @@
     </v-navigation-drawer>
     <v-toolbar color="amber" app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>行くとこ調整</v-toolbar-title>
+      <v-toolbar-title>paon</v-toolbar-title>
     </v-toolbar>
     <v-content>
       <v-container grid-list-xl>
         <v-layout v-bind="binding">
+          <v-flex>
+               <v-card>
+                <v-card-title primary-title>
+                  <div id=mapv>
+                  </div>
+                </v-card-title>
+              </v-card>
+          </v-flex>
           <v-flex>
               <template>
                 <v-data-table
@@ -123,12 +131,15 @@
       </v-container>
     </v-content>
     <v-footer app fixed>
-      <span>&copy; 2019, Chosei</span>
+      <span>&copy; 2019, PAON</span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
+import  'leaflet/dist/leaflet.css'
+import  L from 'leaflet'
+
   export default {
     data: () => ({
       drawer: null,
@@ -269,9 +280,18 @@
       open (event) {
         alert(event.title)
       }
+    },
+    mounted: function () {
+        L.map( 'mapv', { center: L.latLng( 35.6825, 139.752778 ), zoom: 15 } ).addLayer(
+            L.tileLayer( 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' )
+        )
     }
   }
 </script>
+
+<style>
+#mapv { width: 80%; height: 300px; }
+</style>
 
 <style lang="stylus" scoped>
   .my-event {
