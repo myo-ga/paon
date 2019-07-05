@@ -2,15 +2,20 @@
   "name": "view",
   "version": "0.1.0",
   "private": true,
+  "description": "## Project setup ``` npm install ```",
+  "author": "",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "main": "babel.config.js",
   "dependencies": {
     "core-js": "^2.6.5",
     "leaflet": "^1.5.1",
+    "vee-validate": "^2.2.11",
     "vue": "^2.6.10",
+    "vue-router": "^3.0.3",
     "vuetify": "^1.5.5"
   },
   "devDependencies": {
@@ -49,8 +54,5 @@
     "> 1%",
     "last 2 versions"
   ],
-  "description": "## Project setup ``` npm install ```",
-  "main": "babel.config.js",
-  "author": "",
   "license": "ISC"
 }
