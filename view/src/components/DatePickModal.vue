@@ -22,7 +22,7 @@
           <v-btn flat color="grey" @click="modal = false">キャンセル</v-btn>
           <v-btn flat color="primary" @click="$refs.dialog.save(date)">OK</v-btn>
         </v-date-picker>
-      </v-dialog>
+    </v-dialog>
 </template>
 
 <script>

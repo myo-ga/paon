@@ -4,7 +4,7 @@
         <template v-for="(dates, i) in dates">
             <v-list-tile v-bind:key="i">
                 <v-list-tile-content>
-                    <DatePickModal/>
+                    <DatePicker/>
                 </v-list-tile-content>
                 <!--v-list-tile-action>
                     <v-btn flat icon v-on:click="deleteDate(i)">
@@ -24,7 +24,7 @@
 
 
 <script>
-import DatePickModal from "./DatePickModal"
+import DatePicker from "./DatePickModal"
 
     export default {
         data: () => ({
@@ -39,7 +39,7 @@ import DatePickModal from "./DatePickModal"
             }
         },
         components: {
-            DatePickModal
+            DatePicker
         }
     }
 </script>

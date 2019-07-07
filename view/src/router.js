@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import AdjustEvent from './components/AdjustEvent.vue'
+import RegistEvent from './components/RegistEvent.vue'
 
 Vue.use(Router)
 
@@ -10,13 +10,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'AdjustEvent',
-      component: AdjustEvent
+      name: 'RegistEvent',
+      component: RegistEvent
     },
     {
-      path: '/RegistEvent',
-      name: 'RegistEvent',
-      component: () => import('./components/RegistEvent.vue')
+      path: '/AdjustEvent',
+      name: 'AdjustEvent',
+      component: () => import('./components/AdjustEvent.vue')
     }
   ]
 })

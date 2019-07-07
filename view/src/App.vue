@@ -11,20 +11,20 @@
         <router-link to="/">
           <v-list-tile >
             <v-list-tile-action>
-              <v-icon>dashboard</v-icon>
+              <v-icon>assignment</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title>Dashboard</v-list-tile-title>
+              <v-list-tile-title>イベントを登録する</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </router-link>
-        <router-link to="/RegistEvent">
+        <router-link to="/AdjustEvent">
           <v-list-tile >
             <v-list-tile-action>
-              <v-icon>settings</v-icon>
+              <v-icon>today</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title>Settings</v-list-tile-title>
+              <v-list-tile-title>イベントに参加する</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </router-link>
@@ -47,12 +47,12 @@
 </template>
 
 <script>
-import AdjustEvent from "./components/AdjustEvent"
+import RegistEvent from "./components/RegistEvent"
 
   export default {
     name: "App",
     components: {
-      AdjustEvent
+      RegistEvent
     },
     data: () => ({
       drawer: null,
