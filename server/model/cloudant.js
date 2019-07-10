@@ -1,11 +1,24 @@
 var Cloudant = require('@cloudant/cloudant');
-var appEnv= require('../.vcap-local.json');
 
 var DB = function() {
+
+    // 資格情報読み込み
+    this.readCredentialUrl = function () {
+        let appEnv = null;
+        if (process.env.VCAP_SERVICES) {
+            appEnv = JSON.parse(process.env.VCAP_SERVICES);
+        } else {
+            appEnv= require('../vcap-local.json');
+        }
+        let url = appEnv['cloudantNoSQLDB'][0].credentials.url;
+        return url;
+    }
+
+
     // 初期化
     this.init = function (dbName) {
-        this.cloudant = Cloudant(
-            appEnv.services['cloudantNoSQLDB'][0].credentials,
+        let url = this.readCredentialUrl();
+        this.cloudant = Cloudant(url,
             (err, cloudant, pong) => {
                 if (err) {
                     return console.log('Failed to initialize Cloudant: ' + err.message);
