@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-layout justify-center >
+    <v-layout justify-center>
       <form>
-        <v-flex>
+        <v-flex class="mb-3">
           <v-text-field
             v-model="name"
             v-validate="'required|max:10'"
@@ -13,10 +13,21 @@
             required
           ></v-text-field>
         </v-flex>
-        <v-flex>
+        <v-flex class="mb-3">
             <DatePickDialog/>
         </v-flex>
-        <v-flex>
+        <v-flex class="mb-3">
+          <v-textarea
+            v-model="comments"
+            label="コメント"
+            counter
+            maxlength="120"
+            full-width
+            single-line
+            solo
+          ></v-textarea>
+        </v-flex>
+        <v-flex class="mb-3">
           <v-btn @click="submit">登録</v-btn>
           <v-btn @click="clear">クリア</v-btn>
         </v-flex>
@@ -43,6 +54,7 @@ export default {
     },
     data: () => ({
         name: '',
+        comments: '',
         dictionary: {
             custom: {
                 name: {

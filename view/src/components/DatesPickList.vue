@@ -1,41 +1,44 @@
 <template>
-<div>
+
     <v-list two-line>
         <template v-for="(dates, i) in dates">
             <v-list-tile v-bind:key="i">
                 <v-list-tile-content>
-                    <DatePicker/>
+                    <DatePicker :num="i+1" v-on:date-input="dateInput"/>
                 </v-list-tile-content>
-                <!--v-list-tile-action>
-                    <v-btn flat icon v-on:click="deleteDate(i)">
+                <v-list-tile-action>
+                    <v-btn flat icon v-if="i>0" v-on:click="deleteDate(i)">
                         <v-icon>delete</v-icon>
                     </v-btn>
-                </v-list-tile-action-->
+                </v-list-tile-action>
             </v-list-tile>
         </template>
     </v-list>
-    <div class="bittom-right">
-        <v-btn dark color="primary" v-on:click="addDate(i)">
-            日付を追加する
-        </v-btn>
-    </div>
-</div>
+    <!--デバッグ用 v-text-field v-bind:label="dates+' '"></v-text-field-->
+
 </template>
 
 
 <script>
-import DatePicker from "./DatePickModal"
+import DatePicker from "./DatePickMenu"
 
     export default {
         data: () => ({
-            dates: ['']
+            dates: [''],
+            index: 0
         }),
         methods: {
-            deleteDate(i) {
+            deleteDate: function(i) {
                 this.dates.splice(i, 1);
             },
-            addDate(i){
-                this.dates.push("日付を追加する");
+            addDate: function(){
+                this.dates.push('');
+            },
+            dateInput: function(date,nm){
+                this.dates[nm-1]=date;
+                if(this.dates.length < 5){
+                    this.addDate();
+                }
             }
         },
         components: {

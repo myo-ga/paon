@@ -17,10 +17,15 @@
             v-on="on"
           ></v-text-field>
         </template>
-        <v-date-picker v-model="date" color="teal">
+        <v-date-picker 
+          v-model="date" 
+          color="teal" 
+          locale="ja-JP"
+          :day-format="date => new Date(date).getDate()">
           <v-spacer></v-spacer>
-          <v-btn flat color="grey" @click="modal = false">キャンセル</v-btn>
-          <v-btn flat color="primary" @click="$refs.dialog.save(date)">OK</v-btn>
+          <v-btn flat color="grey" @click="menu=false;">キャンセル</v-btn>
+          <v-btn flat color="primary" @click="saveModal">
+              OK</v-btn>
         </v-date-picker>
     </v-dialog>
 </template>
@@ -30,6 +35,11 @@
     data: () => ({
       date: new Date().toISOString().substr(0, 10),
       modal: false
-    })
+    }),
+    method: {
+      saveModal(){
+        $root.dialog.save(date);
+      }
+    }
   }
 </script>
