@@ -4,39 +4,36 @@
         <template v-for="(dates, i) in dates">
             <v-list-tile v-bind:key="i">
                 <v-list-tile-content>
-                    <DatePicker :num="i+1" v-on:date-input="dateInput"/>
+                    <DatePicker :num="i" @date-input="dateInput"/>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                    <v-btn flat icon v-if="i>0" v-on:click="deleteDate(i)">
+                    <v-btn flat icon v-if="i<=dates.length" @click="deleteDate(i)">
                         <v-icon>delete</v-icon>
                     </v-btn>
                 </v-list-tile-action>
             </v-list-tile>
         </template>
     </v-list>
-    <!--デバッグ用 v-text-field v-bind:label="dates+' '"></v-text-field-->
-
 </template>
 
 
 <script>
-import DatePicker from "./DatePickMenu"
+import DatePicker from "./DatePickModal"
 
     export default {
         data: () => ({
-            dates: [''],
-            index: 0
+            dates: ['']
         }),
         methods: {
             deleteDate: function(i) {
-                this.dates.splice(i, 1);
+                this.dates.splice(i,1);
             },
             addDate: function(){
                 this.dates.push('');
             },
             dateInput: function(date,nm){
-                this.dates[nm-1]=date;
-                if(this.dates.length < 5){
+                this.dates[nm]=date;
+                if(nm >= this.dates.length-1){
                     this.addDate();
                 }
             }

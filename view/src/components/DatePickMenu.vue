@@ -1,15 +1,14 @@
 <template>
   <v-menu
     ref="menu"
+    class="menu"
     v-model="menu"
     :close-on-content-click="false"
-    :nudge-right="0"
     lazy
     transition="scale-transition"
-    offset-y
     full-width
-    min-width="290px"
-  >
+    width="400px"
+  >  
     <template v-slot:activator="{ on }">
       <v-text-field
         v-model="date"
@@ -21,7 +20,9 @@
     </template>
     <v-date-picker
       ref="picker"
+      class="picker"
       v-model="date"
+      full-width
       locale="ja-JP" 
       :day-format="date => new Date(date).getDate()" 
       @change="save"
@@ -46,4 +47,14 @@
     }
   }
 </script>
+
+<style scooped>
+.picker th {
+  font-size: 120%;
+}
+
+.v-btn__content {
+    font-size: 150%;
+}
+</style>
 
