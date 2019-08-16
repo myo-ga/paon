@@ -2,19 +2,9 @@
     <v-dialog
         ref="dialog"
         v-model="modal"
-        lazy
         full-width
         width="400px"
     >
-      <template v-slot:activator="{ on }">
-        <v-text-field
-          v-model="date"
-          v-bind:label="'日付'+(num+1)"
-          prepend-icon="event"
-          readonly
-          v-on="on"
-        ></v-text-field>
-      </template>
       <v-date-picker
         ref="picker"
         class="picker"
@@ -23,19 +13,23 @@
         full-width
         locale="ja-JP" 
         :day-format="date => new Date(date).getDate()" 
-        @change="save"
+        @input="save"
       ></v-date-picker>
     </v-dialog>
 </template>
 
+
 <script>
   export default {
-    props:{num: Number, inputDate: Date},
+    props: {num: Number},
     data: () => ({
-      date: inputDate,
-      dialog: false
+      date: new Date().toISOString().substr(0, 10),
+      modal: false
     }),
     methods: {
+      open(){
+        this.modal=true;
+      },
       save (date) {
         this.$refs.dialog.save(date);
         this.$emit('date-input', this.date, this.num);

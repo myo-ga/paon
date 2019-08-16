@@ -8,6 +8,12 @@
       fill-height 
     >
       <v-flex>
+          {{ name }}
+      </v-flex>
+      <v-flex>
+          {{ comments }}
+      </v-flex>
+      <v-flex>
         <MapView/>
       </v-flex>
       <v-flex>
@@ -25,11 +31,19 @@ import MapView from './MapView'
 import MemberTable from './MemberTable'
 import CalendarView from './CalendarView'
 
-  export default {
-    components: {
-      MapView,
-      MemberTable,
-      CalendarView
-    }
+export default {
+  components: {
+    MapView,
+    MemberTable,
+    CalendarView
+  },
+  data: () => ({
+    name: '',
+    comments: '',
+  }),
+  mounted(){
+    this.name = this.$store.state.eventname;
+    this.comments = this.$store.state.comments;
   }
+}
 </script>

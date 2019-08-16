@@ -9,8 +9,16 @@ import  L from 'leaflet'
 
 export default {
     mounted:function() {
-        L.map( 'mapv', { center: L.latLng( 35.6825, 139.752778 ), zoom: 15 } ).addLayer(
-            L.tileLayer( 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' )
+        L.map( 
+            'mapv', 
+            {   
+                center: L.latLng( 35.6825, 139.752778 ), 
+                zoom: 15 
+            } 
+        ).addLayer(
+            L.tileLayer( 
+                'http://{s}.tile.osm.org/{z}/{x}/{y}.png' 
+            )
         )
     }
 }
