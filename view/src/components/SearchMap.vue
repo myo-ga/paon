@@ -78,7 +78,6 @@ import  L from 'leaflet'
 
 //yolpのローカルサーチAPIがCORS制限に引っかかるため
 //vue-jsonpを使う
-//参考：https://qiita.com/_masakitm_/items/ada0d210e94365b45db4
 import Vue from 'vue'
 import jsonp from 'vue-jsonp'
 Vue.use(jsonp)
@@ -86,7 +85,7 @@ Vue.use(jsonp)
 
 //定数設定
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
-const YOLP_APPID = 'dj00aiZpPWMxdTVwWWtHa1puNCZzPWNvbnN1bWVyc2VjcmV0Jng9ZWY-'
+const YOLP_APPID = '***'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 
