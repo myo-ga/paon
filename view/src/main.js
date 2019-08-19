@@ -1,14 +1,19 @@
 import Vue from 'vue'
+
+// vue-router
 import router from './router'
-import './plugins/vuetify'
+
+//axios
 import axios from 'axios' 
-
 import store from './plugins/store'
+Vue.prototype.$axios = axios;
 
+//vuetify
+import './plugins/vuetify'
+
+//app
 import App from './App.vue'
 
-
-Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
 new Vue({

@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import MapView from './MapView'
+import MapView from './testlist'
 import MemberTable from './MemberTable'
 import CalendarView from './CalendarView'
 

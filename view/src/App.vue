@@ -6,6 +6,7 @@
       clipped 
       absolute 
       temporary 
+      app
     >
       <v-list dense>
         <router-link to="/">
@@ -39,10 +40,21 @@
             </v-list-tile-content>
           </v-list-tile>
         </router-link>
+      <!--Test2-->  
+        <router-link to="/VueTest2">
+          <v-list-tile >
+            <v-list-tile-action>
+              <v-icon>mood</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>テスト2</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </router-link>
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar height=35 color="gradient" dark app fixed clipped-left >
+    <v-toolbar height=35 color="gradient" dark app fixed>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title class="font-weight-light">paon</v-toolbar-title>
     </v-toolbar>
@@ -66,15 +78,6 @@
     }),
     props: {
       source: String
-    },
-    computed: {
-      binding () {
-        const binding = {}
-
-        if (this.$vuetify.breakpoint.mdAndUp) binding.column = true
-
-        return binding
-      }
     }
   }
 </script>
@@ -82,5 +85,6 @@
 <style lang="stylus" scoped>
   .gradient{
     background: linear-gradient(90deg, teal 30%, purple 150%);
+    z-index: 1000 !important;
   }
 </style>

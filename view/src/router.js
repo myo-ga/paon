@@ -21,7 +21,7 @@ export default new Router({
     {
       path: '/VueTest',
       name: 'VueTest',
-      component: () => import('./components/SearchMap.vue')
+      component: () => import('./components/testlist.vue')
     }
   ]
 })

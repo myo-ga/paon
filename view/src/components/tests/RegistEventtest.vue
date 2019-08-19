@@ -51,11 +51,11 @@
             <v-flex>
               <v-list>
                 <v-subheader>候補日</v-subheader>
-                  <v-list-tile v-for="(date, i) in dates" :key="i">
-                    <v-list-tile-content>
-                      <v-list-tile-title v-text="date"></v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
+                <v-list-tile v-for="(date, i) in dates" :key="i">
+                  <v-list-tile-content>
+                    <v-list-tile-title v-text="date"></v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
               </v-list>
             </v-flex>
           </v-layout>
