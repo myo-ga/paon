@@ -41,6 +41,8 @@ var DB = function() {
     // awaitでinsertを同期処理する
     // asyncはPreomiseを返し、returnでresolveの引数にする
     // throwはPromiseを返し、rejectの引数にする
+    // awaitはpromiseがresolveされるまで待つ。その結果(resolveされた結果）を返す
+    // ※Promiseは非同期する処理を記述し、成功時、失敗時にコールバック関数を定義できる
     this.insertOneRecord = async function (data, param) {
         try {
             let result = await this.dbIf.insert(data, param);
@@ -54,6 +56,25 @@ var DB = function() {
         try {
             // _id, _revも合わせて指定すること
             let result = await this.dbIf.insert(data, param);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+    // 削除
+    this.deleteOneRecord = async function (id, rev) {
+        try {
+            let result = await this.dbIf.destroy(id, rev);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    // リスト全て
+    this.getAllRecord = async function () {
+        try {
+            let result = await this.dbIf.list();
             return result;
         } catch (err) {
             throw err;
