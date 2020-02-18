@@ -1,27 +1,18 @@
 <html>
+    <head>
+        <link rel='stylesheet' type='text/css' href='/stylesheets/debug.css'>
+    </head>
     <body>
-        <h3>イベント登録</h3>
-        <form action='/events/create' method='post'>
-            イベント名：<input type='text' name='eventName'><br>
-            メモ：<input type='text' name='eventMemo'><br>
-            候補日：<input type='text' name='eventDays'><br>
-            <input type='submit'>
-        </form>
-        <hr>
-        <h3>イベント更新</h3>
-        <form action='/events/update' method='post'>
-            id：<input type='text' name='id'><br>
-            rev:<input type='text' name='rev'><br>
-            イベント名：<input type='text' name='eventName'><br>
-            メモ：<input type='text' name='eventMemo'><br>
-            候補日：<input type='text' name='eventDays'><br>
-            <input type='submit'>
-        </form>
-        <hr>
-        <h3>イベント参照</h3>
-        <form action='/events/get' method='get'>
-            id：<input type='text' name='id'><br>
-            <input type='submit'>
-        </form>  
+        <div id='header'>
+            <h3>PAON Debug Page</h3>
+        </div>
+        <div id='content'>
+            <%- include('./debug/content', {const_value: const_value}); %>
+        </div>
+        <div id='footer'>
+        </div>
+        <script src='/javascripts/jquery-3.4.1.min.js'></script>
+        <script src='/javascripts/json-formatter.js'></script>
+        <script src='/javascripts/debug.js'></script>
     </body>
 </html>

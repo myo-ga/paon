@@ -1,0 +1,160 @@
+<%
+let api_board_list = [
+    {
+        api_id: 'create-event-api',
+        api_type: 'イベント登録',
+        api_list: [
+            {
+                arg: 'eventName',
+                description: 'イベント名',
+                condition: '文字制限：' + String(const_value.event.eventNameMaxLength),
+            },
+            {
+                arg: 'eventMemo',
+                description: 'メモ',
+                condition: '文字制限：' + String(const_value.event.eventMemoMaxLength),
+            },
+            {
+                arg: 'eventAddDays',
+                description: '追加候補日',
+                condition: '正規表現：' + String(const_value.event.eventAddDaysRegExp),
+            },
+            {
+                arg: 'storeId',
+                description: '店舗ID',
+                condition: '文字制限：' + String(const_value.event.storeIdMaxLength),
+            },
+            {
+                arg: 'storeLatitude',
+                description: '店舗緯度',
+                condition: '正規表現：' + String(const_value.event.storeLatitudeRegExp),
+            },
+            {
+                arg: 'storeLongitude',
+                description: '店舗経度',
+                condition: '正規表現：' + String(const_value.event.storeLongitudeRegExp),
+            },
+            {
+                arg: 'storeName',
+                description: '店舗名',
+                condition: '文字制限：' + String(const_value.event.storeNameMaxLength),
+            },
+            {
+                arg: 'storeAddress',
+                description: '店舗住所',
+                condition: '文字制限：' + String(const_value.event.storeAddressMaxLength),
+            },
+            {
+                arg: 'storeUrl',
+                description: '店舗URL',
+                condition: '文字制限：' + String(const_value.event.storeUrlMaxLength),
+            }
+        ],
+        api_send_id: 'create-event-send',
+        request_view_id: 'create-event-request-view',
+        response_view_id: 'create-event-response-view'
+    },
+    {
+        api_id: 'update-event-api',
+        api_type: 'イベント更新',
+        api_list: [
+            {
+                arg: 'id',
+                description: 'イベントID',
+                condition: '文字制限：' + String(const_value.event.eventIdMaxLength),
+            },
+            {
+                arg: 'rev',
+                description: 'リビジョン番号',
+                condition: '文字制限：' + String(const_value.event.eventRevMaxLength),
+            },            
+            {
+                arg: 'eventName',
+                description: 'イベント名',
+                condition: '文字制限：' + String(const_value.event.eventNameMaxLength),
+            },
+            {
+                arg: 'eventMemo',
+                description: 'メモ',
+                condition: '文字制限：' + String(const_value.event.eventMemoMaxLength),
+            },
+            {
+                arg: 'eventAddDays',
+                description: '追加候補日',
+                condition: '正規表現：' + String(const_value.event.eventAddDaysRegExp),
+            },
+            {
+                arg: 'storeId',
+                description: '店舗ID',
+                condition: '文字制限：' + String(const_value.event.storeIdMaxLength),
+            },
+            {
+                arg: 'storeLatitude',
+                description: '店舗緯度',
+                condition: '正規表現：' + String(const_value.event.storeLatitudeRegExp),
+            },
+            {
+                arg: 'storeLongitude',
+                description: '店舗経度',
+                condition: '正規表現：' + String(const_value.event.storeLongitudeRegExp),
+            },
+            {
+                arg: 'storeName',
+                description: '店舗名',
+                condition: '文字制限：' + String(const_value.event.storeNameMaxLength),
+            },
+            {
+                arg: 'storeAddress',
+                description: '店舗住所',
+                condition: '文字制限：' + String(const_value.event.storeAddressMaxLength),
+            },
+            {
+                arg: 'storeUrl',
+                description: '店舗URL',
+                condition: '文字制限：' + String(const_value.event.storeUrlMaxLength),
+            }
+        ],
+        api_send_id: 'update-event-send',
+        request_view_id: 'update-event-request-view',
+        response_view_id: 'update-event-response-view'
+    },
+    {
+        api_id: 'refer-event-api',
+        api_type: 'イベント参照',
+        api_list: [
+            {
+                arg: 'id',
+                description: 'イベントID',
+                condition: '文字制限：' + String(const_value.event.eventIdMaxLength),
+            }
+        ],
+        api_send_id: 'refer-event-send',
+        request_view_id: 'refer-event-request-view',
+        response_view_id: 'refer-event-response-view'
+    },
+    {
+        api_id: 'delete-event-api',
+        api_type: 'イベント削除',
+        api_list: [
+            {
+                arg: 'id',
+                description: 'イベントID',
+                condition: '文字制限：' + String(const_value.event.eventIdMaxLength),
+            },
+            {
+                arg: 'rev',
+                description: 'リビジョン番号',
+                condition: '文字制限：' + String(const_value.event.eventRevMaxLength),
+            },  
+        ],
+        api_send_id: 'delete-event-send',
+        request_view_id: 'delete-event-request-view',
+        response_view_id: 'delete-event-response-view'
+    }
+];
+%>
+
+<% for (let api_board of api_board_list) { %>
+    <%- include('./api_board', api_board); %>
+    <hr>
+<% } %>

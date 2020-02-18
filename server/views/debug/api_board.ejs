@@ -1,0 +1,26 @@
+<div id=<%= api_id %> >
+    <h3><%= api_type %></h3>
+    <table>
+    <% for (let api of api_list) { %>
+        <tr>
+            <td><%= api.arg %></td>
+            <td><%= api.description %></td>
+            <td><%= api.condition %></td>
+            <% if (api.arg != 'id') { %>
+                <td><input type='text' name=<%= api.arg %> ></td>
+            <% } else { %>
+                <td><input type='text' name=<%= api.arg %> list='id_list' ></td>
+            <% } %>
+        </tr>    
+    <% } %>
+    </table>
+    <input type='button' id=<%= api_send_id %> value='submit'><br>
+    <div style='background-color: rgb(20,20,20);'>
+        <div style='color: white'>Request</div>
+        <div id=<%= request_view_id %> ></div>
+    </div>
+    <div style='background-color: rgb(50,50,50);'>
+        <div style='color: white'>Response</div>
+        <div id=<%= response_view_id %> ></div>
+    </div>
+</div>

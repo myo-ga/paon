@@ -1,0 +1,16 @@
+#header, #content, #footer {
+    width: 800px;
+    margin: 0 auto;
+}
+
+
+/* input[type=text] {
+    width: 200px;
+} */
+
+table {
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid black;
+}

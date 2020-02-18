@@ -1,0 +1,12 @@
+<div id='event-api-content'>
+    <%- include('./event', {const_vlaue: const_value}); %>
+</div>
+
+<div id='member-api-content'>
+</div>
+
+<datalist id='id_list'>
+    <% for (let id of id_list) { %>
+        <option value=<%= id %> ></option>
+    <% } %>
+</datalist>
