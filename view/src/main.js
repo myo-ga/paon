@@ -5,8 +5,10 @@ import router from './router'
 
 //axios
 import axios from 'axios' 
-import store from './plugins/store'
 Vue.prototype.$axios = axios;
+
+//vuex
+import store from './plugins/store'
 
 //vuetify
 import './plugins/vuetify'

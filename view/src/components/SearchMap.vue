@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-layout row wrap>
+    <v-layout row wrap justify-center>
 
       <v-flex>
         <v-card
@@ -27,9 +27,9 @@
         </v-card>
       </v-flex>
 
-      <v-flex>
+      <v-flex shrink>
         <v-container>
-          <v-layout column>
+          <v-layout column align-center>
             <v-flex>
               <v-text-field
                 v-model="query"
@@ -85,7 +85,7 @@ Vue.use(jsonp)
 
 //定数設定
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
-const YOLP_APPID = '***'
+const YOLP_APPID = '****'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 

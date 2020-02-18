@@ -8,20 +8,13 @@ Vue.config.productionTip = false;
 Vue.use(Vuetify, {
   iconfont: 'md',
   theme: {
-    themes: {
-      light: {
-        primary: colors.teal,
-        secondary: colors.grey.darken1,
-        accent: colors.purple,
-        error: colors.red.accent3,
-      },
-      dark: {
-        primary: colors.teal,
-        secondary: colors.grey.darken1,
-        accent: colors.purple,
-        error: colors.red.accent3,
-      },
-    },
+      primary: colors.teal,
+      secondary: colors.grey.darken1,
+      accent: colors.purple,
+      error: colors.red.accent3,
+      success: colors.green,
+      worning: colors.yellow,
+      info: colors.purple
   },
 })
 
