@@ -9,9 +9,9 @@
         "storeAddressMaxLength": 128,
         "storeUrlMaxLength": 128,
 
-        "eventAddDaysRegExp": "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}",
-        "storeLatitudeRegExp": "^[NS][0-9]{2}\\.[0-9]{2}$",
-        "storeLongitudeRegExp": "^[EW][0-9]{2}\\.[0-9]{2}$"
+        "eventAddDaysRegExp": "[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2})?",
+        "storeLatitudeRegExp": "^$|^[NS][0-9]{2}\\.[0-9]{2}$",
+        "storeLongitudeRegExp": "^$|^[EW][0-9]{2}\\.[0-9]{2}$"
 
     },
     "member": {
