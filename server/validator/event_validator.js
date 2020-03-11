@@ -1,8 +1,27 @@
 const config = require('config');
+
+function validateEventDelDays(value, {req}) {
+  let dayPattern = new RegExp(config.get("event.eventDelDaysRegExp"));
+  if (value === void 0) {
+      throw new Error ('value is undefined.');
+  }
+  for (let dayN of value.split(',')) {
+    // 空入力対策
+    if (dayN == '') {
+      continue;
+    }
+    // yyyy-MM-dd hh:mmのフォーマットチェック
+    if (dayN.match(dayPattern) == null) {
+      throw new Error('Day format is invalid.');
+    }
+  }
+  return true;
+}
+
 // 関数の引数に{}をつける
 // 引数分割束縛
 // a={num:10}
-// f=(num)=>{console.log(num)}
+// f=({num})=>{console.log(num)}
 // f(a)で自動的にプロパティnumを引数にとる
 function validateEventAddDays(value, {req}) {
     let datePattern = new RegExp(config.get("event.eventAddDaysRegExp"));
@@ -42,6 +61,7 @@ function validateStoreLL(dataPattern, errorMessage) {
 // キー名、値同一のため、記述省略
 module.exports = {
     validateEventAddDays,
+    validateEventDelDays,
     validateStoreLatitude: 
         validateStoreLL(config.get("event.storeLatitudeRegExp"), 'Store Latitude is invalued.'),
     validateStoreLongitude:

@@ -84,6 +84,11 @@ let api_board_list = [
                 condition: '正規表現：' + String(const_value.event.eventAddDaysRegExp),
             },
             {
+                arg: 'eventDelDays',
+                description: '削除日',
+                condition: '正規表現：' + String(const_value.event.eventDelDaysRegExp),
+            },
+            {
                 arg: 'storeId',
                 description: '店舗ID',
                 condition: '文字制限：' + String(const_value.event.storeIdMaxLength),

@@ -79,6 +79,7 @@ router.post('/update', [
   check('eventName').isLength({max: config.get('event.eventNameMaxLength')}),
   check('eventMemo').isLength({max: config.get('event.eventMemoMaxLength')}),
   check('eventAddDays').custom(event_validator.validateEventAddDays),
+  check('eventDelDays').custom(event_validator.validateEventDelDays),
   check('storeId').isLength({max: config.get('event.storeIdMaxLength')}),
   check('storeLatitude').custom(event_validator.validateStoreLatitude),
   check('storeLongitude').custom(event_validator.validateStoreLongitude),
@@ -98,6 +99,7 @@ router.post('/update', [
     let eventName = req.body.eventName;
     let eventMemo = req.body.eventMemo;
     let eventAddDays = req.body.eventAddDays;
+    let eventDelDays = req.body.eventDelDays;
     let eventMembers = {};
     let storeId = req.body.storeId;
     let storeLatitude = req.body.storeLatitude;
@@ -111,17 +113,61 @@ router.post('/update', [
     db.init('paon');
     let currentEvent = await db.getOneRecord(_id);
     // TODO: idが正しくなく、currentEvent==undefinedの場合の処理
-    eventMembers = currentEvent.eventMembers;
 
-    // 日付設定
+    // deleteEventDays();
+
+    // addEventDays();
+
+    // eventDaysより削除
+    let tmpEventDays = {};
+    let eventDelList = eventDelDays.split(",");
+    for (let dayN in currentEvent.eventDays) {
+      if (eventDelList.indexOf(dayN) >= 0) {
+        continue;
+      }
+      tmpEventDays[dayN] = currentEvent.eventDays[dayN];
+    }
+    currentEvent.eventDays = tmpEventDays;
+
+    // memberNより削除
+    eventMembers = currentEvent.eventMembers;
+    for (let memberN in currentEvent.eventMembers) {
+      let memberDays = currentEvent.eventMembers[memberN].memberDays;
+      let tmpMemberDays = {};
+      for (let dayN in memberDays) {
+        if (eventDelList.indexOf(dayN) >= 0) {
+          continue;
+        }
+        tmpMemberDays[dayN] = memberDays[dayN];
+      }
+      currentEvent.eventMembers[memberN].memberDays = tmpMemberDays;
+    }
+
+    // 最大のdayN算出
+    let maxN = -1;
+    for (let dayN in currentEvent.eventDays) {
+      let curN = parseInt(dayN.replace("day", ""));
+      maxN = Math.max(maxN, curN)
+    }
+    maxN += 1;
+
+    // 日付の追加
     let eventDateList = eventAddDays.split(',');
-    let eventDays = {};
     for (let i = 0; i < eventDateList.length; i++) {
       // 入力がない場合
       if (eventDateList[i] == '') {
         continue;
       }
-      eventDays['day' + String(i)] = eventDateList[i];
+      currentEvent.eventDays['day' + String(i + maxN)] = eventDateList[i];
+    }
+
+    // evnetMenberに日付を追加
+    eventMembers = currentEvent.eventMembers;
+    for (let memberN in currentEvent.eventMembers) {
+      let memberDays = currentEvent.eventMembers[memberN].memberDays;
+      for (let i = 0; i < eventDateList.length; i++) {
+        memberDays['day' + String(i + maxN)] = 0;
+      }
     }
 
     // key名とvalue同じため、value省略
@@ -130,7 +176,7 @@ router.post('/update', [
       _rev,
       eventName,
       eventMemo,
-      eventDays,
+      eventDays: currentEvent.eventDays,
       eventMembers,
       storeId,
       storeLatitude,
