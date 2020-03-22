@@ -166,7 +166,7 @@ router.post('/update', [
     for (let memberN in currentEvent.eventMembers) {
       let memberDays = currentEvent.eventMembers[memberN].memberDays;
       for (let i = 0; i < eventDateList.length; i++) {
-        memberDays['day' + String(i + maxN)] = 0;
+        memberDays['day' + String(i + maxN)] = config.get("member.candidate.None");
       }
     }
 
