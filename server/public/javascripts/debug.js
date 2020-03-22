@@ -1,14 +1,3 @@
-var create_event_view = null;
-var create_event_button = null;
-
-var update_event_view = null;
-var update_event_button = null;
-
-var refer_event_view = null;
-var refer_event_button = null;
-
-var delete_event_view = null;
-var delete_event_button = null;
 
 class TreeView {
     constructor(request_node, response_node) {
@@ -97,79 +86,89 @@ function get_form_data(id) {
 }
 
 
-function register_create_event() {
-    create_event_view = new TreeView(
-        document.getElementById("create-event-request-view"),
-        document.getElementById("create-event-response-view")
+function register_operation(
+    request_view_id,
+    response_view_id,
+    button_id,
+    request_uri,
+    request_method,
+    form_id,
+) {
+    let view = new TreeView(
+        document.getElementById(request_view_id),
+        document.getElementById(response_view_id)
     );
-    create_event_view.append_request_node({});
-    create_event_view.append_response_node({});
+    view.append_request_node({});
+    view.append_response_node({});
 
-    create_event_button = new EventButton(
-        "#create-event-send",
-        create_event_view,
-        "/event/create",
-        "POST",
-        ()=>{return get_form_data("#create-event-api");},
-    );
-}
-
-
-function register_update_event() {
-    update_event_view = new TreeView(
-        document.getElementById("update-event-request-view"),
-        document.getElementById("update-event-response-view")
-    );
-    update_event_view.append_request_node({});
-    update_event_view.append_response_node({});
-
-    update_event_button = new EventButton(
-        "#update-event-send",
-        update_event_view,
-        "/event/update",
-        "POST",
-        ()=>{return get_form_data("#update-event-api");},
-    );
-}
-
-function register_refer_event() {
-    refer_event_view = new TreeView(
-        document.getElementById("refer-event-request-view"),
-        document.getElementById("refer-event-response-view")
-    );
-    refer_event_view.append_request_node({});
-    refer_event_view.append_response_node({});
-
-    refer_event_button = new EventButton(
-        "#refer-event-send",
-        refer_event_view,
-        "/event/get",
-        "GET",
-        ()=>{return get_form_data("#refer-event-api");},
-    );
-}
-
-function register_delete_event() {
-    delete_event_view = new TreeView(
-        document.getElementById("delete-event-request-view"),
-        document.getElementById("delete-event-response-view")
-    );
-    delete_event_view.append_request_node({});
-    delete_event_view.append_response_node({});
-
-    delete_event_button = new EventButton(
-        "#delete-event-send",
-        delete_event_view,
-        "/event/delete",
-        "POST",
-        ()=>{return get_form_data("#delete-event-api");},
+    let button = new EventButton(
+        button_id,
+        view,
+        request_uri,
+        request_method,
+        ()=>{return get_form_data(form_id);},
     );
 }
 
 
 $(()=>{
-    register_create_event();
-    register_update_event();
-    register_refer_event();
-    register_delete_event();
+    register_operation(
+        "create-event-request-view",
+        "create-event-response-view",
+        "#create-event-send",
+        "/event/create",
+        "POST",
+        "#create-event-api"
+    );
+    register_operation(
+        "update-event-request-view",
+        "update-event-response-view",
+        "#update-event-send",
+        "/event/update",
+        "POST",
+        "#update-event-api"
+    );
+    register_operation(
+        "refer-event-request-view",
+        "refer-event-response-view",
+        "#refer-event-send",
+        "/event/get",
+        "GET",
+        "#refer-event-api"
+    );    
+    register_operation(
+        "delete-event-request-view",
+        "delete-event-response-view",
+        "#delete-event-send",
+        "/event/delete",
+        "POST",
+        "#delete-event-api"
+    );
+
+
+    register_operation(
+        "create-member-request-view",
+        "create-member-response-view",
+        "#create-member-send",
+        "/member/create",
+        "POST",
+        "#create-member-api"
+    );
+    register_operation(
+        "update-member-request-view",
+        "update-member-response-view",
+        "#update-member-send",
+        "/member/update",
+        "POST",
+        "#update-member-api"
+    );
+    register_operation(
+        "delete-member-request-view",
+        "delete-member-response-view",
+        "#delete-member-send",
+        "/member/delete",
+        "POST",
+        "#delete-member-api"
+    );
+
 });

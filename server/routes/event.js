@@ -209,6 +209,10 @@ router.get('/get', [
     let db = new cloudant.DB();
     db.init('paon');
     let body = await db.getOneRecord(id);
+    body["id"] = body._id;
+    body["rev"] = body._rev;
+    delete body._id;
+    delete body._rev;
     res.send(body);
 
   } catch (err) {

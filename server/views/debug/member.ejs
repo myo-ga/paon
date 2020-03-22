@@ -1,0 +1,111 @@
+<%
+let api_board_list = [
+    {
+        api_id: 'create-member-api',
+        api_type: 'メンバー登録',
+        api_list: [
+            {
+                arg: 'id',
+                description: 'イベントID',
+                condition: '',
+            },
+            {
+                arg: 'memberName',
+                description: 'メンバー名',
+                condition: '',
+            },
+            {
+                arg: 'memberComment',
+                description: 'コメント',
+                condition: '',
+            },
+            {
+                arg: 'day0',
+                description: '候補日0',
+                condition: '',
+            },
+            {
+                arg: 'day1',
+                description: '候補日1',
+                condition: '',
+            },
+            {
+                arg: 'day2',
+                description: '候補日2',
+                condition: '',
+            }
+        ],
+        api_send_id: 'create-member-send',
+        request_view_id: 'create-member-request-view',
+        response_view_id: 'create-member-response-view'
+    },
+    {
+        api_id: 'update-member-api',
+        api_type: 'メンバー更新',
+        api_list: [
+            {
+                arg: 'id',
+                description: 'イベントID',
+                condition: '',
+            },
+            {
+                arg: 'memberId',
+                description: 'メンバーID',
+                condition: '',
+            },
+            {
+                arg: 'memberName',
+                description: 'メンバー名',
+                condition: '',
+            },
+            {
+                arg: 'memberComment',
+                description: 'コメント',
+                condition: '',
+            },
+            {
+                arg: 'day0',
+                description: '候補日0',
+                condition: '',
+            },
+            {
+                arg: 'day1',
+                description: '候補日1',
+                condition: '',
+            },
+            {
+                arg: 'day2',
+                description: '候補日2',
+                condition: '',
+            }
+        ],
+        api_send_id: 'update-member-send',
+        request_view_id: 'update-member-request-view',
+        response_view_id: 'update-member-response-view'
+    },
+    {
+        api_id: 'delete-member-api',
+        api_type: 'メンバー削除',
+        api_list: [
+            {
+                arg: 'id',
+                description: 'イベントID',
+                condition: '',
+            },
+            {
+                arg: 'memberId',
+                description: 'メンバーID',
+                condition: '',
+            }
+        ],
+        api_send_id: 'delete-member-send',
+        request_view_id: 'delete-member-request-view',
+        response_view_id: 'delete-member-response-view'
+    }
+];
+%>
+
+<% for (let api_board of api_board_list) { %>
+    <%- include('./api_board', api_board); %>
+    <hr>
+<% } %>
