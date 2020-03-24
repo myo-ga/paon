@@ -83,11 +83,14 @@ import jsonp from 'vue-jsonp'
 Vue.use(jsonp)
 
 
+//設定読み込み
+import YOLP_APPID from './yahoo'
+
 //定数設定
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
-const YOLP_APPID = '****'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+
 
 // デフォルトのマーカー画像設定
 delete  L.Icon.Default.prototype._getIconUrl
