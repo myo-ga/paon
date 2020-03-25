@@ -84,13 +84,13 @@ Vue.use(jsonp)
 
 
 //設定読み込み
-import YOLP_APPID from './yahoo'
+//import YOLP_APPID from './yahoo'
 
 //定数設定
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-
+const YOLP_APPID = 'dj00aiZpPWMxdTVwWWtHa1puNCZzPWNvbnN1bWVyc2VjcmV0Jng9ZWY-'
 
 // デフォルトのマーカー画像設定
 delete  L.Icon.Default.prototype._getIconUrl
@@ -120,12 +120,31 @@ export default {
       bounds: null,
       markers: null,
       selected: -1,
+
+      //selected  
+      storeId:  '',                       //テスト:店のID固定
+      storeLatitude: '',            //テスト:店の緯度固定
+      storeLongitude: '',           //テスト:店の経度固定
+      storeName: '',                      //テスト:店名固定
+      storeAddress: '',                   //テスト:店の住所固定
+      storeUrl: ''                        //テスト:店のURL固定
+
     };
   },
   mounted: function() {
+    
+    //vuex
+    this.storeId = this.$store.state.storeId;
+    this.storeLatitude = this.$store.state.storeLatitude;
+    this.storeLongitude = this.$store.state.storeLongitude;
+    this.storeName = this.$store.state.storeName;
+    this.storeAddress = this.$store.state.storeAddress;
+    this.storeUrl = this.$store.state.storeUrl;
+
     this.viewMap();
   },
   methods: {
+
     //地図の初期表示(leaflet + osm)
     viewMap(){
       this.map = L.map( 
@@ -195,7 +214,27 @@ export default {
 
     selectPos(index){
       this.selected = index;
-    }
+        
+      this.storeId = this.localinfo["Feature"][index].Id;
+      //var coordinates = this.localinfo["Feature"][index].Geometry.Coordinates.split(',');
+      //var lng = parseFloat(coordinates[0]);
+      //var lat = parseFloat(coordinates[1]);
+      //this.storeLatitude = lat;
+      //this.storeLongitude = lng;
+      this.storeName = this.localinfo["Feature"][index].Name;
+
+      //vuexのstoreに表示データをコミットする
+      this.$store.commit(
+        'storeSelect', {
+          storeId: this.storeId,
+          storeLatitude: this.storeLatitude,
+          storeLongitude : this.storeLongitude,
+          storeName: this.storeName,
+          storeAddress: this.storeAddress,
+          storeUrl: this.storeUrl
+      });
+    },
+
   }
 };
 </script>

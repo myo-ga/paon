@@ -136,7 +136,6 @@ Vue.use(VeeValidate)
 
 //Axios（APIに使用）
 const querystring = require('querystring');
-import qs from 'qs';
 
 export default {
   $_veeValidate: {
@@ -150,7 +149,15 @@ export default {
     name: '',     //イベント名
     comments: '', //イベントのコメント
     dates: [],  //日付配列
-    date: '',   //日付
+    date: '',   //日付 YYYY-MM-DD
+    
+    //店舗情報
+    storeId:  '',                 //テスト:店のID固定
+    storeLatitude: '',            //テスト:店の緯度固定
+    storeLongitude: '',           //テスト:店の経度固定
+    storeName: '',                //テスト:店名固定
+    storeAddress: '',             //テスト:店の住所固定
+    storeUrl: '',                  //テスト:店のURL固定
 
     //バイデーション情報
     validate_dictionary: {
@@ -174,14 +181,28 @@ export default {
     this.comments = this.$store.state.comments; //コメント
     this.dates = this.$store.state.dates;       //日付
 
+    this.storeId = this.$store.state.storeId;
+    this.storeLatitude = this.$store.state.storeLatitude;
+    this.storeLongitude = this.$store.state.storeLongitude;
+    this.storeName = this.$store.state.storeName;
+    this.storeAddress = this.$store.state.storeAddress;
+    this.storeUrl = this.$store.state.storeUrl;
+    
+    //URLからパラメータを取得
+    this.eventId = this.$route.query.id;
+
     //画面表示時にデータを取得
-    this.get();
+    if(this.eventId != null){
+      this.get();
+    }
 
   },
 
   methods: { 
     //表示データを登録する
     submit () {
+
+      //検証
       this.$validator.validateAll()
 
       //vuexのstoreに表示データをコミットする
@@ -191,6 +212,14 @@ export default {
           comments: this.comments,
           dates: this.dates,
       });
+
+        
+      this.storeId = this.$store.state.storeId;
+      this.storeLatitude = this.$store.state.storeLatitude;
+      this.storeLongitude = this.$store.state.storeLongitude;
+      this.storeName = this.$store.state.storeName;
+      this.storeAddress = this.$store.state.storeAddress;
+      this.storeUrl = this.$store.state.storeUrl;
 
       //データを送信する
       this.post();
@@ -210,21 +239,26 @@ export default {
         'https://nikujaga.mybluemix.net/event/get',
         {
           params: {
-            id: '4a2f84c573094d064488a9b11cdf8abd'  //テスト：とりあえず取得するIDは固定しとく
+            //id: '4a2f84c573094d064488a9b11cdf8abd'  //テスト：とりあえず取得するIDは固定しとく
+            id: this.eventId //URLから取得したIDでイベントをリクエスト
           }
         }
       )
       .then(
-        json => {
+        response => {
           //データ取得できたら取得したデータを変数に格納（ストア）
-          this.name = json.eventName;
-          this.comments = json.eventMemo;
-          this.dates = json.eventDays;
+          this.name = response.data.eventName;
+          this.comments = response.data.eventMemo;
+
+          //datepicker用に連想配列を配列に変換
+          var obj = response.data.eventDays
+          this.dates = Object.keys(obj).map(function (key) {return obj[key]});
+
         }
       )
       .catch(function (error) {
         //エラー処理
-          //console.log(error);
+        alert(error);
       }) 
     },
 
@@ -236,30 +270,39 @@ export default {
         querystring.stringify({
           eventName: this.name,
           eventMemo: this.comments,
-          //eventAddDays: this.dates.join(','),
-          eventAddDays: '2020-01-09 01:01',   //テスト:日時固定
-          storeId:  11,                       //テスト:店のID固定
-          storeLatitude: 'N11.11',            //テスト:店の緯度固定
-          storeLongitude: 'E11.11',           //テスト:店の経度固定
-          storeName: 11,                      //テスト:店名固定
-          storeAddress: 11,                   //テスト:店の住所固定
-          storeUrl: 11                        //テスト:店のURL固定
+          eventAddDays: this.dates.join(','),
+          //eventAddDays: '2020-01-09',   //テスト:日時固定
+          storeId:  this.storeId,                       //テスト:店のID固定
+          storeLatitude: this.storeLatitude,            //テスト:店の緯度固定
+          storeLongitude: this.storeLongitude,           //テスト:店の経度固定
+          storeName: this.storeName,                      //テスト:店名固定
+          storeAddress: this.storeAddress,                   //テスト:店の住所固定
+          storeUrl: this.storeUrl                        //テスト:店のURL固定
         })
       )
-      .then(function(response){
-        alert('アラート');
-      })
+      .then(
+        response => {
+          this.eventId = response.data.id;
+          alert('http://localhost/?id=' + this.eventId);
+        }
+      )
       .catch(function (error) {
-          //console.log(error);
+          alert(error);
       });
-    }
+    },
+
   },
 
   watch:{
-    //日付は5件まで
+    
     dates(val) {
+
+      //フォーマット
+      //this.datesFormated = this.dates.map(function(element){return element.replace(/-/g,'/')});
+
+      //日付は5件まで
       if (val.length > 5) {
-        this.$nextTick(() => this.dates.pop())
+        this.$nextTick(() => val.pop())
       }
     }
   }
