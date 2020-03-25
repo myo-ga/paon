@@ -3,17 +3,16 @@ var router = express.Router();
 const { check, validationResult } = require('express-validator');
 const config = require('config');
 var cloudant = require('../model/cloudant.js');
-var event_validator = require('../validator/event_validator.js');
-//var JSONFormatter = require('json-formatter-js');
+var eventValidator = require('../validator/event_validator.js');
 
 // イベント生成
 router.post('/create', [
   check('eventName').isLength({max: config.get('event.eventNameMaxLength')}),
   check('eventMemo').isLength({max: config.get('event.eventMemoMaxLength')}),
-  check('eventAddDays').custom(event_validator.validateEventAddDays),
+  check('eventAddDays').custom(eventValidator.validateEventAddDays),
   check('storeId').isLength({max: config.get('event.storeIdMaxLength')}),
-  check('storeLatitude').custom(event_validator.validateStoreLatitude),
-  check('storeLongitude').custom(event_validator.validateStoreLongitude),
+  check('storeLatitude').custom(eventValidator.validateStoreLatitude),
+  check('storeLongitude').custom(eventValidator.validateStoreLongitude),
   check('storeName').isLength({max: config.get('event.storeNameMaxLength')}),
   check('storeAddress').isLength({max: config.get('event.storeAddressMaxLength')}),
   check('storeUrl').isLength({max: config.get('event.storeUrlMaxLength')})
@@ -22,7 +21,12 @@ router.post('/create', [
     // validation評価
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      let ret = {
+        ok: false,
+        type: config.get("common.error.validation"),
+        errors: errors.array()
+      };
+      return res.status(422).json(ret);
     }
 
     let eventName = req.body.eventName;
@@ -67,7 +71,13 @@ router.post('/create', [
     res.send(body);
 
   } catch (err) {
-    res.send(err);
+    console.log(err);
+    let ret = {
+      ok: false,
+      type: config.get('common.error.createRecord'),
+      errors: [{msg:err.message}]
+    };
+    res.status(422).json(ret);
   }
 
 });
@@ -78,11 +88,11 @@ router.post('/update', [
   check('rev').isLength({max: config.get('event.eventRevMaxLength')}),
   check('eventName').isLength({max: config.get('event.eventNameMaxLength')}),
   check('eventMemo').isLength({max: config.get('event.eventMemoMaxLength')}),
-  check('eventAddDays').custom(event_validator.validateEventAddDays),
-  check('eventDelDays').custom(event_validator.validateEventDelDays),
+  check('eventAddDays').custom(eventValidator.validateEventAddDays),
+  check('eventDelDays').custom(eventValidator.validateEventDelDays),
   check('storeId').isLength({max: config.get('event.storeIdMaxLength')}),
-  check('storeLatitude').custom(event_validator.validateStoreLatitude),
-  check('storeLongitude').custom(event_validator.validateStoreLongitude),
+  check('storeLatitude').custom(eventValidator.validateStoreLatitude),
+  check('storeLongitude').custom(eventValidator.validateStoreLongitude),
   check('storeName').isLength({max: config.get('event.storeNameMaxLength')}),
   check('storeAddress').isLength({max: config.get('event.storeAddressMaxLength')}),
   check('storeUrl').isLength({max: config.get('event.storeUrlMaxLength')})
@@ -91,7 +101,12 @@ router.post('/update', [
     // validation評価
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      let ret = {
+        ok: false,
+        type: config.get("common.error.validation"),
+        errors: errors.array()
+      };
+      return res.status(422).json(ret);
     }
   
     let _id = req.body.id;
@@ -111,12 +126,16 @@ router.post('/update', [
     // _id, _revよりメンバーを取得する
     let db = new cloudant.DB();
     db.init('paon');
+
     let currentEvent = await db.getOneRecord(_id);
-    // TODO: idが正しくなく、currentEvent==undefinedの場合の処理
-
-    // deleteEventDays();
-
-    // addEventDays();
+    if (currentEvent === void 0) {
+      let ret = {
+        ok: false,
+        type: config.get('common.error.updateRecord'),
+        errors: [{'msg': 'id is empty.'}]
+      };
+      return res.status(422).json(ret);
+    }
 
     // eventDaysより削除
     let tmpEventDays = {};
@@ -146,7 +165,7 @@ router.post('/update', [
     // 最大のdayN算出
     let maxN = -1;
     for (let dayN in currentEvent.eventDays) {
-      let curN = parseInt(dayN.replace("day", ""));
+      let curN = parseInt(dayN.replace('day', ''));
       maxN = Math.max(maxN, curN)
     }
     maxN += 1;
@@ -189,8 +208,14 @@ router.post('/update', [
     let body = await db.updateOneRecord(data);
     res.send(body);
 
-  } catch (error) {
-    res.send(error);
+  } catch (err) {
+    console.log(err);
+    let ret = {
+      ok: false,
+      type: config.get('common.error.updateRecord'),
+      errors: [{msg:err.message}]
+    };
+    res.send(ret);
   }
 });
 
@@ -199,24 +224,46 @@ router.get('/get', [
   check('id').isLength({max: config.get('event.eventIdMaxLength')}),
 ], async function (req, res, next) {
   try {
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      let ret = {
+        ok: false,
+        type: config.get("common.error.validation"),
+        errors: errors.array()
+      };
+      return res.status(422).json(ret);
     }
 
     let id = req.query.id;
-  
+
     let db = new cloudant.DB();
     db.init('paon');
-    let body = await db.getOneRecord(id);
-    body["id"] = body._id;
-    body["rev"] = body._rev;
-    delete body._id;
-    delete body._rev;
-    res.send(body);
+    let currentEvent = await db.getOneRecord(id);
+    if (currentEvent === void 0) {
+      let ret = {
+        ok: false,
+        type: config.get('common.error.referRecord'),
+        errors: [{'msg': 'id is empty.'}]
+      };
+      return res.status(422).json(ret);
+    }
+    
+    currentEvent["id"] = currentEvent._id;
+    currentEvent["rev"] = currentEvent._rev;
+    delete currentEvent._id;
+    delete currentEvent._rev;
+
+    res.send(currentEvent);
 
   } catch (err) {
-    res.send(err);
+    console.log(err);
+    let ret = {
+      ok: false,
+      type: config.get('common.error.referRecord'),
+      errors: [{msg:err.message}]
+    };
+    res.send(ret);
   }
 });
 
@@ -228,7 +275,12 @@ router.post('/delete', [
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      let ret = {
+        ok: false,
+        type: config.get("common.error.validation"),
+        errors: errors.array()
+      };
+      return res.status(422).json(ret);
     }
 
     let _id = req.body.id;
@@ -236,28 +288,24 @@ router.post('/delete', [
 
     let db = new cloudant.DB();
     db.init('paon');
+
     let body = await db.deleteOneRecord(_id, _rev);
     res.send(body);
     
   } catch (err) {
-    res.send(err);
+    let msg = (err.message === void 0) ? err : err.message;
+    let ret = {
+      ok: false,
+      type: config.get('common.error.deleteRecord'),
+      errors: [{msg:msg}]
+    };
+    return res.status(422).json(ret);
   }
 });
 
-// 参加追加
-// ・イベントID
-// ・名前
-// ・候補日程（複数、それに対して、丸罰）
-// ・コメント
 
-// 参加更新
-// ・参加ID
-// ・名前
-// ・候補日程（複数、それに対して、丸罰）
-// ・コメント
 
-// 参加削除
-// ・参加ID
+
 
 
 /* GET users listing. */

@@ -19,8 +19,8 @@ class TreeView {
             this.update_response_node(data);
             success();
         })
-        .fail((data) => {
-            this.update_response_node(data);
+        .fail((jqXHR, textStatus, errorThrown) => {
+            this.update_response_node(JSON.parse(jqXHR.responseText));
             fail();
         });
     }

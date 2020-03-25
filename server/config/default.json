@@ -25,5 +25,14 @@
         "memberNameMaxLength": 128,
         "memberCommentMaxLength": 256,
         "memberIdMaxLength": 128
+    },
+    "common": {
+        "error" : {
+            "validation": "validation error",
+            "createRecord": "record create error",
+            "updateRecord": "record update error",
+            "deleteRecord": "record delete error",
+            "referRecord" : "refer record error"
+        }
     }
 }
