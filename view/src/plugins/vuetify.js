@@ -9,8 +9,8 @@ Vue.use(Vuetify, {
   iconfont: 'md',
   theme: {
       primary: colors.teal,
-      secondary: colors.grey.darken1,
-      accent: colors.purple,
+      secondary: colors.purple,
+      accent: colors.teal,
       error: colors.red.accent3,
       success: colors.green,
       worning: colors.yellow,
