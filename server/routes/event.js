@@ -307,25 +307,4 @@ router.post('/delete', [
 
 
 
-
-/* GET users listing. */
-router.get('/', async function(req, res, next) {
-  try {
-    let db = new cloudant.DB();
-    db.init('paon');
-    let all_record = await db.getAllRecord();
-    let id_list = [];
-    for (let record of all_record.rows) {
-      id_list.push(record['id']);
-    }
-    // configはconfigオブジェクトであるが、renderに渡したときには
-    // JSONオブジェクト（Object型）に変換される模様
-    res.render('debug', {const_value: config, id_list: id_list});
-  } catch (err) {
-
-  }
-
-
-});
-
 module.exports = router;
