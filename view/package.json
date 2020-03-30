@@ -18,6 +18,8 @@
     "vue": "^2.6.10",
     "vue-jsonp": "^0.1.8",
     "vue-router": "^3.0.3",
+    "vue-timeselector": "^1.0.0",
+    "vue2-timepicker": "^1.0.8",
     "vuetify": "^1.5.5",
     "vuex": "^3.1.1"
   },
