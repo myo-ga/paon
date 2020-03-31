@@ -12,6 +12,17 @@ router.post('/create', [
 ], async function(req, res, next) {
 
     try {
+        // validation
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let ret = {
+              ok: false,
+              type: config.get("common.error.validation"),
+              errors: errors.array()
+            };
+            return res.status(422).json(ret);
+        }
+
         let id = req.body.id;
         let memberName = req.body.memberName;
         let memberComment = req.body.memberComment;
@@ -19,9 +30,15 @@ router.post('/create', [
         // dbより読み込み、idよりevent照会
         let db = new cloudant.DB();
         db.init('paon');
+
         let currentEvent = await db.getOneRecord(id);
         if (currentEvent === void 0) {
-            throw "id is not correct.";
+            let ret = {
+                ok: false,
+                type: config.get('common.error.updateRecord'),
+                errors: [{'msg': 'id is empty.'}]
+            };
+            return res.status(422).json(ret);
         }
 
         // eventDaysより日付を取得
@@ -33,7 +50,6 @@ router.post('/create', [
             memberDays[dayN] = config.get("member.candidate.None");
             if (req.body[dayN] !== void 0 &&
                 memberValidator.validateCandidate(req.body[dayN])) {
-                // TODO: フォーマット範囲外は例外とするべきか？
                 memberDays[dayN] = req.body[dayN];
             }
         }
@@ -56,11 +72,16 @@ router.post('/create', [
 
         // dbに書き込み
         let body = await db.updateOneRecord(currentEvent);
-    
-        // 結果をレスポンス
         res.send(body);
-    } catch (error) {
-        res.send(error);
+
+    } catch (err) {
+        console.log(err);
+        let ret = {
+          ok: false,
+          type: config.get('common.error.updateRecord'),
+          errors: [{msg:err.message}]
+        };
+        res.send(ret);
     }
 
 });
@@ -74,6 +95,17 @@ router.post('/update', [
 ], async function(req, res, next) {
 
     try {
+        // validation
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let ret = {
+              ok: false,
+              type: config.get("common.error.validation"),
+              errors: errors.array()
+            };
+            return res.status(422).json(ret);
+        }
+
         let id = req.body.id;
         let memberId = req.body.memberId;
         let memberName = req.body.memberName;
@@ -82,16 +114,26 @@ router.post('/update', [
         // dbより読み込み、idよりevent照会
         let db = new cloudant.DB();
         db.init('paon');
+
         let currentEvent = await db.getOneRecord(id);
         if (currentEvent === void 0) {
-            throw "id is not correct.";
+            let ret = {
+                ok: false,
+                type: config.get('common.error.updateRecord'),
+                errors: [{'msg': 'id is empty.'}]
+            };
+            return res.status(422).json(ret);
         }
 
         // メンバーの取得
         let member = currentEvent.eventMembers[memberId];
-        // TODO: メンバーが取得できているか確認
         if (member === void 0) {
-            throw "memberId is not correct.";
+            let ret = {
+                ok: false,
+                type: config.get('common.error.updateRecord'),
+                errors: [{'msg': 'memberId doesn not exist.'}]
+            };
+            return res.status(422).json(ret);
         }
 
         // 名前とコメント更新
@@ -102,7 +144,6 @@ router.post('/update', [
         for (dayN in member.memberDays) {
             if (req.body[dayN] !== void 0 &&
                 memberValidator.validateCandidate(req.body[dayN])) {
-                // TODO: フォーマット範囲外は例外とするべきか？
                 member.memberDays[dayN] = req.body[dayN];
             }
         }
@@ -111,11 +152,16 @@ router.post('/update', [
 
         // dbに書き込み
         let body = await db.updateOneRecord(currentEvent);
-    
-        // 結果をreturn
         res.send(body);
-    } catch (error) {
-        res.send(error);
+
+    } catch (err) {
+        console.log(err);
+        let ret = {
+          ok: false,
+          type: config.get('common.error.updateRecord'),
+          errors: [{msg:err.message}]
+        };
+        res.send(ret);
     }
 });
 
@@ -126,21 +172,44 @@ router.post('/delete', [
 ], async function(req, res, next) {
 
     try {
+
+        // validation
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let ret = {
+              ok: false,
+              type: config.get("common.error.validation"),
+              errors: errors.array()
+            };
+            return res.status(422).json(ret);
+        }
+
         let id = req.body.id;
         let memberId = req.body.memberId;
 
         // dbより読み込み、idよりevent照会
         let db = new cloudant.DB();
         db.init('paon');
+
         let currentEvent = await db.getOneRecord(id);
         if (currentEvent === void 0) {
-            throw "id is not correct.";
+            let ret = {
+                ok: false,
+                type: config.get('common.error.updateRecord'),
+                errors: [{'msg': 'id is empty.'}]
+            };
+            return res.status(422).json(ret);
         }
         
         // メンバーの取得
         let member = currentEvent.eventMembers[memberId];
         if (member === void 0) {
-            throw "memberId is not correct.";
+            let ret = {
+                ok: false,
+                type: config.get('common.error.updateRecord'),
+                errors: [{'msg': 'memberId doesn not exist.'}]
+            };
+            return res.status(422).json(ret);
         }
 
         // メンバー削除
@@ -148,11 +217,16 @@ router.post('/delete', [
 
         // dbに書き込み
         let body = await db.updateOneRecord(currentEvent);
-    
-        // 結果をreturn
         res.send(body);
-    } catch (error) {
-        res.send(error);
+
+    } catch (err) {
+        console.log(err);
+        let ret = {
+          ok: false,
+          type: config.get('common.error.updateRecord'),
+          errors: [{msg:err.message}]
+        };
+        res.send(ret);
     }
     return true;
 });
