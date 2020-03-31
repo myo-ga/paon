@@ -16,16 +16,6 @@ export const state = {
 };
 
 export const mutations = {
-    eventid(state,val){state.eventid=val},
-    eventrev(state,val){state.eventrev=val},
-    eventname(state,val){state.eventname=val},
-    comments(state,val){state.comments=val},
-    storeId(state,val){state.storeId=val},
-    storeLatitude(state,val){state.storeLatitude=val},
-    storeLongitude(state,val){state.storeLongitude=val},
-    storeName(state,val){state.storeName=val},
-    storeAddress(state,val){state.storeAddress=val},
-    dates(state,val){state.dates=val.concat();},
 
     submit(state, payload){
         state.eventid = payload.eventid;
@@ -62,3 +52,34 @@ export const mutations = {
     }
 };
 
+
+
+export const actions = {
+
+    async getEvent(context) {
+        const payload = {
+          eid: '',
+          rev: '',
+          name: '',
+          comments: '',
+          dates: {},      
+          location: {lid:'',lat:'',lng:'',name:'',address:''}
+        };
+        await axios
+          .get("https://nikujaga.mybluemix.net/event/get", {
+            params: { id: payload.eid }
+          })
+          .then(response => {
+            payload.rev = response.data.rev;
+            payload.name = response.data.eventName;
+            payload.comments = response.data.eventMemo;  
+            payload.dates = response.data.eventDays;  
+            payload.location.lid = response.data.storeId;
+            payload.location.lat = response.data.storeLatitude;
+            payload.location.lng = response.data.storeLongitude;
+            payload.location.name = response.data.storeName;
+            payload.location.address = response.data.storeAddress;
+          });
+        context.commit("update", payload);
+    },
+};

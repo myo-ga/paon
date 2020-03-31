@@ -13,9 +13,9 @@
             <v-layout column justify-center class="pa-3">
               <v-flex class="mx-3"><v-text-field
                   label="イベント名"
-                  v-model="name"
-                  v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('name')"
-                  data-vv-name="name"
+                  v-model="eventname"
+                  v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('eventname')"
+                  data-vv-name="eventname"
                   required>
               </v-text-field></v-flex>
               <v-flex class="mx-3"><v-textarea
@@ -86,25 +86,11 @@ export default {
     DatePickView,
   },
   data: () => ({
-    eventId: '',  //イベントID
-    eventrev: '',
-    name: '',     //イベント名
-    comments: '', //イベントのコメント
-    dates: [],  //日付配列
-    date: '',   //日付 YYYY-MM-DD
-    storeId:  '',                 //店のID固定
-    storeLatitude: '',            //店の緯度固定
-    storeLongitude: '',           //店の経度固定
-    storeName: '',                //店名固定
-    storeAddress: '',             //店の住所固定
-    storeUrl: '',                 //店のURL固定
-
-    test:null,
-
+    eventId:'',
     //バイデーション情報
     validate_dictionary: {
       custom: {
-        name: {
+        eventname: {
           required: () => '必ず入力してください',
           max: '25文字まで入力可能です。'
         }
@@ -112,48 +98,64 @@ export default {
     },
   }),
 
+  computed:{
+    eventrev:{
+      get(){return this.$store.state.eventrev},
+      set(val){this.$store.commit('eventrev', val)}
+    },
+    eventname:{
+      get(){return this.$store.state.eventname},
+      set(val){this.$store.commit('eventname', val)}
+    },
+    comments:{
+      get(){return this.$store.state.comments},
+      set(val){this.$store.commit('comments', val)}
+    },
+    datetimes:{
+      get(){return this.$store.state.dates},
+      set(val){this.$store.commit('dates', val)}
+    },
+    storeId:{
+      get(){return this.$store.state.storeId},
+      set(val){this.$store.commit('storeId', val)}
+    },
+    storeLatitude:{
+      get(){return this.$store.state.storeLatitude},
+      set(val){this.$store.commit('storeLatitude', val)}
+    },
+    storeLongitude:{
+      get(){return this.$store.state.storeLongitude},
+      set(val){this.$store.commit('storeLongitude', val)}
+    },
+    storeName:{
+      get(){return this.$store.state.storeName},
+      set(val){this.$store.commit('storeName', val)}
+    },
+    storeAddress:{
+      get(){return this.$store.state.storeAddress},
+      set(val){this.$store.commit('storeAddress', val)}
+    },
 
-  created(){
   },
   
-  mounted () {
+  created () {
     //バリデーション設定
     this.$validator.localize('ja', this.validate_dictionary);
     
     //URLからパラメータを取得
     this.eventId = this.$route.query.id;
 
-    //画面表示時にデータを取得
-    if(this.eventId){
-      this.get();
-      this.vuexupdate();
-      this.$store.update('updaterev',{eventrev: this.eventrev});      
-    }
+    //画面表示時にデータを取得。なければ登録画面に遷移。
+    if(this.eventId){ this.get(); }
+    else{this.$router.push('/');}
   },
 
   methods: { 
-    vuexupdate(){
-      //vuexのstoreに表示データをコミットする
-      this.$store.commit(
-        'update', {
-          eventname: this.name,
-          comments: this.comments,
-          dates: this.dates,
-          storeId: this.storeId,
-          storeLatitude: this.storeLatitude,
-          storeLongitude: this.storeLongitude,
-          storeName: this.storeName,
-          storeAddress: this.storeAddress,
-          storeUrl: this.storeUrl
-      });
-    },
 
     //データを更新する
     update () {
       //検証
       this.$validator.validateAll()
-
-      this.vuexupdate();
 
       //データを送信する
       this.post();
@@ -161,29 +163,30 @@ export default {
     
     //APIでデータ送信
     post () {
+      var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
         'http://nikujaga.mybluemix.net/event/update', 
         querystring.stringify({
-          id: this.eventid,
-          rev: this.eventrev,
-          eventName: this.name,
-          eventMemo: this.comments,
-          //eventAddDays: this.dates.join(','),
+          id: vm.eventid,
+          rev: vm.eventrev,
+          eventName: vm.eventname,
+          eventMemo: vm.comments,
+          //eventAddDays: this.datetimes.join(','),
           eventAddDays: '',
           eventDelDays: '',
-          storeId:  this.storeId,                       //テスト:店のID固定
-          storeLatitude: this.storeLatitude,            //テスト:店の緯度固定
-          storeLongitude: this.storeLongitude,           //テスト:店の経度固定
-          storeName: this.storeName,                      //テスト:店名固定
-          storeAddress: this.storeAddress,                   //テスト:店の住所固定
-          storeUrl: this.storeUrl                        //テスト:店のURL固定
+          storeId:  vm.storeId,                       //テスト:店のID固定
+          storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
+          storeLongitude: vm.storeLongitude,           //テスト:店の経度固定
+          storeName: vm.storeName,                      //テスト:店名固定
+          storeAddress: vm.storeAddress,                   //テスト:店の住所固定
+          storeUrl: vm.storeUrl                        //テスト:店のURL固定
         })
       )
       .then(
         response => {
-          this.eventId = response.data.id;
-          this.eventrev = response.data.rev;
+          vm.eventId = response.data.id;
+          vm.eventrev = response.data.rev;
         }
       )
       .catch(function (error) {
@@ -193,34 +196,34 @@ export default {
 
     //APIでデータ取得
     get () {
+      var vm = this;
       this.$axios.get(
         'https://nikujaga.mybluemix.net/event/get',{
           params: {
-            id: this.eventId //URLから取得したIDでイベントをリクエスト
+            id: vm.eventId //URLから取得したIDでイベントをリクエスト
           }
       })
       .then(
         response => {
           //データ取得できたら取得したデータを変数に格納（ストア）
-          this.eventrev = response.data.rev;
-          this.name = response.data.eventName;
-          this.comments = response.data.eventMemo;
+          vm.eventrev = response.data.rev;
+          vm.eventname = response.data.eventName;
+          vm.comments = response.data.eventMemo;
 
           //datepicker用に連想配列を配列に変換
           var obj = response.data.eventDays;
-          this.dates = [];
+          var datetimes = [];
           for(var eventday in obj){
-            this.dates.push(obj[eventday]);
+            datetimes.push(obj[eventday]);
           }
+          vm.datetimes = datetimes.concat();
 
-          this.storeId = response.data.storeId;
-          this.storeLatitude = response.data.storeLatitude;
-          this.storeLongitude = response.data.storeLongitude;
-          this.storeName = response.data.storeName;
-          this.storeAddress = response.data.storeAddress;
-          this.storeUrl = response.data.storeUrl;
-          
-          this.vuexupdate();
+          vm.storeId = response.data.storeId;
+          vm.storeLatitude = response.data.storeLatitude;
+          vm.storeLongitude = response.data.storeLongitude;
+          vm.storeName = response.data.storeName;
+          vm.storeAddress = response.data.storeAddress;
+          vm.storeUrl = response.data.storeUrl;
         }
       )
       .catch(function (error) {
