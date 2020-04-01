@@ -91,7 +91,7 @@ Vue.use(jsonp)
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-const YOLP_APPID = '-'
+const YOLP_APPID = 'dj00aiZpPWMxdTVwWWtHa1puNCZzPWNvbnN1bWVyc2VjcmV0Jng9ZWY-'
 
 // デフォルトのマーカー画像設定
 delete  L.Icon.Default.prototype._getIconUrl
@@ -123,9 +123,14 @@ export default {
       selected: -1,
       list: [], 
 
-      icon: L.icon({
+      selectedIcon: L.icon({
         iconUrl: require("leaflet/dist/images/marker-teal.png"),
         iconRetinaUrl: require("leaflet/dist/images/marker-teal.png"),
+        iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
+      }),
+      icon: L.icon({
+        iconUrl: require("leaflet/dist/images/marker-grey.png"),
+        iconRetinaUrl: require("leaflet/dist/images/marker-grey.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
       }),
     };
@@ -152,6 +157,9 @@ export default {
       get(){return this.$store.state.storeAddress},
       set(val){this.$store.commit('storeAddress', val)}
     },
+    center: function(){
+      return this.map.getCenter();
+    }
   },
   watch:{
   },
@@ -159,6 +167,8 @@ export default {
   mounted: function() {
     //地図を表示
     this.viewMap();
+
+    //YOLP
     if(this.storeId) this.get(this.storeId);
   },
 
@@ -184,10 +194,11 @@ export default {
         output: 'json',
         appid: YOLP_APPID,
         query: this.query,
+        distinct: false,
         sort: 'hybrid',
         start: 0,
-        result: 100,
-        loco_mode: false,
+        results: 10,
+        loco_mode: true,
       })
       .then(json => {
         this.localinfo = json["Feature"];
@@ -207,29 +218,29 @@ export default {
         output: 'json',
         appid: YOLP_APPID,
         query: this.query,
-        sort: 'hybrid',
         uid: val,
         start: 0,
-        result: 100,
-        loco_mode: false,
+        results: 1,
       })
       .then(json => {
         this.localinfo = json["Feature"];
-        this.dispCanditate();
+        this.dispCanditate(-1);
         this.selectPos(0);
       })
       .catch(err => {(this.errored = true), (this.error = err);})
       .finally(() => (this.loading = false));       
     },
 
-    //検索候補表示
-    dispCanditate(){
+    //検索候補の地図・リスト表示
+    dispCanditate(index){
       //表示更新前にクリア
       if(this.markers) this.markers.clearLayers();
       if(this.bounds) this.bounds = null;//消し方微妙。メモリリーク？
       if(this.list) this.list = [];
 
       //地図にローカルサーチ結果をピン打ち
+      var vm = this;
+      var i = 0;
       for(var item in this.localinfo){
         //店名と住所をリストに追加
         this.list.push({
@@ -242,19 +253,22 @@ export default {
         var lng = parseFloat(coordinates[0]);
         var lat = parseFloat(coordinates[1]);
         
-        //緯度経度でピン打ち
-        var marker = L.marker([lat,lng],{icon: this.icon, id: item });
-        marker.bindPopup(this.localinfo[item].Name);
-        //marker.on('click', function(e){this.$SelectMarker(e.target.options.id)});
+        var marker = L.marker([lat,lng],{id: item});//ピンのアイコン設定
+        marker.bindTooltip(vm.localinfo[item].Name).openPopup();
+        if(index == i){
+          marker.setIcon(vm.selectedIcon);//ピンのアイコン
+          marker.setZIndexOffset(1000);//一番前に表示
+        }
+        else{
+          marker.setIcon(this.icon);
+          marker.on('click', function(e){vm.selectPos(e.target.options.id)});
+        }
         this.markers.addLayer(marker);
 
         //地図範囲設定
-        if(this.bounds == null){
-          this.bounds = L.latLngBounds([lat,lng],[lat,lng]);
-        }
-        else {
-          this.bounds.extend([lat,lng]);
-        }
+        if(this.bounds == null) this.bounds = L.latLngBounds([lat,lng],[lat,lng]);
+        else this.bounds.extend([lat,lng]);
+        i++;
       }
       this.map.addLayer(this.markers);
       this.map.fitBounds(this.bounds);  //ピンに合わせて範囲を表示
@@ -270,6 +284,9 @@ export default {
       //var lat = parseFloat(coordinates[1]);
       //this.storeLatitude = lat;
       //this.storeLongitude = lng;
+      
+      //選択を地図に反映
+      this.dispCanditate(index);
     },
 
   }
