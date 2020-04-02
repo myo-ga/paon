@@ -132,7 +132,7 @@ router.post('/update', [
       let ret = {
         ok: false,
         type: config.get('common.error.updateRecord'),
-        errors: [{'msg': 'id is empty.'}]
+        errors: [{'msg': 'Empty id'}]
       };
       return res.status(422).json(ret);
     }
@@ -244,7 +244,7 @@ router.get('/get', [
       let ret = {
         ok: false,
         type: config.get('common.error.referRecord'),
-        errors: [{'msg': 'id is empty.'}]
+        errors: [{'msg': 'Empty id'}]
       };
       return res.status(422).json(ret);
     }

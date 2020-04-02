@@ -35,8 +35,8 @@ router.post('/create', [
         if (currentEvent === void 0) {
             let ret = {
                 ok: false,
-                type: config.get('common.error.updateRecord'),
-                errors: [{'msg': 'id is empty.'}]
+                type: config.get('common.error.createRecord'),
+                errors: [{'msg': 'Empty id'}]
             };
             return res.status(422).json(ret);
         }
@@ -78,7 +78,7 @@ router.post('/create', [
         console.log(err);
         let ret = {
           ok: false,
-          type: config.get('common.error.updateRecord'),
+          type: config.get('common.error.createRecord'),
           errors: [{msg:err.message}]
         };
         res.send(ret);
@@ -120,7 +120,7 @@ router.post('/update', [
             let ret = {
                 ok: false,
                 type: config.get('common.error.updateRecord'),
-                errors: [{'msg': 'id is empty.'}]
+                errors: [{'msg': 'Empty id'}]
             };
             return res.status(422).json(ret);
         }
@@ -131,7 +131,7 @@ router.post('/update', [
             let ret = {
                 ok: false,
                 type: config.get('common.error.updateRecord'),
-                errors: [{'msg': 'memberId doesn not exist.'}]
+                errors: [{'msg': 'memberId does not exist'}]
             };
             return res.status(422).json(ret);
         }
@@ -195,8 +195,8 @@ router.post('/delete', [
         if (currentEvent === void 0) {
             let ret = {
                 ok: false,
-                type: config.get('common.error.updateRecord'),
-                errors: [{'msg': 'id is empty.'}]
+                type: config.get('common.error.deleteRecord'),
+                errors: [{'msg': 'Empty id'}]
             };
             return res.status(422).json(ret);
         }
@@ -206,8 +206,8 @@ router.post('/delete', [
         if (member === void 0) {
             let ret = {
                 ok: false,
-                type: config.get('common.error.updateRecord'),
-                errors: [{'msg': 'memberId doesn not exist.'}]
+                type: config.get('common.error.deleteRecord'),
+                errors: [{'msg': 'memberId does not exist'}]
             };
             return res.status(422).json(ret);
         }
@@ -223,7 +223,7 @@ router.post('/delete', [
         console.log(err);
         let ret = {
           ok: false,
-          type: config.get('common.error.updateRecord'),
+          type: config.get('common.error.deleteRecord'),
           errors: [{msg:err.message}]
         };
         res.send(ret);

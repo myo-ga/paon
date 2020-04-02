@@ -32,7 +32,7 @@
             "createRecord": "record create error",
             "updateRecord": "record update error",
             "deleteRecord": "record delete error",
-            "referRecord" : "refer record error"
+            "referRecord" : "record refer error"
         }
     }
 }

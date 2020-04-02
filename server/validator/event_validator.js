@@ -3,7 +3,7 @@ const config = require('config');
 function validateEventDelDays(value, {req}) {
   let dayPattern = new RegExp(config.get("event.eventDelDaysRegExp"));
   if (value === void 0) {
-      throw new Error ('Parameter is undefined.');
+      throw new Error ('Undefined parameter');
   }
   for (let dayN of value.split(',')) {
     // 空入力対策
@@ -12,7 +12,7 @@ function validateEventDelDays(value, {req}) {
     }
     // yyyy-MM-dd hh:mmのフォーマットチェック
     if (dayN.match(dayPattern) == null) {
-      throw new Error('Day format is invalid.');
+      throw new Error('Invalid value');
     }
   }
   return true;
@@ -26,7 +26,7 @@ function validateEventDelDays(value, {req}) {
 function validateEventAddDays(value, {req}) {
     let datePattern = new RegExp(config.get("event.eventAddDaysRegExp"));
    if (value === void 0) {
-       throw new Error ('Parameter is undefined.');
+       throw new Error ('Undefined parameter');
    }
    for (let day of value.split(',')) {
      // 空入力対策
@@ -35,12 +35,12 @@ function validateEventAddDays(value, {req}) {
      }
      // yyyy-MM-dd hh:mmのフォーマットチェック
      if (day.match(datePattern) == null) {
-       throw new Error('Date format is invalid.');
+       throw new Error('Invalid value');
      }
      // 実在する日付かチェック
      let date = new Date(day);
      if (isNaN(date)) {
-       throw new Error('Date is not existed.');
+       throw new Error('Invalid value');
      }
    }
    return true;
@@ -63,7 +63,7 @@ module.exports = {
     validateEventAddDays,
     validateEventDelDays,
     validateStoreLatitude: 
-        validateStoreLL(config.get("event.storeLatitudeRegExp"), 'Store Latitude is invalid.'),
+        validateStoreLL(config.get("event.storeLatitudeRegExp"), 'Invalid value'),
     validateStoreLongitude:
-        validateStoreLL(config.get("event.storeLongitudeRegExp"), 'Store Longitude is invalid.')
+        validateStoreLL(config.get("event.storeLongitudeRegExp"), 'Invalid value')
 }
