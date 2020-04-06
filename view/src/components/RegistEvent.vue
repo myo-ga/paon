@@ -115,8 +115,8 @@ export default {
     },
   }),
 
-  //画面表示時処理
-  mounted () {
+  //画面表示時前処理
+  created () {
     //バリデーション設定
     this.$validator.localize('ja', this.validate_dictionary);
   },
@@ -135,7 +135,7 @@ export default {
           comments: this.comments,
       });
       
-      //componentの値を取得
+      //vuexからcomponentの値を取得
       this.dates = this.$store.state.dates;
       this.storeId = this.$store.state.storeId;
       this.storeLatitude = this.$store.state.storeLatitude;
@@ -146,7 +146,6 @@ export default {
 
       //データを送信する
       this.post();
-      //alert([this.name,this.comments,this.dates,this.storeId,this.storeName]);
     },
 
     //表示データをクリアする
@@ -159,27 +158,28 @@ export default {
 
     //APIでデータ送信
     post () {
+      var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
         'http://nikujaga.mybluemix.net/event/create', 
         querystring.stringify({
-          eventName: this.name,
-          eventMemo: this.comments,
-          eventAddDays: this.dates.join(','),
-          storeId:  this.storeId,                       //テスト:店のID固定
-          storeLatitude: this.storeLatitude,            //テスト:店の緯度固定
-          storeLongitude: this.storeLongitude,           //テスト:店の経度固定
-          storeName: this.storeName,                      //テスト:店名固定
-          storeAddress: this.storeAddress,                   //テスト:店の住所固定
-          storeUrl: this.storeUrl                        //テスト:店のURL固定
+          eventName: vm.name,
+          eventMemo: vm.comments,
+          eventAddDays: vm.dates.join(','),
+          storeId:  vm.storeId,                       //テスト:店のID固定
+          storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
+          storeLongitude: vm.storeLongitude,           //テスト:店の経度固定
+          storeName: vm.storeName,                      //テスト:店名固定
+          storeAddress: vm.storeAddress,                   //テスト:店の住所固定
+          storeUrl: vm.storeUrl                        //テスト:店のURL固定
         })
       )
       .then(
         response => {
-          this.eventId = response.data.id;
+          vm.eventId = response.data.id;
           
           //update画面に遷移
-          this.$router.push('/UpdateEvent/?id=' + this.eventId);
+          vm.$router.push('/UpdateEvent/?id=' + vm.eventId);
         }
       )
       .catch(function (error) {

@@ -123,56 +123,41 @@ export default {
       selected: -1,
       list: [], 
 
-      selectedIcon: L.icon({
+      //selected  
+      storeId:  '',     
+      storeLatitude: '',
+      storeLongitude: '',
+      storeName: '',
+      storeAddress: '',
+      storeUrl: '',
+
+      icon: L.icon({
         iconUrl: require("leaflet/dist/images/marker-teal.png"),
         iconRetinaUrl: require("leaflet/dist/images/marker-teal.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
       }),
-      icon: L.icon({
-        iconUrl: require("leaflet/dist/images/marker-grey.png"),
-        iconRetinaUrl: require("leaflet/dist/images/marker-grey.png"),
+      
+      selectedicon: L.icon({
+        iconUrl: require("leaflet/dist/images/marker-purple.png"),
+        iconRetinaUrl: require("leaflet/dist/images/marker-purple.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
       }),
     };
   },
-
-  computed:{
-    storeId:{
-      get(){return this.$store.state.storeId},
-      set(val){this.$store.commit('storeId', val)}
-    },
-    storeLatitude:{
-      get(){return this.$store.state.storeLatitude},
-      set(val){this.$store.commit('storeLatitude', val)}
-    },
-    storeLongitude:{
-      get(){return this.$store.state.storeLongitude},
-      set(val){this.$store.commit('storeLongitude', val)}
-    },
-    storeName:{
-      get(){return this.$store.state.storeName},
-      set(val){this.$store.commit('storeName', val)}
-    },
-    storeAddress:{
-      get(){return this.$store.state.storeAddress},
-      set(val){this.$store.commit('storeAddress', val)}
-    },
-    center: function(){
-      return this.map.getCenter();
-    }
-  },
-  watch:{
-  },
-
   mounted: function() {
     //地図を表示
     this.viewMap();
 
-    //YOLP
-    if(this.storeId) this.get(this.storeId);
-  },
+    //vuexで店舗IDを取得
+    this.storeId = this.$store.state.storeId;
 
+    //パラメータにIDがある場合はロケーション情報を取得
+    if(this.storeId){
+      this.get();
+    }
+  },
   methods: {
+
     //地図の初期表示(leaflet + osm)
     viewMap(){
       this.map = L.map( 
@@ -183,6 +168,8 @@ export default {
           OSM_URL, { attribution: OSM_ATTR }
         )
       );
+
+      //検索の準備
       this.markers = L.layerGroup();
     },
 
@@ -194,11 +181,10 @@ export default {
         output: 'json',
         appid: YOLP_APPID,
         query: this.query,
-        distinct: false,
         sort: 'hybrid',
         start: 0,
-        results: 10,
-        loco_mode: true,
+        result: 100,
+        loco_mode: false,
       })
       .then(json => {
         this.localinfo = json["Feature"];
@@ -211,37 +197,39 @@ export default {
     },
 
     //test YOLPローカルサーチAPItest
-    get(val){
+    get(){
       this.loading=true;
       this.errored=false;
       this.$jsonp(LOCAL_SEARCH_URL,{
         output: 'json',
         appid: YOLP_APPID,
         query: this.query,
-        uid: val,
+        sort: 'hybrid',
+        uid: this.storeId,
         start: 0,
-        results: 1,
+        result: 100,
+        loco_mode: false,
       })
       .then(json => {
         this.localinfo = json["Feature"];
-        this.dispCanditate(-1);
-        this.selectPos(0);
+        this.dispCanditate();
       })
       .catch(err => {(this.errored = true), (this.error = err);})
-      .finally(() => (this.loading = false));       
+      .finally(() => (this.loading = false));      
+
+      this.selectPos(-1);
     },
 
-    //検索候補の地図・リスト表示
-    dispCanditate(index){
+    //検索候補表示
+    dispCanditate(){
       //表示更新前にクリア
       if(this.markers) this.markers.clearLayers();
       if(this.bounds) this.bounds = null;//消し方微妙。メモリリーク？
       if(this.list) this.list = [];
 
       //地図にローカルサーチ結果をピン打ち
-      var vm = this;
-      var i = 0;
       for(var item in this.localinfo){
+
         //店名と住所をリストに追加
         this.list.push({
           Name: this.localinfo[item].Name, 
@@ -253,22 +241,19 @@ export default {
         var lng = parseFloat(coordinates[0]);
         var lat = parseFloat(coordinates[1]);
         
-        var marker = L.marker([lat,lng],{id: item});//ピンのアイコン設定
-        marker.bindTooltip(vm.localinfo[item].Name).openPopup();
-        if(index == i){
-          marker.setIcon(vm.selectedIcon);//ピンのアイコン
-          marker.setZIndexOffset(1000);//一番前に表示
-        }
-        else{
-          marker.setIcon(this.icon);
-          marker.on('click', function(e){vm.selectPos(e.target.options.id)});
-        }
+        //緯度経度でピン打ち
+        var marker = L.marker([lat,lng],{icon: this.icon, id: item });
+        marker.bindPopup(this.localinfo[item].Name);
+        //marker.on('click', function(e){this.$SelectMarker(e.target.options.id)});
         this.markers.addLayer(marker);
 
         //地図範囲設定
-        if(this.bounds == null) this.bounds = L.latLngBounds([lat,lng],[lat,lng]);
-        else this.bounds.extend([lat,lng]);
-        i++;
+        if(this.bounds == null){
+          this.bounds = L.latLngBounds([lat,lng],[lat,lng]);
+        }
+        else {
+          this.bounds.extend([lat,lng]);
+        }
       }
       this.map.addLayer(this.markers);
       this.map.fitBounds(this.bounds);  //ピンに合わせて範囲を表示
@@ -284,9 +269,17 @@ export default {
       //var lat = parseFloat(coordinates[1]);
       //this.storeLatitude = lat;
       //this.storeLongitude = lng;
-      
-      //選択を地図に反映
-      this.dispCanditate(index);
+
+      //vuexのstoreに表示データをvuexにコミットする
+      this.$store.commit(
+        'storeSelect', {
+          storeId: this.storeId,
+          storeLatitude: this.storeLatitude,
+          storeLongitude : this.storeLongitude,
+          storeName: this.storeName,
+          storeAddress: this.storeAddress,
+          storeUrl: this.storeUrl
+      });
     },
 
   }

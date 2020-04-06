@@ -17,7 +17,7 @@
         <!--選択された数だけ日付をリスト表示-->
         <v-list style="max-height: 300px;">
           <v-subheader>候補日リスト</v-subheader>
-          <template v-for="(datetime, i) in datetimesStr" >
+          <template v-for="(datetime, i) in datetimes" >
             <v-list-tile :key="i">
               <v-list-tile-action>
                 <v-menu
@@ -29,7 +29,7 @@
                   full-width min-width="290px">
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-bind:value="datetime"
+                        v-bind:value="datetime.str"
                         prepend-icon="schedule" readonly
                         style = "width: 300px"
                         v-on="on"></v-text-field>
@@ -37,7 +37,7 @@
                     <v-time-picker 
                       v-model="times[i]"
                       format="24hr"
-                      @click:minute="setTimes(i)">
+                      @input="menu[i]=false;">
                     </v-time-picker>
                 </v-menu>
               </v-list-tile-action>
@@ -59,91 +59,68 @@ const DATESNUM = 5;
 
 export default {  
   data: () => ({
+    dates:[],
+    times:[],
+    datetimes:[],
     datetime: '',
     menu: [],
   }),
 
   computed: {
-    //vuexわけわからん
-    datetimes:{
-      get(){return this.$store.state.dates;},
-      set(val){this.$store.commit('dates', val)}
-    },
-
-    datetimesStr:{
-      get(){
-        // datetimesからdatetimeObjを生成
-        var datetimesStr = [];
-        for(var i = 0; i < this.datetimes.length; i++){
-          var val = this.datetimes[i].split(' ');
-          datetimesStr.push(this.formatDate(val[0], val[1]));
-        }
-        return datetimesStr;
-      }
-    },
-
-    dates:{
-      get(){
-        var dates = [];
-        for(var i= 0; i < this.datetimes.length; i++){
-          var val = this.datetimes[i].split(' ');
-          dates.push(val[0]);
-        }
-        return dates;
-      },
-      set(val){
-        if (val.length > DATESNUM) {this.$nextTick(() => val.pop());}
-        else {
-          var datetimes = [];
-          for(var i = 0; i < val.length; i++){
-            var dt = val[i]
-            var tm = this.times[i] ? this.times[i] : DEFTIME;
-            datetimes.push(dt+' '+tm);
-          }
-          this.datetimes = datetimes.concat();
-        }
-      }
-    },
-
-    //timesは配列の中身をいじるためcomuptedはあきらめる
-    //https://qiita.com/clomie/items/7a69ee850a304595142e
-    times:{
-      get(){
-        var times = [];
-        for(var i= 0; i < this.datetimes.length; i++){
-          var val = this.datetimes[i].split(' ');
-          times.push(val[1]);
-        }
-        return times;
-      },
-      set(val){
-        var datetimes = [];
-        for(var i = 0; i < this.dates.length; i++){
-          var dt = this.dates[i]
-          var tm = val[i] ? val[i] : DEFTIME;
-          datetimes.push(dt+' '+tm);
-        }
-        this.datetimes = datetimes.concat();
-      }
+    datetimes () {
+      
     }
   },
 
-  watch: {
-   // dates: function(val) {
-   //   //日付5件より多ければpopする
-   //   if (val.length > DATESNUM) {this.$nextTick(() => val.pop());}
-   // }
+  mounted() {
+    //vuexからdatetimesを読み込み
+    var datetimes = this.$store.state.dates;
+    
+    // datesとtimesを初期化 
+    var dates = [];
+    var times = [];
+
+    for(var i = 0; i < datetimes.length; i++){
+      var val = datetimes[i].split(' ');
+      dates.push(val[0]);
+      times.push(val[1]);
+    }
+    // this.datesとthis.timesを更新
+    this.dates = dates.concat();
+    this.times = times.concat();
   },
 
-  methods: { 
-
-    setTimes(n){
-      //メニューを消す
-      this.$set(this.menu,n,false);
-      //強制的にtimesを更新（よくない）
-      this.times=this.times.concat();
+  watch: {
+    dates: function(val) {
+      //日付5件より多ければpopする
+      if (val.length > DATESNUM) {this.$nextTick(() => val.pop());}
+      else {this.updateDatetimes();}
     },
+    times: function() {
+      this.updateDatetimes();
+    },
+  },
 
+  methods: {
+    updateDatetimes(){
+      this.datetimes = [];
+      var r = [];
+      for(var i = 0; i < this.dates.length; i++){
+        var dt = this.dates[i]
+        var tm = this.times[i] ? this.times[i] : DEFTIME;
+        var dttm = this.formatDate(dt, tm);
+
+        // datetimes更新用
+        this.datetimes.push({date: dt, time: tm, str: dttm});
+
+        // vuex更新用
+        r.push(dt+' '+tm);
+      }
+
+      //vuex更新
+      this.$store.commit('datesSelect', {dates: r});
+    },
+    
     //画面表示用に日時フォーマットを適用
     formatDate (date, time) {
       const [YYYY, M, D] = date.split('-');
@@ -155,7 +132,8 @@ export default {
         str = Number(h)+':'+mm;
       }
       return YYYY+'年'+Number(M)+'月'+Number(D)+'日（'+dayofweek+'）　'+str;
-    }
+    },
+
   }
 
 };
