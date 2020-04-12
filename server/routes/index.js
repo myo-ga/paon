@@ -24,8 +24,21 @@ router.get('/debug', async function(req, res, next) {
   } catch (err) {
     res.send(err);
   }
+});
 
-
+router.get('/debug/getall', async function(req, res, next) {
+  try {
+    let db = new cloudant.DB();
+    db.init('paon');
+    let all_record = await db.getAllRecord();
+    let id_list = [];
+    for (let record of all_record.rows) {
+      id_list.push({id:record['id']});
+    }
+    res.send(id_list);
+  } catch (err) {
+    res.send(err);
+  }
 });
 
 module.exports = router;
