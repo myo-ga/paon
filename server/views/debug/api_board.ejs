@@ -9,7 +9,12 @@
             <% if (api.arg != 'id' && api.arg != 'memberId') { %>
                 <td><input type='text' name=<%= api.arg %> ></td>
             <% } else { %>
-                <td><select name=<%= api.arg %> ></select></td>
+                <td><select name=<%= api.arg %> >
+                    <% for (let index in api.id_list) { %>
+                        <option value=<%= api.id_list[index] %> ><%= api.id_list[index]%></option>
+                    <% } %>
+
+                </select></td>
             <% } %>
         </tr>    
     <% } %>

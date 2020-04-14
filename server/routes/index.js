@@ -19,7 +19,7 @@ router.get('/debug', async function(req, res, next) {
       id_list.push(record['id']);
     }
     // configはconfigオブジェクトであるが、renderに渡したときには
-    // JSONオブジェクト（Object型）に変換される模様
+    // JSONオブジェクト（Object型）に変換される模様. id_listもArrayからObjectに変換される
     res.render('debug', {const_value: config, id_list: id_list});
   } catch (err) {
     res.send(err);

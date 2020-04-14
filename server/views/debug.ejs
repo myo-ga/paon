@@ -7,10 +7,11 @@
             <h3>PAON Debug Page</h3>
         </div>
         <div id='content'>
-            <%- include('./debug/content', {const_value: const_value}); %>
+            <%- include('./debug/content', {const_value: const_value, id_list: id_list}); %>
         </div>
         <div id='footer'>
         </div>
+        
         <script src='/javascripts/jquery-3.4.1.min.js'></script>
         <script src='/javascripts/json-formatter.js'></script>
         <script src='/javascripts/debug.js'></script>
