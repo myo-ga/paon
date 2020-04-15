@@ -7,18 +7,18 @@ let api_board_list = [
             {
                 arg: 'id',
                 description: 'イベントID',
-                condition: '',
+                condition: '文字制限：' + String(const_value.event.eventIdMaxLength),
                 id_list: id_list
             },
             {
                 arg: 'memberName',
                 description: 'メンバー名',
-                condition: '',
+                condition: '文字制限：' + String(const_value.member.memberNameMaxLength),
             },
             {
                 arg: 'memberComment',
                 description: 'コメント',
-                condition: '',
+                condition: '文字制限：' + String(const_value.member.memberCommentMaxLength),
             }
         ],
         api_send_id: 'create-member-send',
@@ -33,23 +33,23 @@ let api_board_list = [
             {
                 arg: 'id',
                 description: 'イベントID',
-                condition: '',
+                condition: '文字制限：' + String(const_value.event.eventIdMaxLength),
                 id_list: id_list,
             },
             {
                 arg: 'memberId',
                 description: 'メンバーID',
-                condition: '',
+                condition: '文字制限：' + String(const_value.member.memberIdMaxLength),
             },
             {
                 arg: 'memberName',
                 description: 'メンバー名',
-                condition: '',
+                condition: '文字制限：' + String(const_value.member.memberNameMaxLength),
             },
             {
                 arg: 'memberComment',
                 description: 'コメント',
-                condition: '',
+                condition: '文字制限：' + String(const_value.member.memberCommentMaxLength),
             }
         ],
         api_send_id: 'update-member-send',
@@ -61,16 +61,16 @@ let api_board_list = [
         api_id: 'delete-member-api',
         api_type: 'メンバー削除',
         api_list: [
-            {
+        {
                 arg: 'id',
                 description: 'イベントID',
-                condition: '',
-                id_list: id_list
+                condition: '文字制限：' + String(const_value.event.eventIdMaxLength),
+                id_list: id_list,
             },
             {
                 arg: 'memberId',
                 description: 'メンバーID',
-                condition: '',
+                condition: '文字制限：' + String(const_value.member.memberIdMaxLength),
             }
         ],
         api_send_id: 'delete-member-send',

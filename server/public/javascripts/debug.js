@@ -1,4 +1,3 @@
-
 var gEvent = {};
 
 var gEventTableMap = {};
@@ -16,6 +15,14 @@ var gMemberMemberIdSelectMap = {};
 var gMemberRequestJsonViewMap = {};
 var gMemberResponseJsonViewMap = {};
 
+
+var kCreateEventAPI = "#create-event-api";
+var kUpdateEventAPI = "#update-event-api";
+var kDeleteEventAPI = "#delete-event-api";
+var kReferEventAPI  = "#refer-event-api";
+
+var kCreateMemberAPI = "#create-member-api";
+var kUpdateMemberAPI = "#update-member-api";
 var kDeleteMemberAPI = "#delete-member-api";
 
 
@@ -49,8 +56,8 @@ class EventTable {
     // イベント項目を表示する
     fillField(event) {
         for (let key in event) {
-            let jqElement = $(this.api_id_).find("*[name=" + key+ "]");
-            jqElement.val(event[key]);
+            let jq_element = $(this.api_id_).find("*[name=" + key + "]");
+            jq_element.val(event[key]);
         }
     }
 }
@@ -63,8 +70,8 @@ class MemberTable {
     }
     // 候補日項目削除
     removeDayN() {
-        let trList = $(this.api_id_ + " tr");
-        for (let tr of trList) {
+        let tr_list = $(this.api_id_ + " tr");
+        for (let tr of tr_list) {
             let text = $(tr).find("td:first").html();
             if (text.startsWith("day")) {
                 tr.remove();
@@ -73,14 +80,14 @@ class MemberTable {
     }
     // 候補日項目追加
     addDayN(eventDays) {
-        for (let dayN in eventDays) {
-            let jqTr = $("<tr>");
-            jqTr.append($("<td>").html(dayN));
-            jqTr.append($("<td>").html("候補日"));
-            jqTr.append($("<td>").html("OK|UnKnown|NG|None"));
-            let jqInput = $("<input>").prop("name", dayN);
-            jqTr.append($("<td>").append(jqInput));
-            $(this.api_id_ + " table").append(jqTr);
+        for (let day_n in eventDays) {
+            let jq_tr = $("<tr>");
+            jq_tr.append($("<td>").html(day_n));
+            jq_tr.append($("<td>").html("候補日"));
+            jq_tr.append($("<td>").html("OK|UnKnown|NG|None"));
+            let jq_input = $("<input>").prop("name", day_n).prop("type", "text");
+            jq_tr.append($("<td>").append(jq_input));
+            $(this.api_id_ + " table").append(jq_tr);
         }
     }
     // 候補日項目更新
@@ -92,16 +99,16 @@ class MemberTable {
     updateMemberField(event) {
         $(this.api_id_).find("input[type=text]").val("");
 
-        let memberMemberIdSelect = gMemberMemberIdSelectMap[this.api_id_];
-        let memberId = memberMemberIdSelect.val();
+        let member_memberId_select = gMemberMemberIdSelectMap[this.api_id_];
+        let memberId = member_memberId_select.val();
         if (memberId === null) return;  
 
         let member = event.eventMembers[memberId];
         let memberDays = member.memberDays;
         $(this.api_id_).find("input[name=memberName]").val(member.memberName);
         $(this.api_id_).find("input[name=memberComment]").val(member.memberComment);
-        for (let dayN in memberDays) {
-            $(this.api_id_).find("input[name=" + dayN + "]").val(memberDays[dayN]);
+        for (let day_n in memberDays) {
+            $(this.api_id_).find("input[name=" + day_n + "]").val(memberDays[day_n]);
         }
     }
     
@@ -176,8 +183,8 @@ class EventSendButton extends SendButton {
     // 項目の値取得
     getField() {
         let ret = {};
-        let inputList = $(this.api_id_).find("input[type=text]");
-        for (let input of inputList) {
+        let input_list = $(this.api_id_).find("input[type=text]");
+        for (let input of input_list) {
             ret[input.name] = input.value;
         }
         let event_id =  $(this.api_id_).find("select[name=id]").val();
@@ -193,14 +200,36 @@ class EventSendButton extends SendButton {
         event_request_json_view.add(event_request);
     }
     // リクエスト成功
-    doneProcess(event) {
+    doneProcess(json) {
         let event_response_json_view = gEventResponseJsonViewMap[this.api_id_];
         event_response_json_view.remove();
-        event_response_json_view.add(event);
+        event_response_json_view.add(json);
+        
+        switch (this.api_id_) {
+            case kCreateEventAPI:
+                gEventEventIdSelectMap[kUpdateEventAPI].addOption(json.id);
+                gEventEventIdSelectMap[kDeleteEventAPI].addOption(json.id);
+                gEventEventIdSelectMap[kReferEventAPI].addOption(json.id);
+                gMemberEventIdSelectMap[kCreateMemberAPI].addOption(json.id);
+                gMemberEventIdSelectMap[kUpdateMemberAPI].addOption(json.id);
+                gMemberEventIdSelectMap[kDeleteMemberAPI].addOption(json.id);
+                break;
+
+            case kDeleteEventAPI:
+                gEventEventIdSelectMap[kUpdateEventAPI].removeOption(json.id);
+                gEventEventIdSelectMap[kDeleteEventAPI].removeOption(json.id);
+                gEventEventIdSelectMap[kReferEventAPI].removeOption(json.id);
+                gMemberEventIdSelectMap[kCreateMemberAPI].removeOption(json.id);
+                gMemberEventIdSelectMap[kUpdateMemberAPI].removeOption(json.id);
+                gMemberEventIdSelectMap[kDeleteMemberAPI].removeOption(json.id);
+                break;
+        }
+
+
     }
     // リクエスト失敗
-    errorProcess(event) {
-        this.doneProcess(event);
+    errorProcess(json) {
+        this.doneProcess(json);
     }
 }
 
@@ -213,8 +242,8 @@ class MemberSendButton extends SendButton {
     // 項目の取得
     getField() {
         let ret = {};
-        let inputList = $(this.api_id_).find("input[type=text]");
-        for (let input of inputList) {
+        let input_list = $(this.api_id_).find("input[type=text]");
+        for (let input of input_list) {
             ret[input.name] = input.value;
         }
         let event_id =  $(this.api_id_).find("select[name=id]").val();
@@ -320,9 +349,9 @@ class MemberReloadButton extends ReloadButton {
             member_table.updateDayN(json);
         }
         // memberIdの選択リスト更新
-        let memberMemberIdSelect = gMemberMemberIdSelectMap[this.api_id_];
-        if (memberMemberIdSelect !== void 0) {
-            memberMemberIdSelect.updateMemberId(json);
+        let member_memberId_select = gMemberMemberIdSelectMap[this.api_id_];
+        if (member_memberId_select !== void 0) {
+            member_memberId_select.updateMemberId(json);
             member_table.updateMemberField(json);
         }
     }
@@ -335,17 +364,19 @@ class MemberReloadButton extends ReloadButton {
 
 // イベントIDのセレクト
 class EventIdSelect {
-    constructor(api_id) {
+    constructor(api_id, change_opt=true) {
         this.api_id_ = api_id;
-        this.jqSelect_ = $(this.api_id_).find("select[name=id]");
-        this.jqSelect_.change(()=>{
-            this.fetchEvent();
-        });
+        this.jq_select_ = $(this.api_id_).find("select[name=id]");
+        if (change_opt === true) {
+            this.jq_select_.change(()=>{
+                this.fetchEvent();
+            });
+        }
     }
     // リクエスト発行
     fetchEvent() {
         this.inactive();
-        let event_id = this.jqSelect_.val();
+        let event_id = this.jq_select_.val();
         $.ajax({
             url: "/event/get",
             type: "GET",
@@ -371,25 +402,39 @@ class EventIdSelect {
     }
     // 有効化
     active() {
-        this.jqSelect_.prop("disabled", false);
+        this.jq_select_.prop("disabled", false);
     }
     // 無効化
     inactive() {
-        this.jqSelect_.prop("disabled", true);
+        this.jq_select_.prop("disabled", true);
+    }
+    // オプション追加
+    addOption(value) {
+        let jq_option = $("<option>").val(value).html(value);
+        this.jq_select_.append(jq_option);
+    }
+    // オプション削除
+    removeOption(value) {
+        for (let option of this.jq_select_.children()) {
+            if (option.value === value) {
+                option.remove();
+                break;
+            }
+        }
     }
 }
 
 
 // イベントのイベントIDセレクト
 class EventEventIdSelect extends EventIdSelect {
-    constructor(api_id) {
-        super(api_id);
+    constructor(api_id, change_opt=true) {
+        super(api_id, change_opt);
     }
     // リクエスト成功、イベントの項目の更新
     doneProcess(event) {
         for (let key in event) {
-            let jqElement = $(this.api_id_).find("*[name=" + key+ "]");
-            jqElement.val(event[key]);
+            let jq_element = $(this.api_id_).find("*[name=" + key+ "]");
+            jq_element.val(event[key]);
         }
     }
     // リクエスト失敗、アラートの表示
@@ -404,23 +449,23 @@ class MemberMemberIdSelect {
     constructor(api_id) {
         // メンバー更新のメンバーIDの選択
         this.api_id_ = api_id;
-        this.jqSelect_ = $(this.api_id_).find("select[name=memberId]");
-        this.jqSelect_.change(()=>{
+        this.jq_select_ = $(this.api_id_).find("select[name=memberId]");
+        this.jq_select_.change(()=>{
             if (this.api_id_ === kDeleteMemberAPI) return;
             gMemberTableMap[this.api_id_].updateMemberField(gEvent[this.api_id_]); // TODO: gEventの代入を精査
         });
     }
     // メンバーIDの更新
     updateMemberId(event) {
-        this.jqSelect_.children().remove();
-        for (let memberN in event["eventMembers"]) {
-            let jqOption = $("<option>").html(memberN).val(memberN);
-            this.jqSelect_.append(jqOption);
+        this.jq_select_.children().remove();
+        for (let member_n in event["eventMembers"]) {
+            let jqOption = $("<option>").html(member_n).val(member_n);
+            this.jq_select_.append(jqOption);
         }
     }
     // メンバーIDの取得
     val() {
-        return this.jqSelect_.val();
+        return this.jq_select_.val();
     }
 }
 
@@ -434,16 +479,16 @@ class MemberEventIdSelect extends EventIdSelect {
     doneProcess(json) {
         gEvent[this.api_id_] = json;
         // メンバーの表示のdayNの項目数更新
-        let memberTable = gMemberTableMap[this.api_id_];
+        let member_table = gMemberTableMap[this.api_id_];
         if (this.api_id_ !== kDeleteMemberAPI) {
-            memberTable.updateDayN(json);
+            member_table.updateDayN(json);
         }
-        let memberMemberIdSelect = gMemberMemberIdSelectMap[this.api_id_];
-        if (memberMemberIdSelect !== void 0) {
+        let member_memberId_select = gMemberMemberIdSelectMap[this.api_id_];
+        if (member_memberId_select !== void 0) {
             // memberIdの選択リスト更新
-            memberMemberIdSelect.updateMemberId(json);
+            member_memberId_select.updateMemberId(json);
             // メンバーの表示項目の更新
-            memberTable.updateMemberField(json);
+            member_table.updateMemberField(json);
         }
     }
 }
@@ -452,77 +497,78 @@ class MemberEventIdSelect extends EventIdSelect {
 $(()=>{
  
     // イベント参照
-    gEventRequestJsonViewMap["#refer-event-api"] = 
-        new JsonView("#refer-event-api", "#refer-event-request-view", 0);
-    gEventResponseJsonViewMap["#refer-event-api"] =
-        new JsonView("#refer-event-api", "#refer-event-response-view", Infinity);
-    gEventSendButtonMap["#refer-event-api"] = 
-        new EventSendButton("#refer-event-api", "#refer-event-send", "/event/get", "GET");
+    gEventRequestJsonViewMap[kReferEventAPI] = 
+        new JsonView(kReferEventAPI, "#refer-event-request-view", 0);
+    gEventResponseJsonViewMap[kReferEventAPI] =
+        new JsonView(kReferEventAPI, "#refer-event-response-view", Infinity);
+    gEventSendButtonMap[kReferEventAPI] = 
+        new EventSendButton(kReferEventAPI, "#refer-event-send", "/event/get", "GET");
+    gEventEventIdSelectMap[kReferEventAPI] = new EventEventIdSelect(kReferEventAPI, false);
 
     // イベント作成
-    gEventRequestJsonViewMap["#create-event-api"] = 
-        new JsonView("#create-event-api", "#create-event-request-view", 0);
-    gEventResponseJsonViewMap["#create-event-api"] =
-        new JsonView("#create-event-api", "#create-event-response-view", Infinity);
-    gEventSendButtonMap["#create-event-api"] = 
-        new EventSendButton("#create-event-api", "#create-event-send", "/event/create", "POST");
+    gEventRequestJsonViewMap[kCreateEventAPI] = 
+        new JsonView(kCreateEventAPI, "#create-event-request-view", 0);
+    gEventResponseJsonViewMap[kCreateEventAPI] =
+        new JsonView(kCreateEventAPI, "#create-event-response-view", Infinity);
+    gEventSendButtonMap[kCreateEventAPI] = 
+        new EventSendButton(kCreateEventAPI, "#create-event-send", "/event/create", "POST");
 
     // イベント更新
-    gEventRequestJsonViewMap["#update-event-api"] = 
-        new JsonView("#update-event-api", "#update-event-request-view", 0);
-    gEventResponseJsonViewMap["#update-event-api"] =
-        new JsonView("#update-event-api", "#update-event-response-view", Infinity);
-    gEventSendButtonMap["#update-event-api"] = 
-        new EventSendButton("#update-event-api", "#update-event-send", "/event/update", "POST");
-    gEventReloadButtonMap["#update-event-api"] = 
-        new EventReloadButton("#update-event-api", "#update-event-reload");
-    gEventTableMap["#update-event-api"] = new EventTable("#update-event-api")
-    gEventEventIdSelectMap["#update-event-api"] = new EventEventIdSelect("#update-event-api");
+    gEventRequestJsonViewMap[kUpdateEventAPI] = 
+        new JsonView(kUpdateEventAPI, "#update-event-request-view", 0);
+    gEventResponseJsonViewMap[kUpdateEventAPI] =
+        new JsonView(kUpdateEventAPI, "#update-event-response-view", Infinity);
+    gEventSendButtonMap[kUpdateEventAPI] = 
+        new EventSendButton(kUpdateEventAPI, "#update-event-send", "/event/update", "POST");
+    gEventReloadButtonMap[kUpdateEventAPI] = 
+        new EventReloadButton(kUpdateEventAPI, "#update-event-reload");
+    gEventTableMap[kUpdateEventAPI] = new EventTable(kUpdateEventAPI)
+    gEventEventIdSelectMap[kUpdateEventAPI] = new EventEventIdSelect(kUpdateEventAPI);
 
     // イベント削除
-    gEventRequestJsonViewMap["#delete-event-api"] = 
-        new JsonView("#delete-event-api", "#delete-event-request-view", 0);
-    gEventResponseJsonViewMap["#delete-event-api"] =
-        new JsonView("#delete-event-api", "#delete-event-response-view", Infinity);
-    gEventSendButtonMap["#delete-event-api"] = 
-        new EventSendButton("#delete-event-api", "#delete-event-send", "/event/delete", "POST");
-    gEventReloadButtonMap["#delete-event-api"] = new EventReloadButton("#delete-event-api", "#delete-event-reload");
-    gEventTableMap["#delete-event-api"] = new EventTable("#delete-event-api");
-    gEventEventIdSelectMap["#delete-event-api"] = new EventEventIdSelect("#delete-event-api");
+    gEventRequestJsonViewMap[kDeleteEventAPI] = 
+        new JsonView(kDeleteEventAPI, "#delete-event-request-view", 0);
+    gEventResponseJsonViewMap[kDeleteEventAPI] =
+        new JsonView(kDeleteEventAPI, "#delete-event-response-view", Infinity);
+    gEventSendButtonMap[kDeleteEventAPI] = 
+        new EventSendButton(kDeleteEventAPI, "#delete-event-send", "/event/delete", "POST");
+    gEventReloadButtonMap[kDeleteEventAPI] = new EventReloadButton(kDeleteEventAPI, "#delete-event-reload");
+    gEventTableMap[kDeleteEventAPI] = new EventTable(kDeleteEventAPI);
+    gEventEventIdSelectMap[kDeleteEventAPI] = new EventEventIdSelect(kDeleteEventAPI);
 
     // メンバー作成
-    gMemberRequestJsonViewMap["#create-member-api"] = 
-        new JsonView("#create-member-api", "#create-member-request-view", 0);
-    gMemberResponseJsonViewMap["#create-member-api"] =
-        new JsonView("#create-member-api", "#create-member-response-view", Infinity);
-    gMemberSendButtonMap["#create-member-api"] = 
-        new MemberSendButton("#create-member-api", "#create-member-send", "/member/create", "POST");
-    gMemberReloadButtonMap["#create-member-api"] = new MemberReloadButton("#create-member-api", "#create-member-reload");
-    gMemberTableMap["#create-member-api"] = new MemberTable("#create-member-api");
-    gMemberEventIdSelectMap["#create-member-api"] = new MemberEventIdSelect("#create-member-api");
+    gMemberRequestJsonViewMap[kCreateMemberAPI] = 
+        new JsonView(kCreateMemberAPI, "#create-member-request-view", 0);
+    gMemberResponseJsonViewMap[kCreateMemberAPI] =
+        new JsonView(kCreateMemberAPI, "#create-member-response-view", Infinity);
+    gMemberSendButtonMap[kCreateMemberAPI] = 
+        new MemberSendButton(kCreateMemberAPI, "#create-member-send", "/member/create", "POST");
+    gMemberReloadButtonMap[kCreateMemberAPI] = new MemberReloadButton(kCreateMemberAPI, "#create-member-reload");
+    gMemberTableMap[kCreateMemberAPI] = new MemberTable(kCreateMemberAPI);
+    gMemberEventIdSelectMap[kCreateMemberAPI] = new MemberEventIdSelect(kCreateMemberAPI);
 
     // メンバー更新
-    gMemberRequestJsonViewMap["#update-member-api"] = 
-        new JsonView("#update-member-api", "#update-member-request-view", 0);
-    gMemberResponseJsonViewMap["#update-member-api"] =
-        new JsonView("#update-member-api", "#update-member-response-view", Infinity);
-    gMemberSendButtonMap["#update-member-api"] = 
-        new MemberSendButton("#update-member-api", "#update-member-send", "/member/update", "POST");
-    gMemberEventIdSelectMap["#update-member-api"] = new MemberEventIdSelect("#update-member-api");
-    gMemberMemberIdSelectMap["#update-member-api"] = new MemberMemberIdSelect("#update-member-api");
-    gMemberReloadButtonMap["#update-member-api"] = new MemberReloadButton("#update-member-api", "#update-member-reload");
-    gMemberTableMap["#update-member-api"] = new MemberTable("#update-member-api");
+    gMemberRequestJsonViewMap[kUpdateMemberAPI] = 
+        new JsonView(kUpdateMemberAPI, "#update-member-request-view", 0);
+    gMemberResponseJsonViewMap[kUpdateMemberAPI] =
+        new JsonView(kUpdateMemberAPI, "#update-member-response-view", Infinity);
+    gMemberSendButtonMap[kUpdateMemberAPI] = 
+        new MemberSendButton(kUpdateMemberAPI, "#update-member-send", "/member/update", "POST");
+    gMemberEventIdSelectMap[kUpdateMemberAPI] = new MemberEventIdSelect(kUpdateMemberAPI);
+    gMemberMemberIdSelectMap[kUpdateMemberAPI] = new MemberMemberIdSelect(kUpdateMemberAPI);
+    gMemberReloadButtonMap[kUpdateMemberAPI] = new MemberReloadButton(kUpdateMemberAPI, "#update-member-reload");
+    gMemberTableMap[kUpdateMemberAPI] = new MemberTable(kUpdateMemberAPI);
 
     // メンバー削除
-    gMemberRequestJsonViewMap["#delete-member-api"] = 
-        new JsonView("#delete-member-api", "#delete-member-request-view", 0);
-    gMemberResponseJsonViewMap["#delete-member-api"] =
-        new JsonView("#delete-member-api", "#delete-member-response-view", Infinity);
-    gMemberSendButtonMap["#delete-member-api"] = 
-        new MemberSendButton("#delete-member-api", "#delete-member-send", "/member/delete", "POST");
-    gMemberEventIdSelectMap["#delete-member-api"] = new MemberEventIdSelect("#delete-member-api");
-    gMemberReloadButtonMap["#delete-member-api"] = new MemberReloadButton("#delete-member-api", "#delete-member-reload");
-    gMemberMemberIdSelectMap["#delete-member-api"] = new MemberMemberIdSelect("#delete-member-api");    
-    gMemberTableMap["#delete-member-api"] = new MemberTable("#delete-member-api");   
+    gMemberRequestJsonViewMap[kDeleteMemberAPI] = 
+        new JsonView(kDeleteMemberAPI, "#delete-member-request-view", 0);
+    gMemberResponseJsonViewMap[kDeleteMemberAPI] =
+        new JsonView(kDeleteMemberAPI, "#delete-member-response-view", Infinity);
+    gMemberSendButtonMap[kDeleteMemberAPI] = 
+        new MemberSendButton(kDeleteMemberAPI, "#delete-member-send", "/member/delete", "POST");
+    gMemberEventIdSelectMap[kDeleteMemberAPI] = new MemberEventIdSelect(kDeleteMemberAPI);
+    gMemberReloadButtonMap[kDeleteMemberAPI] = new MemberReloadButton(kDeleteMemberAPI, "#delete-member-reload");
+    gMemberMemberIdSelectMap[kDeleteMemberAPI] = new MemberMemberIdSelect(kDeleteMemberAPI);    
+    gMemberTableMap[kDeleteMemberAPI] = new MemberTable(kDeleteMemberAPI);   
 
 });

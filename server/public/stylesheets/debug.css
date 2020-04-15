@@ -10,7 +10,15 @@
 
 table {
     border-collapse: collapse;
+    width: 100%;
 }
+td:last-child {
+    width: 250px;
+}
+select, input[type=text] {
+    width: 100%;
+}
+
 td {
     border: 1px solid black;
 }
