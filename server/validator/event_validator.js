@@ -46,24 +46,8 @@ function validateEventAddDays(value, {req}) {
    return true;
 }
 
-// sotre latitude and longitude
-function validateStoreLL(dataPattern, errorMessage) {
-    let re = new RegExp(dataPattern);
-    return (value, {req}) => {
-        if (value.match(re) == null) {
-            throw new Error(errorMessage);
-        }
-        return true;
-    };
-}
-
-
 // キー名、値同一のため、記述省略
 module.exports = {
     validateEventAddDays,
     validateEventDelDays,
-    validateStoreLatitude: 
-        validateStoreLL(config.get("event.storeLatitudeRegExp"), 'Invalid value'),
-    validateStoreLongitude:
-        validateStoreLL(config.get("event.storeLongitudeRegExp"), 'Invalid value')
 }

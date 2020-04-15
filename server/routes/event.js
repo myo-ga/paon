@@ -11,8 +11,8 @@ router.post('/create', [
   check('eventMemo').isLength({max: config.get('event.eventMemoMaxLength')}),
   check('eventAddDays').custom(eventValidator.validateEventAddDays),
   check('storeId').isLength({max: config.get('event.storeIdMaxLength')}),
-  check('storeLatitude').custom(eventValidator.validateStoreLatitude),
-  check('storeLongitude').custom(eventValidator.validateStoreLongitude),
+  check('storeLatitude').isLength({max: config.get('event.storeLatitudeMaxLength')}),
+  check('storeLongitude').isLength({max: config.get('event.storeLongitudeMaxLength')}),
   check('storeName').isLength({max: config.get('event.storeNameMaxLength')}),
   check('storeAddress').isLength({max: config.get('event.storeAddressMaxLength')}),
   check('storeUrl').isLength({max: config.get('event.storeUrlMaxLength')})
@@ -91,8 +91,8 @@ router.post('/update', [
   check('eventAddDays').custom(eventValidator.validateEventAddDays),
   check('eventDelDays').custom(eventValidator.validateEventDelDays),
   check('storeId').isLength({max: config.get('event.storeIdMaxLength')}),
-  check('storeLatitude').custom(eventValidator.validateStoreLatitude),
-  check('storeLongitude').custom(eventValidator.validateStoreLongitude),
+  check('storeLatitude').isLength({max: config.get('event.storeLatitudeMaxLength')}),
+  check('storeLongitude').isLength({max: config.get('event.storeLongitudeMaxLength')}),
   check('storeName').isLength({max: config.get('event.storeNameMaxLength')}),
   check('storeAddress').isLength({max: config.get('event.storeAddressMaxLength')}),
   check('storeUrl').isLength({max: config.get('event.storeUrlMaxLength')})

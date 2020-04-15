@@ -229,7 +229,9 @@ class EventSendButton extends SendButton {
     }
     // リクエスト失敗
     errorProcess(json) {
-        this.doneProcess(json);
+        let event_response_json_view = gEventResponseJsonViewMap[this.api_id_];
+        event_response_json_view.remove();
+        event_response_json_view.add(json);
     }
 }
 

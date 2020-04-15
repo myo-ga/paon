@@ -8,6 +8,8 @@
         "storeNameMaxLength": 128,
         "storeAddressMaxLength": 128,
         "storeUrlMaxLength": 128,
+        "storeLatitudeMaxLength": 128,
+        "storeLongitudeMaxLength": 128,
 
         "eventAddDaysRegExp": "[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2})?",
         "eventDelDaysRegExp": "day[0-9]+",
