@@ -2,13 +2,14 @@
 <template>
 <!--画面：イベント登録-->
 
-  <v-container grid-list-xl>
+  <v-container>
 
       <!--カードを縦に並べる-->
       <v-layout row wrap>
 
         <!--カード１）イベント情報登録-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+        <v-flex xs12 sm12 md10 lg7 class="mx-auto">
+          <v-card>
             <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
             <v-layout column justify-center class="pa-3">
               <v-flex class="mx-3">
@@ -36,19 +37,19 @@
         </v-flex>
 
         <!--カード２）候補日選択-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+        <v-flex xs12 sm12 md10 lg7 class="my-3 mx-auto"><v-card>
             <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
             <DatePickView/>
         </v-card></v-flex>
 
         <!--カード３）地図-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+        <v-flex xs12 sm12 md10 lg7 class="mx-auto"><v-card>
             <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
             <SerchMap/>
         </v-card></v-flex>
 
         <!--カード４）テスト：フッターに地図が隠れちゃうから残してる。後でなんとかする。-->
-        <v-flex xs12 sm8 offset-sm2 shrink fixed>
+        <v-flex xs12 sm12 md10 lg7 class="mx-auto">
           <v-card>
             <v-toolbar>
             </v-toolbar>
@@ -153,7 +154,8 @@ export default {
       this.name = ''
       this.comments = ''
       this.dates = ''
-      this.$validator.reset()
+      this.$validator.reset();
+      console.log(this.$vuetify.breakpoint);
     },
 
     //APIでデータ送信

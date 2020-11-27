@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-layout row wrap justify-center>
+    <v-layout column wrap justify-center>
 
       <v-flex>
         <v-text-field
@@ -12,35 +12,30 @@
           @click:append-outer="search">
         </v-text-field>
       </v-flex>
+    </v-layout>
 
-      <v-flex>
-        <v-card
+    <v-layout row wrap style="border: 1px solid #ff0000">
+      <v-flex style="border: 1px solid #000000">
+        <!-- <v-card
           class="pa-2"
           flat
           height="100%"
           min-height="300px"
           min-width="300px"
-          max-width="100%"
+          max-width="10%"
+          id="mapv"
+        > -->
+        <v-card
+          class="pa-2"
+          flat
           id="mapv"
         >
-          <!--template>
-            <v-toolbar class="mapBar" floating dense>
-              <v-text-field 
-                v-model="query"
-                single-line
-                label="場所を検索"
-                v-on:keyup.enter="search"
-                append-outer-icon="search"
-                @click:append-outer="search">
-              </v-text-field>
-            </v-toolbar>
-          </template-->
         </v-card>
       </v-flex>
 
-      <v-flex>
-        <v-container>
-          <v-layout column align-center>
+      <v-flex style="border: 1px solid #000000">
+        <v-container class="pa-0 ma-0">
+          <v-layout column align-center class="pa-0 ma-0">
 
             <v-flex v-if="errored" v-cloak>検索結果が見つかりませんでした。</v-flex>
             <v-flex v-else-if="!loading" v-cloak>
@@ -66,6 +61,31 @@
           </v-layout>
         </v-container>
       </v-flex>
+    </v-layout>
+    <v-layout column wrap justify-center>
+
+
+      
+      <v-flex class="mt-0 mb-0 pt-0 pb-0">
+        <v-text-field
+          color="teal"
+          label="店舗名">
+        </v-text-field>
+      </v-flex>
+
+      <v-flex class="mt-0 mb-0 pt-0 pb-0">
+        <v-text-field
+          color="teal"
+          label="住所">
+        </v-text-field>
+      </v-flex>
+
+      <v-flex class="mt-0 mb-0 pt-0 pb-0">
+        <v-text-field
+          color="teal"
+          label="URL">
+        </v-text-field>
+      </v-flex>      
 
     </v-layout>
   </v-container>
@@ -296,7 +316,7 @@ export default {
 
 <style>
 .mapBar { z-index: 1000 !important;}
-#mapv { width: 1000px; height: 500px; z-index: 0;};
+#mapv { width: 600px;  max-width: 100%; height: 500px; z-index: 0;};
 
 [v-cloak] {
   display: none;

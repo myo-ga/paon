@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-layout row wrap class="pa-3" justify-center>
+    <v-layout row reverse wrap class="pa-3">
 
-      <v-flex shrink class="my-3" >
+      <v-flex shrink class="my-3" style="max-width: 400px;">
         <!--日付選択用カレンダー-->
         <v-date-picker
             v-model="dates"
