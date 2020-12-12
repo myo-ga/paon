@@ -2,8 +2,8 @@
   <v-container>
     <v-layout row reverse wrap fill-height>
 
+      <!--日付選択用カレンダー-->
       <v-flex class="my-3" style="max-width: 350px;">
-        <!--日付選択用カレンダー-->
         <v-date-picker
             v-model="dates"
             locale="ja-JP" 
@@ -13,9 +13,11 @@
         </v-date-picker>
       </v-flex>
 
+      <!-- 選択日付リスト -->
       <v-flex class="my-3 mr-3">
-        <!--選択された数だけ日付をリスト表示-->
         <v-card height=100%>
+
+          <!-- 選択数0の場合：日付選択を促すメッセージ表示 -->
           <template v-if="datetimesStr.length == 0">
             <div style="width: 100%; height: 100%; display: table; color: #8f8f8f">
               <div style="display: table-cell; text-align: center; vertical-align: middle;">
@@ -23,111 +25,49 @@
               </div>
             </div>
           </template>
+
+          <!-- 選択数1以上：選択された日付のリスト表示 -->
           <template v-else>
             <v-list>
               <template v-for="(datetime, i) in datetimesStr">
-
                 <v-list-tile :key="i">
-                  <v-dialog
-                  v-model="dialog"
-                  width="290px"
-                  >
-                    <!-- デフォルトで表示する内容 -->
-                    <template v-slot:activator="{ on }">
-                      <!-- v-list-tileのpaddingに0を設定したいが、できないため、クラス経由でpadding0にする -->
-                      <v-list-tile class="my-v-list-tile" style="width:100%;" v-on="on" >
-                        <v-icon style="padding-right: 10px">timer</v-icon>
-                        <v-list-tile-content>
-                          {{datetime}}
-                        </v-list-tile-content>  
-                      </v-list-tile>
-                      <!-- 削除ボタン v-list-tileに含めない。含めるとボタン押下とメニューの押下がバグで連動してしまうため -->
-                      <v-btn icon @click="deletedatetimes(i)" style="margin: 0">
-                        <v-icon>delete</v-icon>
-                      </v-btn>
-                    </template>
-
-                    <!-- メニュークリック時に展開する内容 -->
-                    <v-time-picker 
-                      format="24hr"
-                      v-model="tmp_time"
-                      full-width
-                      >
-                    <!-- <v-time-picker 
-                      format="24hr"
-                      v-model="times[i]"
-                       @click:minute="setTimes(i)"
-                      full-width
-                    > -->
-                      <v-btn style="margin-left: auto; margin-right: 10px;" @click="setTimeX">OK</v-btn>
-                      <v-btn style="margin-left: 10; margin-right: auto " @click="discardTimes(i)">キャンセル</v-btn>
-                    </v-time-picker>
-                  </v-dialog>
-
-
+                  <!-- v-list-tileのpaddingに0を設定したいが、できないため、クラス経由でpadding0にする -->
+                  <v-list-tile
+                  class="my-v-list-tile"
+                  style="width:100%;"
+                  @click="openDialog(i)">
+                    <v-icon style="padding-right: 10px">timer</v-icon>
+                    <v-list-tile-content>
+                      {{datetime}}
+                    </v-list-tile-content>  
+                  </v-list-tile>
+                  <!-- 削除ボタン v-list-tileに含めない。含めるとボタン押下とメニューの押下がバグで連動してしまうため -->
+                  <v-btn icon @click="deleteDatetimes(i)" style="margin: 0">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
                 </v-list-tile>
-                
               </template>
             </v-list>
+            
+            <!-- 時刻選択をする時計のダイアログ -->
+            <v-dialog
+            v-model="dialog"
+            width="290px"
+            >
+              <v-time-picker 
+              format="24hr"
+              v-model="picker_time"
+              full-width
+              ref="v_time_picker"
+              >
+                <v-btn style="margin-left: auto; margin-right: 10px;" @click="()=>{setSelectedTimes();closeDialog()}">OK</v-btn>
+                <v-btn style="margin-left: 10; margin-right: auto " @click="closeDialog">キャンセル</v-btn>
+              </v-time-picker>
+            </v-dialog>
+
           </template>
-          <!-- <v-list>
-            <template v-for="(datetime, i) in datetimesStr" >
-              <v-list-tile :key="i">
-                <v-list-tile-action>
-                  <v-menu
-                    v-model="menu[i]"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    lazy offset-y
-                    transition="scale-transition"
-                    full-width min-width="290px">
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-bind:value="datetime"
-                          prepend-icon="schedule" readonly
-                          style = "width: 300px"
-                          v-on="on"></v-text-field>
-                      </template>
-                      <v-time-picker 
-                        v-model="times[i]"
-                        format="24hr"
-                        @click:minute="setTimes(i)">
-                      </v-time-picker>
-                  </v-menu>
-                </v-list-tile-action>
-              </v-list-tile>
-            </template>
-          </v-list> -->
         </v-card>
-        <!-- <v-list style="max-height: 300px;">
-          <v-subheader>候補日リスト</v-subheader>
-          <template v-for="(datetime, i) in datetimesStr" >
-            <v-list-tile :key="i">
-              <v-list-tile-action>
-                <v-menu
-                  v-model="menu[i]"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  lazy offset-y
-                  transition="scale-transition"
-                  full-width min-width="290px">
-                    <template v-slot:activator="{ on }">
-                      <v-text-field
-                        v-bind:value="datetime"
-                        prepend-icon="schedule" readonly
-                        style = "width: 300px"
-                        v-on="on"></v-text-field>
-                    </template>
-                    <v-time-picker 
-                      v-model="times[i]"
-                      format="24hr"
-                      @click:minute="setTimes(i)">
-                    </v-time-picker>
-                </v-menu>
-              </v-list-tile-action>
-            </v-list-tile>
-          </template>
-        </v-list> -->
+
       </v-flex>
 
     </v-layout>
@@ -137,24 +77,18 @@
 
 <script>
 
-const DEFTIME = '';
+const DEFTIME = '18:00';
 const DATESNUM = 5;
 
 export default {  
   data: () => {
     return {
-      datetime: '',
-      menu: [],
-      test_x: [],
       dialog: false,
-      tmp_time: null
+      selected_date_index: 0,
+      picker_time: null
     }
   },
   
-  // () => ({
-  //   datetime: '',
-  //   menu: [],
-  // }),
 
   computed: {
     //vuexわけわからん
@@ -164,10 +98,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('setEventDays', {eventDays: val});
-        //this.$store.commit("datetimes", val);
       }
-      // get(){return this.$store.state.dates;},
-      // set(val){this.$store.commit('dates', val)}
     },
 
     datetimesStr:{
@@ -192,7 +123,7 @@ export default {
           var val = this.datetimes[i].split(' ');
           dates.push(val[0]);
         }
-        console.log("dates get", val);
+        console.log("dates get", dates);
         return dates;
       },
       set(val){
@@ -205,14 +136,13 @@ export default {
             datetimes.push(dt+' '+tm); // '2020-12-01 ' 末尾にスペース入る
           }
           this.datetimes = datetimes.concat();
-          console.log("dates set", val);
+          console.log("dates set", datetimes);
         }
       }
     },
 
-    //timesは配列の中身をいじるためcomuptedはあきらめる
-    //https://qiita.com/clomie/items/7a69ee850a304595142e
-    // 配列のindexアクセスに対ししてv-modelではsetter/getterでアクセス不可
+    // timesは配列の中身をいじるためcomuptedはあきらめる
+    // 配列のindexアクセスに対してv-modelではsetter/getterでアクセス不可
     // https://qiita.com/clomie/items/7a69ee850a304595142e
     times:{
       get(){
@@ -237,29 +167,10 @@ export default {
     }
   },
 
-  watch: {
-   // dates: function(val) {
-   //   //日付5件より多ければpopする
-   //   if (val.length > DATESNUM) {this.$nextTick(() => val.pop());}
-   // }
-  },
 
   methods: { 
 
-    setTimes(n){
-      console.log("setTime", n);
-      //メニューを消す
-      this.$set(this.menu,n,false);
-      //強制的にtimesを更新（よくない）
-      this.times=this.times.concat();
-    },
-
-    setTimeX() {
-      console.log("setTimeX ", this.tmp_time);
-      this.dialog = false;
-    },
-
-    //画面表示用に日時フォーマットを適用
+    // 画面表示用に日時フォーマットを適用
     // date: 'yyyy-mm-dd' 例：2020-01-01
     // time: 'hh:mm' 例：01:01
     formatDate (date, time) {
@@ -273,7 +184,7 @@ export default {
       return YYYY + '年' + M +'月'+ D +'日（'+dayofweek+'）'+ str;
     },
 
-    deletedatetimes(index) {
+    deleteDatetimes(index) {
       let new_datetimes = [];
       for (let i = 0; i < this.datetimes.length; i++) {
         if (i == index) {
@@ -284,11 +195,40 @@ export default {
       this.datetimes = new_datetimes.concat();
     },
 
-    discardTimes(index) {
-      let a = index;
-      if (a == 11) {
-        return;
-      }
+    openDialog(index) {
+      // 選択された日付のインデックスを保存
+      // ダイアログOK時に指定インデックスの時刻を更新するため
+      this.selected_date_index = index;
+      // 選択された日付に設定済みの時刻をダイアログの時刻に設定
+      this.picker_time = this.times[index];
+      // ダイアログを開く
+      this.dialog = true;
+    },
+
+    closeDialog() {
+      this.dialog = false;
+      // TimePickerをhourの選択に戻す
+      // TimePickerはminute選択後、dialogで再度TimePickerを開くとminuteが選択されたままであるため
+      //
+      // hour/minuteの選択するにはv-time-picker-titleにupdate:selectingイベントを発生させる必要がある
+      // hour(1)、minute(2)をイベント時に指定する
+      //
+      // vuetifyではv-time-pickerをタグ（コンポーネント）として提供しているが、
+      // v-time-picker-titleを直接的に操作できないので、$refsでコンポネントに階層的にアクセスすることで操作する.
+      // v-time-picker-titleまでの階層は下記のようになる
+      //
+      // v-time-picker
+      // └---v-picker
+      //      └---v-time-picker-title
+      //      ├---transition
+      //      ├---v-time-picker-clock
+      this.$refs.v_time_picker.$children[0].$children[0].$emit("update:selecting", 1);
+    },
+
+    setSelectedTimes() {
+      let times = this.times;
+      times[this.selected_date_index] = this.picker_time;
+      this.times = times.concat();
     },
     
     showAlart() {
