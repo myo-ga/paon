@@ -14,10 +14,10 @@
               v-bind:to="link.path"
               @click="viewing=index" 
               :key="index">
-              <v-list-action>
+              <v-list-tile-action>
                 <v-icon v-if="viewing==index" color="primary">{{link.icon}}</v-icon>
                 <v-icon v-else>{{link.icon}}</v-icon>
-              </v-list-action>
+              </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-title v-html="link.title"></v-list-tile-title>
               </v-list-tile-content>

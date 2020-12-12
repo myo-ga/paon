@@ -5,10 +5,10 @@
   <v-container>
 
       <!--カードを縦に並べる-->
-      <v-layout row wrap>
+      <v-layout column wrap style="max-width: 800px" class="mx-auto">
 
         <!--カード１）イベント情報登録-->
-        <v-flex xs12 sm12 md10 lg7 class="mx-auto">
+        <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
             <v-layout column justify-center class="pa-3">
@@ -37,13 +37,15 @@
         </v-flex>
 
         <!--カード２）候補日選択-->
-        <v-flex xs12 sm12 md10 lg7 class="my-3 mx-auto"><v-card>
+        <v-flex class="mb-3">
+          <v-card>
             <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
             <DatePickView/>
-        </v-card></v-flex>
+          </v-card>
+        </v-flex>
 
         <!--カード３）地図-->
-        <v-flex xs12 sm12 md10 lg7 class="mx-auto"><v-card>
+        <v-flex><v-card>
             <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
             <SerchMap/>
         </v-card></v-flex>

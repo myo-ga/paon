@@ -4,6 +4,8 @@ export const state = {
     eventname: '',
     comments: '',
 
+    // eventDays = [{date:'2020-12-01', time:'19:00'}, {date: '2020-12-02', time:'18:00'},...]
+    eventDays: [],
     dates: [],
     times: [],
 
@@ -16,6 +18,10 @@ export const state = {
 };
 
 export const mutations = {
+    setEventDays(state, val) {
+        state.eventDays = val;
+    },
+
     eventid(state,val){state.eventid=val},
     eventrev(state,val){state.eventrev=val},
     eventname(state,val){state.eventname=val},

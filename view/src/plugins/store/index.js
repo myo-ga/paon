@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import * as actions from './actions';
+import {actions} from './actions';
 import * as getters from './getters';
-import { state, mutations } from './mutations';
+// import {state, mutations} from './mutations';
+import {mutations} from './mutations';
+import {state} from './state';
 
 Vue.use(Vuex);
 
