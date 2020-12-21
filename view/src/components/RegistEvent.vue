@@ -51,12 +51,12 @@
         </v-card></v-flex>
 
         <!--カード４）テスト：フッターに地図が隠れちゃうから残してる。後でなんとかする。-->
-        <v-flex xs12 sm12 md10 lg7 class="mx-auto">
+        <!-- <v-flex xs12 sm12 md10 lg7 class="mx-auto">
           <v-card>
             <v-toolbar>
             </v-toolbar>
           </v-card>
-        </v-flex>
+        </v-flex> -->
 
       </v-layout>
       
