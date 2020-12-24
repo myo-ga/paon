@@ -123,7 +123,7 @@ export default {
           var val = this.datetimes[i].split(' ');
           dates.push(val[0]);
         }
-        console.log("dates get", dates);
+        // console.log("dates get", dates);
         return dates;
       },
       set(val){
@@ -133,10 +133,10 @@ export default {
           for(var i = 0; i < val.length; i++){
             var dt = val[i]
             var tm = this.times[i] ? this.times[i] : DEFTIME;
-            datetimes.push(dt+' '+tm); // '2020-12-01 ' 末尾にスペース入る
+            datetimes.push(dt+' '+tm); // '2020-12-01' + ' ' + '18:00'
           }
           this.datetimes = datetimes.concat();
-          console.log("dates set", datetimes);
+          // console.log("dates set", datetimes);
         }
       }
     },
@@ -151,11 +151,11 @@ export default {
           var val = this.datetimes[i].split(' ');
           times.push(val[1]);
         }
-        console.log("times get", times);
+        // console.log("times get", times);
         return times;
       },
       set(val){
-        console.log("times set", val);
+        // console.log("times set", val);
         var datetimes = [];
         for(var i = 0; i < this.dates.length; i++){
           var dt = this.dates[i]
@@ -230,10 +230,12 @@ export default {
       times[this.selected_date_index] = this.picker_time;
       this.times = times.concat();
     },
-    
-    showAlart() {
-      alert("This is alart!");
+
+    clear() {
+      this.datetimes = [];
+      this.selected_date_index = 0;
     }
+    
   }
 
 };

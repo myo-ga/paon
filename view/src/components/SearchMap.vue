@@ -16,15 +16,6 @@
 
     <v-layout column wrap>
       <v-flex>
-        <!-- <v-card
-          class="pa-2"
-          flat
-          height="100%"
-          min-height="300px"
-          min-width="300px"
-          max-width="10%"
-          id="mapv"
-        > -->
         <v-card
           class="pa-2"
           flat
@@ -36,7 +27,7 @@
       <v-flex>
         <v-container class="pa-0 ma-0">
           <v-layout column class="pa-0 ma-0">
-
+            <!-- TODO: 検索0件のときはエラーにならない、例外発生したときのみ -->
             <v-flex v-if="errored" v-cloak>
               <v-card class="py-2 mb-2">
               <div style="text-align:center">
@@ -48,8 +39,8 @@
               <v-card class="mb-2">
                 <v-list two-line style="max-height: 300px;" class="scroll-y">
                   <template v-for="(location,index) in list">
-                    <!-- <v-list-tile :key="index" ripple @click="selectPos(index)"> -->
                     <v-list-tile :key="index" ripple @click="zoomSelectCandidateMarker(location.Id, index)">
+
                       <v-list-tile-avatar>
                         <v-icon v-if="location.Id != selected_candidate_marker_id" color="grey lighten-2">room</v-icon>
                         <v-icon v-else color="teal">room</v-icon>
@@ -72,8 +63,6 @@
     </v-layout>
     <v-layout column wrap justify-center>
 
-
-      
       <v-flex class="mt-0 mb-0 pt-0 pb-0">
         <v-text-field
           v-model="storeName"
@@ -152,7 +141,6 @@ export default {
       bounds: null,
       markers: null,
       manual_markers: null,
-      selected: -1,
       selected_candidate_marker_id: -1,
       selected_manual_marker_id: -1,
       list: [], 
@@ -172,42 +160,41 @@ export default {
 
   computed:{
     storeId:{
-      get(){return this.$store.state.storeId},
-      set(val){this.$store.commit('storeId', val)}
+      get(){return this.$store.getters.storeId},
+      set(val){this.$store.dispatch('setStoreId', {storeId: val})}
     },
     storeLatitude:{
-      get(){return this.$store.state.storeLatitude},
-      set(val){this.$store.commit('storeLatitude', val)}
+      get(){return this.$store.getters.storeLatitude},
+      set(val){this.$store.dispatch('setStoreLatitude', {storeLatitude: val})}
     },
     storeLongitude:{
-      get(){return this.$store.state.storeLongitude},
-      set(val){this.$store.commit('storeLongitude', val)}
+      get(){return this.$store.getters.storeLongitude},
+      set(val){this.$store.dispatch('setStoreLongitude', {storeLongitude: val})}
     },
     storeName:{
-      get(){return this.$store.state.storeName},
-      set(val){this.$store.commit('storeName', val)}
+      get(){return this.$store.getters.storeName},
+      set(val){this.$store.dispatch('setStoreName', {storeName: val})}
     },
     storeAddress:{
-      get(){return this.$store.state.storeAddress},
-      set(val){this.$store.commit('storeAddress', val)}
+      get(){return this.$store.getters.storeAddress},
+      set(val){this.$store.dispatch('setStoreAddress', {storeAddress: val})}
     },
     storeUrl: {
-      get(){return this.$store.state.storeUrl},
-      set(val){this.$store.commit('storeUrl', val)}
+      get(){return this.$store.getters.storeUrl},
+      set(val){this.$store.dispatch('setStoreUrl', {storeUrl: val})}
     },
     center: function(){
       return this.map.getCenter();
     }
-  },
-  watch:{
   },
 
   mounted: function() {
     //地図を表示
     this.viewMap();
 
-    //YOLP
-    if(this.storeId) this.get(this.storeId);
+    // TODO: 登録後の表示で使用する可能性あり
+    // YOLP
+    // if(this.storeId) this.get(this.storeId);
   },
 
   methods: {
@@ -251,36 +238,32 @@ export default {
       })
       .then(json => {
         this.localinfo = json["Feature"];
-        // TODO: 引数がないのでエラーになる→解決
-        //this.dispCanditate(-1);
         this.dispCandidate();
       })
       .catch(err => {(this.errored = true), (this.error = err);})
       .finally(() => (this.loading = false));      
-
-      //this.selectPos(-1);
     },
 
     //test YOLPローカルサーチAPItest
-    get(val){
-      this.loading=true;
-      this.errored=false;
-      this.$jsonp(LOCAL_SEARCH_URL,{
-        output: 'json',
-        appid: YOLP_APPID,
-        query: this.query,
-        uid: val,
-        start: 0,
-        results: 1,
-      })
-      .then(json => {
-        this.localinfo = json["Feature"];
-        this.dispCanditate(-1);
-        this.selectPos(0);
-      })
-      .catch(err => {(this.errored = true), (this.error = err);})
-      .finally(() => (this.loading = false));       
-    },
+    // get(val){
+    //   this.loading=true;
+    //   this.errored=false;
+    //   this.$jsonp(LOCAL_SEARCH_URL,{
+    //     output: 'json',
+    //     appid: YOLP_APPID,
+    //     query: this.query,
+    //     uid: val,
+    //     start: 0,
+    //     results: 1,
+    //   })
+    //   .then(json => {
+    //     this.localinfo = json["Feature"];
+    //     this.dispCanditate(-1);
+    //     this.selectPos(0);
+    //   })
+    //   .catch(err => {(this.errored = true), (this.error = err);})
+    //   .finally(() => (this.loading = false));       
+    // },
 
     // 検索結果の内、指定されたマーカーを無選択状態にする
     inactivateSelectedCandidate(marker_id) {
@@ -289,6 +272,8 @@ export default {
         marker.setIcon(this.icon);
         marker.setZIndexOffset(0);
         this.selected_candidate_marker_id = -1;
+        this.storeLatitude = "";
+        this.storeLongitude = "";
       }
     },
 
@@ -299,6 +284,9 @@ export default {
         marker.setZIndexOffset(1000);
         marker.setIcon(this.selectedIcon);
         this.selected_candidate_marker_id = marker_id;
+        let lat_lng = marker.getLatLng();
+        this.storeLatitude = lat_lng.lat;
+        this.storeLongitude = lat_lng.lng;
       }
     },
 
@@ -337,6 +325,8 @@ export default {
     deleteManualMarker() {
       this.manual_markers.clearLayers();
       this.selected_manual_marker_id = -1;
+      this.storeLatitude = "";
+      this.storeLongitude = "";
     },
 
     // 手動マーカーを選択する
@@ -351,6 +341,8 @@ export default {
       // mapに紐づけされているマーカー管理グループに追加してマーカー表示
       this.manual_markers.addLayer(manual_marker);
       this.selected_manual_marker_id = this.manual_markers.getLayerId(manual_marker);
+      this.storeLatitude = latlng.lat;
+      this.storeLongitude = latlng.lng;
     },
 
     dispCandidate() {
@@ -412,75 +404,20 @@ export default {
       this.storeAddress = this.localinfo[index].Property.Address;
     },
 
+    clear() {
+      this.storeId = "";
+      this.storeLatitude = "";
+      this.storeLongitude = "";
+      this.storeName = "";
+      this.storeAddress = "";
+      this.storeUrl = "";
+      this.deleteCandidateMarker();
+      this.deleteManualMarker();
+      this.query = "";
+    }
 
-    //検索候補の地図・リスト表示
-    dispCanditate(index){
-      //表示更新前にクリア
-      if(this.markers) this.markers.clearLayers();
-      if(this.bounds) this.bounds = null;//消し方微妙。メモリリーク？
-      if(this.list) this.list = [];
-
-      //地図にローカルサーチ結果をピン打ち
-      var vm = this;
-      var i = 0;
-      for(var item in this.localinfo){
-        //店名と住所をリストに追加
-        this.list.push({
-          Name: this.localinfo[item].Name, 
-          Address: this.localinfo[item].Property.Address
-        });
-
-        //緯度経度取得
-        var coordinates = this.localinfo[item].Geometry.Coordinates.split(',');
-        var lng = parseFloat(coordinates[0]);
-        var lat = parseFloat(coordinates[1]);
-        
-        // マーカーをレイヤーにつき1個、addLayerで重ねることで複数のマーカーとする
-        var marker = L.marker([lat,lng],{id: item});//ピンのアイコン設定
-        marker.bindTooltip(vm.localinfo[item].Name).openPopup();
-        if(index == i){
-          // 選択されたマーカーに対する描画
-          marker.setIcon(vm.selectedIcon);//ピンのアイコン
-          marker.setZIndexOffset(1000);//一番前に表示
-          this.markers.addLayer(marker);
-          this.selected_marker_id = this.markers.getLayerId(marker);//グループに置ける内部ID取得
-        }
-        else{
-          marker.setIcon(this.icon);
-          marker.on('click', function(e){vm.selectPos(e.target.options.id)});
-          this.markers.addLayer(marker);
-        }
-
-        //地図範囲設定
-        if(this.bounds == null) this.bounds = L.latLngBounds([lat,lng],[lat,lng]);
-        else this.bounds.extend([lat,lng]);
-        i++;
-      }
-      // this.map.addLayer(this.markers);
-      if (this.bounds !== null) {
-        this.map.fitBounds(this.bounds);  //ピンに合わせて範囲を表示
-      }
-    },
-
-    selectPos(index){
-      this.selected = index;        
-      this.storeId = this.localinfo[index].Property.Uid;
-      this.storeName = this.localinfo[index].Name;
-      this.storeAddress = this.localinfo[index].Property.Address;
-      //var coordinates = this.localinfo["Feature"][index].Geometry.Coordinates.split(',');
-      //var lng = parseFloat(coordinates[0]);
-      //var lat = parseFloat(coordinates[1]);
-      //this.storeLatitude = lat;
-      //this.storeLongitude = lng;
-
-      // selectPosは検索されたマーカー描画時に実行される
-      // 検索されたマーカークリック時は手動選択のマーカー削除
-      this.manual_markers.clearLayers();
-      
-      //選択を地図に反映
-      this.dispCanditate(index);
-    },
-
+// TODO: 保存時にcookie保存
+// TODO: イベント名、イベント内容もcomponent化する
   }
 };
 </script>

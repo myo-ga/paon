@@ -15,16 +15,16 @@
               <v-flex class="mx-3">
                 <v-text-field
                   label="イベント名"
-                  v-model="name"
+                  v-model="eventName"
                   v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('name')"
-                  data-vv-name="name"
+                  data-vv-name="eventName"
                   required>
                 </v-text-field>
               </v-flex>
               <v-flex class="mx-3">
                 <v-textarea
                   label="イベントの説明"
-                  v-model="comments"
+                  v-model="eventMemo"
                   v-validate="'max:120'"
                   maxlength="120"
                   rows="10"
@@ -40,14 +40,14 @@
         <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
-            <DatePickView/>
+            <DatePickView ref="date_pick_view"/>
           </v-card>
         </v-flex>
 
         <!--カード３）地図-->
         <v-flex><v-card>
             <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
-            <SerchMap/>
+            <SerchMap ref="search_map"/>
         </v-card></v-flex>
 
         <!--カード４）テスト：フッターに地図が隠れちゃうから残してる。後でなんとかする。-->
@@ -95,22 +95,10 @@ export default {
     DatePickView,
   },
   data: () => ({
-    eventId: '',  //イベントID
-    name: '',     //イベント名
-    comments: '', //イベントのコメント
-    dates: [],  //日付配列
-    date: '',   //日付 YYYY-MM-DD
-    storeId:  '',                 //テスト:店のID固定
-    storeLatitude: '',            //テスト:店の緯度固定
-    storeLongitude: '',           //テスト:店の経度固定
-    storeName: '',                //テスト:店名固定
-    storeAddress: '',             //テスト:店の住所固定
-    storeUrl: '',                  //テスト:店のURL固定
-
     //バイデーション情報
     validate_dictionary: {
       custom: {
-        name: {
+        eventName: {
           required: () => '必ず入力してください',
           max: '25文字まで入力可能です。'
         }
@@ -124,6 +112,17 @@ export default {
     this.$validator.localize('ja', this.validate_dictionary);
   },
 
+  computed: {
+    eventName: {
+      get() {return this.$store.getters.eventName},
+      set(val) {this.$store.dispatch("setEventName", {eventName: val});}
+    },
+    eventMemo: {
+      get() {return this.$store.getters.eventMemo},
+      set(val) {return this.$store.dispatch("setEventMemo", {eventMemo: val});}  
+    }
+  },
+
   methods: { 
     //表示データを登録する
     submit () {
@@ -131,31 +130,17 @@ export default {
       //検証
       this.$validator.validateAll()
 
-      //vuexのstoreに表示データをコミットする
-      this.$store.commit(
-        'submit', {
-          eventname: this.name,
-          comments: this.comments,
-      });
-      
-      //vuexからcomponentの値を取得
-      this.dates = this.$store.state.dates;
-      this.storeId = this.$store.state.storeId;
-      this.storeLatitude = this.$store.state.storeLatitude;
-      this.storeLongitude = this.$store.state.storeLongitude;
-      this.storeName = this.$store.state.storeName;
-      this.storeAddress = this.$store.state.storeAddress;
-      this.storeUrl = this.$store.state.storeUrl;
-
       //データを送信する
       this.post();
     },
 
     //表示データをクリアする
     clear () {
-      this.name = ''
-      this.comments = ''
-      this.dates = ''
+      this.eventName = "";
+      this.eventMemo = "";
+      this.$refs.date_pick_view.clear();
+      this.$refs.search_map.clear();
+      
       this.$validator.reset();
       console.log(this.$vuetify.breakpoint);
     },
@@ -167,23 +152,23 @@ export default {
       this.$axios.post(
         'http://nikujaga.mybluemix.net/event/create', 
         querystring.stringify({
-          eventName: vm.name,
-          eventMemo: vm.comments,
-          eventAddDays: vm.dates.join(','),
-          storeId:  vm.storeId,                       //テスト:店のID固定
-          storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
-          storeLongitude: vm.storeLongitude,           //テスト:店の経度固定
-          storeName: vm.storeName,                      //テスト:店名固定
-          storeAddress: vm.storeAddress,                   //テスト:店の住所固定
-          storeUrl: vm.storeUrl                        //テスト:店のURL固定
+          eventName: this.$store.getters.eventName,
+          eventMemo: this.$store.getters.eventMemo,
+          eventAddDays: this.$store.getters.eventDays.join(","),
+          storeId: this.$store.getters.storeId,
+          storeLatitude: this.$store.getters.storeLatitude,
+          storeLongitude: this.$store.getters.storeLongitude,
+          storeName: this.$store.getters.storeName,
+          storeAddress: this.$store.getters.storeAddress,
+          storeUrl: this.$store.getters.storeUrl
         })
       )
       .then(
         response => {
-          vm.eventId = response.data.id;
+          let eventId = response.data.id;
           
           //update画面に遷移
-          vm.$router.push('/UpdateEvent/?id=' + vm.eventId);
+          vm.$router.push('/UpdateEvent/?id=' + eventId);
         }
       )
       .catch(function (error) {
