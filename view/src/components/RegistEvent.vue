@@ -11,28 +11,7 @@
         <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
-            <v-layout column justify-center class="pa-3">
-              <v-flex class="mx-3">
-                <v-text-field
-                  label="イベント名"
-                  v-model="eventName"
-                  v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('name')"
-                  data-vv-name="eventName"
-                  required>
-                </v-text-field>
-              </v-flex>
-              <v-flex class="mx-3">
-                <v-textarea
-                  label="イベントの説明"
-                  v-model="eventMemo"
-                  v-validate="'max:120'"
-                  maxlength="120"
-                  rows="10"
-                  row-height="35"
-                  counter full-width solo>
-                </v-textarea>
-              </v-flex>
-            </v-layout>
+            <EventDescription ref="event_description"/>
           </v-card>
         </v-flex>
 
@@ -76,73 +55,48 @@
 
 
 <script>
-import Vue from 'vue'
-import VeeValidate from 'vee-validate'    //バイデーション
 import SerchMap from './SearchMap'        //地図表示
 import DatePickView from './DatePickView' //カレンダー
-
-Vue.use(VeeValidate)
+import EventDescription from './EventDescription'
 
 //Axios（APIに使用）
 const querystring = require('querystring');
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
   components: {
     SerchMap,     //地図コンポーネント
     DatePickView,
+    EventDescription
   },
+
   data: () => ({
-    //バイデーション情報
-    validate_dictionary: {
-      custom: {
-        eventName: {
-          required: () => '必ず入力してください',
-          max: '25文字まで入力可能です。'
-        }
-      }
-    },
   }),
-
-  //画面表示時前処理
-  created () {
-    //バリデーション設定
-    this.$validator.localize('ja', this.validate_dictionary);
-  },
-
-  computed: {
-    eventName: {
-      get() {return this.$store.getters.eventName},
-      set(val) {this.$store.dispatch("setEventName", {eventName: val});}
-    },
-    eventMemo: {
-      get() {return this.$store.getters.eventMemo},
-      set(val) {return this.$store.dispatch("setEventMemo", {eventMemo: val});}  
-    }
-  },
 
   methods: { 
     //表示データを登録する
     submit () {
-
       //検証
-      this.$validator.validateAll()
-
-      //データを送信する
-      this.post();
+      this.$refs.event_description.$validator.validateAll()
+      .then((result) => {
+        // 入力エラーあり
+        if (result === false) {
+          alert("不適切な項目があるため、入力項目を見直してください。");
+          return false;
+        }
+        this.post();
+      });
     },
 
     //表示データをクリアする
     clear () {
-      this.eventName = "";
-      this.eventMemo = "";
+      this.$refs.event_description.clear();
       this.$refs.date_pick_view.clear();
       this.$refs.search_map.clear();
       
-      this.$validator.reset();
       console.log(this.$vuetify.breakpoint);
+      console.log(this.$localStorage.get("gg"));
+      this.$localStorage.set("gg", 7);
+      console.log(this.$localStorage.get("gg"));
     },
 
     //APIでデータ送信
