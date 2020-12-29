@@ -9,5 +9,7 @@ export const state = {
     storeLongitude: '',
     storeName: '',
     storeAddress: '',
-    storeUrl: ''
+    storeUrl: '',
+
+    eventHistoryMap: {}
 };

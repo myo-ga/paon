@@ -88,20 +88,18 @@ export default {
     },
 
     //表示データをクリアする
-    clear () {
+    clear() {
       this.$refs.event_description.clear();
       this.$refs.date_pick_view.clear();
       this.$refs.search_map.clear();
       
       console.log(this.$vuetify.breakpoint);
-      console.log(this.$localStorage.get("gg"));
-      this.$localStorage.set("gg", 7);
-      console.log(this.$localStorage.get("gg"));
+      console.log(this.$localStorage.get("eventHistoryMap"));
     },
 
     //APIでデータ送信
-    post () {
-      var vm = this;
+    post() {
+      //var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
         'http://nikujaga.mybluemix.net/event/create', 
@@ -119,14 +117,27 @@ export default {
       )
       .then(
         response => {
-          let eventId = response.data.id;
+          let event_id = response.data.id;
+          let eventHistoryMap = Object.assign({}, this.$store.getters.eventHistoryMap);
+
+          eventHistoryMap[event_id] = {
+            id: event_id,
+            eventName: this.$store.getters.eventName,
+            eventDays: this.$store.getters.eventDays
+          };
+
+          this.$localStorage.set("eventHistoryMap", eventHistoryMap);
           
-          //update画面に遷移
-          vm.$router.push('/UpdateEvent/?id=' + eventId);
+          this.$store.dispatch("setEventHistoryMap", {
+            eventHistoryMap: eventHistoryMap
+          });
+
+          //vm.$router.push('/UpdateEvent/?id=' + event_id);
         }
       )
       .catch(function (error) {
           alert(error);
+
       });
     },
 

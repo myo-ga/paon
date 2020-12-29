@@ -32,6 +32,10 @@ export const actions = {
     },
     setStoreUrl({commit}, {storeUrl}) {
         commit('setStoreUrl', storeUrl)
+    },
+
+    setEventHistoryMap({commit}, {eventHistoryMap}) {
+        commit('setEventHistoryMap', eventHistoryMap);
     }
 
 };

@@ -32,6 +32,12 @@ export const mutations = {
     setStoreUrl(state,val){
         state.storeUrl = val;
     },
+
+    setEventHistoryMap(state, val) {
+        state.eventHistoryMap = val;
+    },
+
+
     updaterev(state, payload){
         state.eventrev = payload.eventrev;
     },

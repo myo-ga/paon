@@ -9,5 +9,7 @@ export const getters = {
     storeLongitude: state => state.storeLongitude,
     storeName: state => state.storeName,
     storeAddress: state => state.storeAddress,
-    storeUrl: state => state.storeUrl
+    storeUrl: state => state.storeUrl,
+
+    eventHistoryMap: state => state.eventHistoryMap
 };
