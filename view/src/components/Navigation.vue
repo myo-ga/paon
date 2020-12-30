@@ -2,11 +2,16 @@
   <v-list>
 
     <template v-for="(link, index) in links">
-      <v-list-tile 
+      <!-- <v-list-tile 
         color="teal"
         ripple 
         v-bind:to="link.path"
         @click="viewing=index" 
+        :key="index"> -->
+      <v-list-tile 
+        color="teal"
+        ripple 
+        v-bind:to="link.path"
         :key="index">
         <!-- <v-list-tile-action>
           <v-icon v-if="viewing==index" color="primary">{{link.icon}}</v-icon>
@@ -19,11 +24,17 @@
     </template>
     
     <template v-for="(eventHistory, index) in eventHistoryList">
-      <v-list-tile 
+      <!-- <v-list-tile 
         color="teal"
         ripple 
-        v-bind:to="'/UpdateEvent/?id=' + eventHistory.id" 
+        v-bind:to="'/ReferEvent?id=' + eventHistory.id" 
         @click="viewing=(index+links.length)" 
+        :key="index+links.length"> -->
+        <v-list-tile 
+        color="purple"
+        ripple
+        :replace="true"
+        :to="'/ReferEvent/' + eventHistory.id"
         :key="index+links.length">
         <!-- <v-list-tile-action>
           <v-icon v-if="viewing==(index+links.length)" color="primary">assignment</v-icon>
@@ -46,11 +57,11 @@ export default {
     // drawer: false,
     links:[
       {title: "イベントを登録する", icon: "assignment", path: "/" },
-      // {title: "イベントに参加する", icon: "today", path: "/AdjustEvent" },
+      {title: "イベントに参加する", icon: "today", path: "/AdjustEvent" },
       // {title: "テスト", icon: "assignment", path: "/VueTest" },
       // {title: "テスト２", icon: "assignment", path: "/VueTest2" },
     ],
-    viewing: 0,
+    // viewing: 0,
 
   }),
 

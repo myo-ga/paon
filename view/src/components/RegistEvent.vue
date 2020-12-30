@@ -72,6 +72,12 @@ export default {
   data: () => ({
   }),
 
+  mounted() {
+    // refsを参照しているので、子コンポーネントが生成された後にclearは参照できる
+    // createdではなくmountedにやる
+    this.clear();
+  },
+
   methods: { 
     //表示データを登録する
     submit () {
@@ -92,9 +98,6 @@ export default {
       this.$refs.event_description.clear();
       this.$refs.date_pick_view.clear();
       this.$refs.search_map.clear();
-      
-      console.log(this.$vuetify.breakpoint);
-      console.log(this.$localStorage.get("eventHistoryMap"));
     },
 
     //APIでデータ送信

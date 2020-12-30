@@ -36,6 +36,11 @@ export const actions = {
 
     setEventHistoryMap({commit}, {eventHistoryMap}) {
         commit('setEventHistoryMap', eventHistoryMap);
+    },
+
+    setEvent({commit}, {event}) {
+        console.log(event);
+        commit('setEvent', event);
     }
 
 };

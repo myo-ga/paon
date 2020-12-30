@@ -36,6 +36,16 @@ export const mutations = {
     setEventHistoryMap(state, val) {
         state.eventHistoryMap = val;
     },
+    setEvent(state, event) {
+        state.eventName = event.eventName;
+        state.eventMemo = event.eventMemo;
+        state.storeId = event.storeId;
+        state.storeLatitude = event.storeLatitude;
+        state.storeLongitude = event.storeLongitude;
+        state.storeName = event.storeName;
+        state.storeAddress = event.storeAddress;
+        state.storeUrl = event.storeUrl;
+    },
 
 
     updaterev(state, payload){

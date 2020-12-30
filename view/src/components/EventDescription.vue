@@ -8,6 +8,7 @@
           v-validate="'required|max:25'" :counter="25" :error-messages="errors.first('eventName')"
           data-vv-name="eventName"
           data-vv-as="イベント名"
+          :disabled="!editable"
         >
         </v-text-field>
       </v-flex>
@@ -20,7 +21,9 @@
           data-vv-as="イベントの説明"
           rows="10"
           row-height="35"
-          full-width solo>
+          full-width solo
+          :disabled="!editable"
+          >
         </v-textarea>
       </v-flex>
     </v-layout>
@@ -61,6 +64,14 @@ export default {
       this.eventName = "";
       this.eventMemo = "";
       this.$validator.reset();
+    }
+  },
+
+  props: {
+    // 編集可能であるか（登録画面/参照画面で切り替えのため）
+    editable: {
+      type: Boolean,
+      default: true
     }
   }
 }
