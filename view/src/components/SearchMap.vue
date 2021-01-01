@@ -49,8 +49,8 @@
                   <v-list-tile :key="index" ripple @click="selectPos(index)">
                     
                     <v-list-action>
-                      <v-icon v-if="index != selected" color="grey lighten-2">room</v-icon>
-                      <v-icon v-else color="teal">room</v-icon>
+                      <v-icon v-if="index != selected" color="grey lighten-2" medium>room</v-icon>
+                      <v-icon v-else color="teal" large>room</v-icon>
                     </v-list-action>
 
                     <v-list-tile-content>
@@ -124,14 +124,14 @@ export default {
       list: [], 
 
       selectedIcon: L.icon({
-        iconUrl: require("leaflet/dist/images/marker-teal.png"),
-        iconRetinaUrl: require("leaflet/dist/images/marker-teal.png"),
-        iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
+        iconUrl: require("../assets/marker-teal.png"),
+        iconRetinaUrl: require("../assets/marker-teal.png"),
+        iconSize: [36, 36], iconAnchor: [18, 35], popupAnchor: [0, -35]
       }),
       icon: L.icon({
-        iconUrl: require("leaflet/dist/images/marker-grey.png"),
-        iconRetinaUrl: require("leaflet/dist/images/marker-grey.png"),
-        iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
+        iconUrl: require("../assets/marker-grey.png"),
+        iconRetinaUrl: require("../assets/marker-grey.png"),
+        iconSize: [30, 30], iconAnchor: [15, 29], popupAnchor: [0, -30]
       }),
     };
   },
@@ -224,11 +224,24 @@ export default {
       })
       .then(json => {
         this.localinfo = json["Feature"];
-        this.dispCanditate(-1);
         this.selectPos(0);
       })
       .catch(err => {(this.errored = true), (this.error = err);})
       .finally(() => (this.loading = false));       
+    },
+    
+    selectPos(index){
+      this.selected = index;        
+      this.storeId = this.localinfo[index].Property.Uid;
+      this.storeName = this.localinfo[index].Name;
+      this.storeAddress = this.localinfo[index].Property.Address;
+      var coordinates = [];
+      coordinates = this.localinfo["Feature"][index].Geometry.Coordinates.split(',');
+      this.storeLatitude = parseFloat(coordinates[0]);
+      this.storeLongitude = parseFloat(coordinates[1]);
+      
+      //選択を地図に反映
+      this.dispCanditate(index);
     },
 
     //検索候補の地図・リスト表示
@@ -274,20 +287,6 @@ export default {
       this.map.fitBounds(this.bounds);  //ピンに合わせて範囲を表示
     },
 
-    selectPos(index){
-      this.selected = index;        
-      this.storeId = this.localinfo[index].Property.Uid;
-      this.storeName = this.localinfo[index].Name;
-      this.storeAddress = this.localinfo[index].Property.Address;
-      //var coordinates = this.localinfo["Feature"][index].Geometry.Coordinates.split(',');
-      //var lng = parseFloat(coordinates[0]);
-      //var lat = parseFloat(coordinates[1]);
-      //this.storeLatitude = lat;
-      //this.storeLongitude = lng;
-      
-      //選択を地図に反映
-      this.dispCanditate(index);
-    },
 
   }
 };

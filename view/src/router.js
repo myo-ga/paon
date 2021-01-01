@@ -24,10 +24,5 @@ export default new Router({
       name: 'AdjustEvent',
       component: () => import('./components/AdjustEvent.vue')
     },
-    {
-      path: '/VueTest',
-      name: 'VueTest',
-      component: () => import('./components/testlist.vue')
-    }
   ]
 })

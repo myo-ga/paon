@@ -8,8 +8,9 @@
       <v-layout row wrap>
 
         <!--カード１）イベント情報登録-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
-            <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
+        <v-flex xs12 sm8 offset-sm2 shrink>
+          <v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">あなたのイベントについて教えてください。</v-toolbar>
             <v-layout column justify-center class="pa-3">
               <v-flex class="mx-3">
                 <v-text-field
@@ -37,13 +38,13 @@
 
         <!--カード２）候補日選択-->
         <v-flex xs12 sm8 offset-sm2 shrink><v-card>
-            <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">候補日を選択してください。</v-toolbar>
             <DatePickView/>
         </v-card></v-flex>
 
         <!--カード３）地図-->
         <v-flex xs12 sm8 offset-sm2 shrink><v-card>
-            <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">どこに行きますか。</v-toolbar>
             <SerchMap/>
         </v-card></v-flex>
 
@@ -129,11 +130,8 @@ export default {
       this.$validator.validateAll()
 
       //vuexのstoreに表示データをコミットする
-      this.$store.commit(
-        'submit', {
-          eventname: this.name,
-          comments: this.comments,
-      });
+      this.$store.commit('eventname', this.name);
+      this.$store.commit('comments', this.comments);
       
       //vuexからcomponentの値を取得
       this.dates = this.$store.state.dates;
