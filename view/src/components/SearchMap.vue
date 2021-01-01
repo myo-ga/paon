@@ -91,7 +91,7 @@ Vue.use(jsonp)
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-const YOLP_APPID = 'dj00aiZpPWMxdTVwWWtHa1puNCZzPWNvbnN1bWVyc2VjcmV0Jng9ZWY-'
+const YOLP_APPID = '＊＊＊'
 
 // デフォルトのマーカー画像設定
 delete  L.Icon.Default.prototype._getIconUrl
