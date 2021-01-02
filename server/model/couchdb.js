@@ -1,9 +1,33 @@
-var nano = require('nano')('http://admin:password@localhost:5984');
+readCredentialUrl = function () {
+    let appEnv = null;
+    appEnv= require('../couchdb.json');
+    let url = 'http://'
+        + appEnv.credentials.user + ':'
+        + appEnv.credentials.password + '@'
+        + appEnv.credentials.url + ':'
+        + appEnv.credentials.port;
+    return url;
+}
+var nano = require('nano')(readCredentialUrl());
 
 var DB = function() {
-    
+
     // 初期化
     this.init = function (dbName) {
+        nano.config.url = this.readCredentialUrl();
+        
+        //console.log('URL:' + nano.url);
+        nano.db.list(
+            (err, body) => {
+                if(err){
+                    return console.log('Failed to initialize Couchdb: ' + err.message);
+                }
+                else if(body.indexOf(dbName) == -1){
+                    nano.db.create(dbName);
+                    console.log('*****test');
+                }
+            }
+        );
         this.dbIf = nano.db.use(dbName);
     };
 
