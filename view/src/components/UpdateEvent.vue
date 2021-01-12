@@ -143,7 +143,8 @@ export default {
     this.$validator.localize('ja', this.validate_dictionary);
     
     //URLからパラメータを取得
-    this.eventId = this.$route.query.id;
+    //this.eventId = this.$route.query.id;
+    this.eventId = this.$route.params.id;
 
     //画面表示時にデータを取得。なければ登録画面に遷移。
     if(this.eventId){ this.get(); }
@@ -211,7 +212,7 @@ export default {
           vm.comments = response.data.eventMemo;
 
           //datepicker用に連想配列を配列に変換
-          var obj = response.data.eventDays;
+          var obj = response.data.eventAddDays;
           var datetimes = [];
           for(var eventday in obj){
             datetimes.push(obj[eventday]);

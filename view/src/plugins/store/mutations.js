@@ -8,8 +8,8 @@ export const mutations = {
     setEventName(state,val){
         state.eventName = val;
     },
-    setEventDays(state, val) {
-        state.eventDays = val;
+    setEventAddDays(state, val) {
+        state.eventAddDays = val;
     },
     setEventMemo(state,val){
         state.eventMemo = val;
@@ -45,6 +45,10 @@ export const mutations = {
         state.storeName = event.storeName;
         state.storeAddress = event.storeAddress;
         state.storeUrl = event.storeUrl;
+        state.eventId = event.id;
+        state.eventRev = event.rev;
+        state.eventMembers = event.eventMembers;
+        state.eventDays = event.eventDays;
     },
 
 

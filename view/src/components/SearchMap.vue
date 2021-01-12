@@ -1,6 +1,7 @@
 <template>
   <v-container>
-    <v-layout column wrap justify-center>
+
+    <v-layout column wrap justify-center v-if="editable">
 
       <v-flex>
         <v-text-field
@@ -39,6 +40,7 @@
               <v-card class="mb-2">
                 <v-list two-line style="max-height: 300px;" class="scroll-y">
                   <template v-for="(location,index) in list">
+
                     <v-list-tile :key="index" ripple @click="zoomSelectCandidateMarker(location.Id, index)">
 
                       <v-list-tile-avatar>
@@ -67,7 +69,9 @@
         <v-text-field
           v-model="storeName"
           color="teal"
-          label="店舗名">
+          label="店舗名"
+          :disabled="!editable"
+          >
         </v-text-field >
       </v-flex>
 
@@ -75,7 +79,9 @@
         <v-text-field
           v-model="storeAddress"
           color="teal"
-          label="住所">
+          label="住所"
+          :disabled="!editable"
+          >
         </v-text-field>
       </v-flex>
 
@@ -83,7 +89,9 @@
         <v-text-field
           v-model="storeUrl"
           color="teal"
-          label="URL">
+          label="URL"
+          :disabled="!editable"
+          >
         </v-text-field>
       </v-flex>      
 
@@ -146,16 +154,25 @@ export default {
       list: [], 
 
       selectedIcon: L.icon({
-        iconUrl: require("leaflet/dist/images/marker-teal.png"),
-        iconRetinaUrl: require("leaflet/dist/images/marker-teal.png"),
+        // TODO: marker-tealは自前で用意しないと存在しないため、leaflet同梱のmarker-icon-2xで検討する(50x82)
+        iconUrl: require("@/assets/marker-teal.png"),
+        iconRetinaUrl: require("@/assets/marker-teal.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
       }),
       icon: L.icon({
-        iconUrl: require("leaflet/dist/images/marker-grey.png"),
-        iconRetinaUrl: require("leaflet/dist/images/marker-grey.png"),
+        iconUrl: require("@/assets/marker-grey.png"),
+        iconRetinaUrl: require("@/assets/marker-grey.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
       }),
     };
+  },
+
+  props: {
+    // 編集可能であるか（登録画面/参照画面で切り替えのため）
+    editable: {
+      type: Boolean,
+      default: true
+    }
   },
 
   computed:{
@@ -217,6 +234,14 @@ export default {
       this.manual_markers = L.layerGroup();
       this.map.addLayer(this.manual_markers);
       let vm = this;
+
+      // 参照用画面の場合はマウスクリックのマーカー追加は行わない
+      if (this.editable === false)  return;
+      // 参照プロットエリア設定
+      // ReferEvent.vueでgetリクエストで緯度経度読むが、
+      // それよりこちらのほうが早く動いてしまい、緯度経度が設定できない。
+      // 対策：ReferEvent.vue側でgetリクエストの読み込みが終わった段階で、
+      //       zoomSelectManualMarkerをコールする
       this.map.on("click", function (e) {
         vm.selectManualMarker(e.latlng);
       });
@@ -321,6 +346,15 @@ export default {
       }
     },
 
+    // 手動で指定されたマーカーをズームする
+    zoomSelectManualMarker(latlng) {
+      this.selectManualMarker(latlng);
+      let lat = latlng.lat;
+      let lng = latlng.lng;
+      let bounds = L.latLngBounds([lat,lng], [lat, lng]);
+      this.map.fitBounds(bounds);
+    },
+
     // 手動選択のマーカーを削除する
     deleteManualMarker() {
       this.manual_markers.clearLayers();
@@ -415,9 +449,6 @@ export default {
       this.deleteManualMarker();
       this.query = "";
     }
-
-// TODO: 保存時にcookie保存
-// TODO: イベント名、イベント内容もcomponent化する
   }
 };
 </script>

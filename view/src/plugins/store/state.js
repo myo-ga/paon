@@ -3,13 +3,15 @@ export const state = {
     eventRev: '',
     eventName: '',
     eventMemo: '',    
-    eventDays: [],
+    eventAddDays: [],
     storeId:  '',
     storeLatitude: '',
     storeLongitude: '',
     storeName: '',
     storeAddress: '',
     storeUrl: '',
+    eventDays: {},
+    eventMembers: {},
 
     eventHistoryMap: {}
 };

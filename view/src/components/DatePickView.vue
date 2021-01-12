@@ -94,10 +94,10 @@ export default {
     //vuexわけわからん
     datetimes:{
       get() {
-        return this.$store.state.eventDays;
+        return this.$store.state.eventAddDays;
       },
       set(val) {
-        this.$store.dispatch('setEventDays', {eventDays: val});
+        this.$store.dispatch('setEventAddDays', {eventAddDays: val});
       }
     },
 

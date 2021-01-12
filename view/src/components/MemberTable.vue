@@ -1,103 +1,84 @@
 <template>
-  <div>
-    <v-toolbar flat color="white">
-      <v-toolbar-title>My CRUD</v-toolbar-title>
-      <v-divider
-        class="mx-2"
-        inset
-        vertical
-      ></v-divider>
-      <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
-        </template>
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{ formTitle }}</span>
-          </v-card-title>
-
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-            <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-toolbar>
-    <v-data-table
-      :headers="headers"
-      :items="desserts"
-      class="elevation-1"
-    >
-      <template v-slot:items="props">
-        <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.calories }}</td>
-        <td class="text-xs-right">{{ props.item.fat }}</td>
-        <td class="text-xs-right">{{ props.item.carbs }}</td>
-        <td class="text-xs-right">{{ props.item.protein }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(props.item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(props.item)"
-          >
-            delete
-          </v-icon>
-        </td>
-      </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
-    </v-data-table>
-  </div>
+  <v-container>
+    <v-layout column>
+      <v-flex>
+        <v-data-table
+          :headers="headers"
+          :items="items"
+          hide-actions
+        >
+          <template v-slot:headers="hprops">
+            <tr>
+              <!-- v-forとv-ifは混在できないため、固定値として外だし -->
+              <th
+              :key="0"
+              align="left"
+              v-if="hprops.headers.length > 0"
+              >
+                日程
+              </th>
+              <!-- headers=[{text=田中},{text=鈴木},{text=山田}] -->
+              <th v-for="(hprop, index) in hprops.headers.slice(1)"
+              :key="index+1"
+              :align="hprop.align"
+              >
+                <a @click="selectedMember(memberIndexes[index])">{{hprop.text}}</a>
+              </th>
+            </tr>
+          </template>
+        
+          <template v-slot:items="props">
+            <tr>
+              <td :key="0">{{ props.item.datetime }}</td>
+              <template v-for="(memberIndex, index) in memberIndexes">
+                <td class="text-xs-left" :key="index+1">{{ props.item[memberIndex] }}</td>    
+              </template>
+              <!-- <td class="text-xs-left">{{ props.item.member0 }}</td>
+              <td class="text-xs-left">{{ props.item.member1 }}</td>
+              <td class="text-xs-left">{{ props.item.member2 }}</td> -->
+              <!-- <td class="justify-center layout px-0">
+                <v-icon
+                  small
+                  class="mr-2"
+                  @click="editItem(props.item)"
+                >
+                  edit
+                </v-icon>
+                <v-icon
+                  small
+                  @click="deleteItem(props.item)"
+                >
+                  delete
+                </v-icon>
+              </td> -->
+            </tr>
+          </template>
+          <!-- <template v-slot:no-data>
+            <v-btn color="primary" @click="initialize">Reset</v-btn>
+          </template> -->
+        </v-data-table>
+      </v-flex>
+      <v-flex align-self-center>
+        <v-btn @click="selectedMember('memberX')">参加の入力をする</v-btn>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
   export default {
     data: () => ({
       dialog: false,
-      headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'name', sortable: false }
-      ],
+      // headers: [
+      //   {
+      //     text: '日程',
+      //     align: 'left',
+      //     sortable: false,
+      //     value: 'name'
+      //   },
+      //   { text: '田中', value: 'tanaka' },
+      //   { text: '山田', value: 'yamada' }
+      // ],
       desserts: [],
       editedIndex: -1,
       editedItem: {
@@ -118,8 +99,67 @@
     computed: {
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      },
+      headers: {
+        get() {
+          let ret = [];
+          for (let member in this.$store.getters.eventMembers) {
+            ret.push({
+              text: this.$store.getters.eventMembers[member].memberName,
+              align: "left",
+              sortable: false
+            });
+          }
+          // メンバー(列)または、日付(行)がある場合は、ヘッダとして日付追加
+          if (Object.keys(this.$store.getters.eventDays).length > 0 || ret.length > 0) {
+            ret.unshift({
+              text: "日程",
+              align: "left",
+              sortable: false
+            });
+          }
+          // if (ret.length > 0) {
+          //   ret.unshift({
+          //     text: "日程",
+          //     align: "left",
+          //     sortable: false
+          //   });
+          // }
+          console.log(ret);
+          return ret;
+        }
+      },
+      // TODO: [Vuetify] Headers must have a value property that corresponds to a value in the v-model arrayのエラーを消す
+      items: {
+        get() {
+          let ret = [];
+          for (let dayN in this.$store.getters.eventDays) {
+            let datetime = this.$store.getters.eventDays[dayN];
+            let row = {
+              datetime: datetime
+            }
+            for (let memberN in this.$store.getters.eventMembers) {
+              let eventMember = this.$store.getters.eventMembers[memberN];
+              let attendance = eventMember.memberDays[dayN];
+              row[memberN] = attendance;
+            }
+            ret.push(row);
+          }
+          console.log(ret);
+          return ret;
+        }
+      },
+      memberIndexes: {
+        get() {
+          let ret = [];
+          for (let memberN in this.$store.getters.eventMembers) {
+            ret.push(memberN);
+          }
+          return ret;
+        }
       }
     },
+    
     watch: {
       dialog (val) {
         val || this.close()
@@ -129,78 +169,81 @@
       this.initialize()
     },
     methods: {
+      selectedMember(memberN) {
+        this.$emit("selected-member", memberN)
+      },
       initialize () {
         this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7
-          }
+          // {
+          //   name: 'Frozen Yogurt',
+          //   calories: 159,
+          //   fat: 6.0,
+          //   carbs: 24,
+          //   protein: 4.0
+          // },
+          // {
+          //   name: 'Ice cream sandwich',
+          //   calories: 237,
+          //   fat: 9.0,
+          //   carbs: 37,
+          //   protein: 4.3
+          // },
+          // {
+          //   name: 'Eclair',
+          //   calories: 262,
+          //   fat: 16.0,
+          //   carbs: 23,
+          //   protein: 6.0
+          // },
+          // {
+          //   name: 'Cupcake',
+          //   calories: 305,
+          //   fat: 3.7,
+          //   carbs: 67,
+          //   protein: 4.3
+          // },
+          // {
+          //   name: 'Gingerbread',
+          //   calories: 356,
+          //   fat: 16.0,
+          //   carbs: 49,
+          //   protein: 3.9
+          // },
+          // {
+          //   name: 'Jelly bean',
+          //   calories: 375,
+          //   fat: 0.0,
+          //   carbs: 94,
+          //   protein: 0.0
+          // },
+          // {
+          //   name: 'Lollipop',
+          //   calories: 392,
+          //   fat: 0.2,
+          //   carbs: 98,
+          //   protein: 0
+          // },
+          // {
+          //   name: 'Honeycomb',
+          //   calories: 408,
+          //   fat: 3.2,
+          //   carbs: 87,
+          //   protein: 6.5
+          // },
+          // {
+          //   name: 'Donut',
+          //   calories: 452,
+          //   fat: 25.0,
+          //   carbs: 51,
+          //   protein: 4.9
+          // },
+          // {
+          //   name: 'KitKat',
+          //   calories: 518,
+          //   fat: 26.0,
+          //   carbs: 65,
+          //   protein: 7
+          // }
         ]
       },
       editItem (item) {

@@ -109,7 +109,7 @@ export default {
         querystring.stringify({
           eventName: this.$store.getters.eventName,
           eventMemo: this.$store.getters.eventMemo,
-          eventAddDays: this.$store.getters.eventDays.join(","),
+          eventAddDays: this.$store.getters.eventAddDays.join(","),
           storeId: this.$store.getters.storeId,
           storeLatitude: this.$store.getters.storeLatitude,
           storeLongitude: this.$store.getters.storeLongitude,
@@ -126,7 +126,7 @@ export default {
           eventHistoryMap[event_id] = {
             id: event_id,
             eventName: this.$store.getters.eventName,
-            eventDays: this.$store.getters.eventDays
+            eventAddDays: this.$store.getters.eventAddDays
           };
 
           this.$localStorage.set("eventHistoryMap", eventHistoryMap);

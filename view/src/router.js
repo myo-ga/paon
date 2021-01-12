@@ -15,7 +15,7 @@ export default new Router({
       component: RegistEvent
     },
     {
-      path: '/UpdateEvent',
+      path: '/UpdateEvent/:id',
       name: 'UpdateEvent',
       component: UpdateEvent
     },

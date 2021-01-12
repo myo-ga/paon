@@ -3,13 +3,16 @@ export const getters = {
     eventRev: state => state.eventRev,
     eventName: state => state.eventName,
     eventMemo: state => state.eventMemo,    
-    eventDays: state => state.eventDays,
+    eventAddDays: state => state.eventAddDays,
     storeId: state => state.storeId,
     storeLatitude: state => state.storeLatitude,
     storeLongitude: state => state.storeLongitude,
     storeName: state => state.storeName,
     storeAddress: state => state.storeAddress,
     storeUrl: state => state.storeUrl,
+
+    eventDays: state => state.eventDays,
+    eventMembers: state => state.eventMembers,
 
     eventHistoryMap: state => state.eventHistoryMap
 };

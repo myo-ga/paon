@@ -188,7 +188,7 @@ export default {
           this.comments = response.data.eventMemo;
 
           //datepicker用に連想配列を配列に変換
-          var obj = response.data.eventDays;
+          var obj = response.data.eventAddDays;
           this.dates = [];
           for(var eventday in obj){
             this.dates.push(obj[eventday]);

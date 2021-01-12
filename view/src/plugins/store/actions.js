@@ -12,8 +12,8 @@ export const actions = {
     setEventMemo({commit}, {eventMemo}) {
         commit('setEventMemo', eventMemo);
     },
-    setEventDays({commit}, {eventDays}) {
-        commit('setEventDays', eventDays);
+    setEventAddDays({commit}, {eventAddDays}) {
+        commit('setEventAddDays', eventAddDays);
     },
     setStoreId({commit}, {storeId}) {
         commit('setStoreId', storeId);

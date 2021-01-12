@@ -27,7 +27,7 @@
         <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">イベントの場所</v-toolbar>
-            <SerchMap ref="search_map"/>
+            <SerchMap ref="search_map" :editable="false"/>
           </v-card>
         </v-flex>
 
@@ -38,23 +38,32 @@
             </v-toolbar>
           </v-card>
         </v-flex> -->
-        <v-flex>
+        <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">イベントの候補日</v-toolbar>
+            <MemberTable ref="member_table" @selected-member="showMemberAttend"/>
+          </v-card>
+        </v-flex>
+
+        <!-- カード５）出欠入力 -->
+        <!-- TODO: selected_memberNの初期値はnullではなく空文字にしたほうがよい、プロパティで渡し、string型のため -->
+        <v-flex v-if="selected_memberN !== null">
+          <v-card>
+            <v-toolbar dense dark color="teal lighten-1">参加可否を入力する</v-toolbar>
+            <MemberAttend :memberN="selected_memberN"/>
           </v-card>
         </v-flex>
 
       </v-layout>
       
       <!--登録ボタンはわかりやすいようにフッターで表示する（フッターは後ろも見えるように半透明）-->
-      <!-- <v-footer height="auto" color="rgba(120,120,120,0.3)" fixed>
+      <v-footer height="auto" color="rgba(120,120,120,0.3)" fixed>
         <v-layout justify-center row wrap>
           <v-flex shrink>
-            <v-btn @click="clear">クリア</v-btn>
-            <v-btn @click="submit" color="purple darken-4 white--text">登録</v-btn>
+            <v-btn @click="edit" color="purple darken-4 white--text">編集</v-btn>
           </v-flex>
         </v-layout>
-      </v-footer> -->
+      </v-footer>
 
   </v-container>
 </template>
@@ -64,6 +73,8 @@
 import SerchMap from './SearchMap'        //地図表示
 // import DatePickView from './DatePickView' //カレンダー
 import EventDescription from './EventDescription'
+import MemberTable from './MemberTable'
+import MemberAttend from './MemberAttend'
 
 
 
@@ -71,10 +82,13 @@ export default {
   components: {
     SerchMap,     //地図コンポーネント
   // DatePickView,
-    EventDescription
+    EventDescription,
+    MemberTable,
+    MemberAttend
   },
 
   data: () => ({
+    selected_memberN: null
   }),
 
   watch: {
@@ -86,6 +100,17 @@ export default {
       console.log("to:", to, "from:",from);
       let event_id = to.params.id;
       this.get(event_id);
+    }
+  },
+
+  computed: {
+    isClicked: {
+      get() {
+        // TODO: 名前クリックしてmemberの出欠が変更されるフォーム
+        // refs経由では設定できない？vuexを使わないとダメ？
+        return true;
+        //return this.$refs.member_table.clicked_member != null;
+      }
     }
   },
 
@@ -109,15 +134,32 @@ export default {
         if (response.data["ok"] !== void 0 && response.data["ok"] === false) {
           alert("選択されたイベントはすでに削除/変更され、参照できません");
         } else {
+          // vuexにevent情報設定  
           vm.$store.dispatch("setEvent", {
             event: response.data
           });
+          // 地図の場所をzoomして設定
+          let latlng = {
+            lat: response.data.storeLatitude,
+            lng: response.data.storeLongitude
+          };
+          vm.$refs.search_map.zoomSelectManualMarker(latlng);
         }
       }) 
       .catch(function (error) {
         alert(error);
       });
+    },
+
+    edit() {
+      let event_id = this.$store.getters.eventId;
+      this.$router.push('/UpdateEvent/' + event_id);
+    },
+
+    showMemberAttend(memberN) {
+      this.selected_memberN = memberN;
     }
+
   }
 }
 </script>
