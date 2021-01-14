@@ -11,6 +11,9 @@ export const mutations = {
     setEventAddDays(state, val) {
         state.eventAddDays = val;
     },
+    setEventDelDays(state, val) {
+        state.eventDelDays = val;
+    },
     setEventMemo(state,val){
         state.eventMemo = val;
     },

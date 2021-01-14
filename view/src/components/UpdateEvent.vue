@@ -2,54 +2,44 @@
 <template>
 <!--画面：イベント登録-->
 
-  <v-container grid-list-xl>
+  <v-container>
 
       <!--カードを縦に並べる-->
-      <v-layout row wrap>
+      <v-layout column wrap style="max-width: 800px" class="mx-auto">
 
+        <!-- カード0）削除ボタン -->
+        <v-flex class="mb-3" align-self-end>
+          <v-btn dark color="red" @click="deleteEvent">イベントを削除する</v-btn>
+        </v-flex>
         <!--カード１）イベント情報登録-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+        <v-flex class="mb-3">
+          <v-card>
             <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
-            <v-layout column justify-center class="pa-3">
-              <v-flex class="mx-3"><v-text-field
-                  label="イベント名"
-                  v-model="eventname"
-                  v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('eventname')"
-                  data-vv-name="eventname"
-                  required>
-              </v-text-field></v-flex>
-              <v-flex class="mx-3"><v-textarea
-                  label="イベントの説明"
-                  v-model="comments"
-                  v-validate="'max:120'"
-                  maxlength="120"
-                  rows="10"
-                  row-height="35"
-                  counter full-width solo>
-              </v-textarea></v-flex>
-            </v-layout>
+            <EventDescription ref="event_description"/>
           </v-card>
         </v-flex>
 
         <!--カード２）候補日選択-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+        <v-flex class="mb-3">
+          <v-card>
             <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
-            <DatePickView/>
-        </v-card></v-flex>
+            <DatePickView ref="date_pick_view"/>
+          </v-card>
+        </v-flex>
 
         <!--カード３）地図-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+        <v-flex><v-card>
             <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
-            <SerchMap/>
+            <SerchMap ref="search_map"/>
         </v-card></v-flex>
 
         <!--カード４）テスト：フッターに地図が隠れちゃうから残してる。後でなんとかする。-->
-        <v-flex xs12 sm8 offset-sm2 shrink fixed>
+        <!-- <v-flex xs12 sm12 md10 lg7 class="mx-auto">
           <v-card>
             <v-toolbar>
             </v-toolbar>
           </v-card>
-        </v-flex>
+        </v-flex> -->
 
       </v-layout>
       
@@ -57,7 +47,7 @@
       <v-footer height="auto" color="rgba(120,120,120,0.3)" fixed>
         <v-layout justify-center row wrap>
           <v-flex shrink>
-            <v-btn @click="update" color="purple darken-4 white--text">更新</v-btn>
+            <v-btn @click="submit" color="purple darken-4 white--text">更新</v-btn>
           </v-flex>
         </v-layout>
       </v-footer>
@@ -66,172 +56,145 @@
 </template>
 
 
+
 <script>
-import Vue from 'vue'
-import VeeValidate from 'vee-validate'    //バイデーション
 import SerchMap from './SearchMap'        //地図表示
 import DatePickView from './DatePickView' //カレンダー
-
-Vue.use(VeeValidate)
+import EventDescription from './EventDescription'
 
 //Axios（APIに使用）
 const querystring = require('querystring');
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
   components: {
     SerchMap,     //地図コンポーネント
     DatePickView,
+    EventDescription
   },
+
   data: () => ({
-    eventId:'',
-    //バイデーション情報
-    validate_dictionary: {
-      custom: {
-        eventname: {
-          required: () => '必ず入力してください',
-          max: '25文字まで入力可能です。'
-        }
-      }
-    },
   }),
 
-  computed:{
-    eventrev:{
-      get(){return this.$store.state.eventrev},
-      set(val){this.$store.commit('eventrev', val)}
-    },
-    eventname:{
-      get(){return this.$store.state.eventname},
-      set(val){this.$store.commit('eventname', val)}
-    },
-    comments:{
-      get(){return this.$store.state.comments},
-      set(val){this.$store.commit('comments', val)}
-    },
-    datetimes:{
-      get(){return this.$store.state.dates},
-      set(val){this.$store.commit('dates', val)}
-    },
-    storeId:{
-      get(){return this.$store.state.storeId},
-      set(val){this.$store.commit('storeId', val)}
-    },
-    storeLatitude:{
-      get(){return this.$store.state.storeLatitude},
-      set(val){this.$store.commit('storeLatitude', val)}
-    },
-    storeLongitude:{
-      get(){return this.$store.state.storeLongitude},
-      set(val){this.$store.commit('storeLongitude', val)}
-    },
-    storeName:{
-      get(){return this.$store.state.storeName},
-      set(val){this.$store.commit('storeName', val)}
-    },
-    storeAddress:{
-      get(){return this.$store.state.storeAddress},
-      set(val){this.$store.commit('storeAddress', val)}
-    },
-
+  mounted() {
+    // refsを参照しているので、子コンポーネントが生成された後にclearは参照できる
+    // createdではなくmountedにやる
+    //this.clear();
+    let latlng = {
+      lat: this.$store.getters.storeLatitude,
+      lng: this.$store.getters.storeLongitude
+    };
+    this.$refs.search_map.zoomSelectManualMarker(latlng);
   },
-  
-  created () {
-    //バリデーション設定
-    this.$validator.localize('ja', this.validate_dictionary);
-    
-    //URLからパラメータを取得
-    //this.eventId = this.$route.query.id;
-    this.eventId = this.$route.params.id;
 
-    //画面表示時にデータを取得。なければ登録画面に遷移。
-    if(this.eventId){ this.get(); }
-    else{this.$router.push('/');}
-  },
 
   methods: { 
-
-    //データを更新する
-    update () {
-      //検証
-      this.$validator.validateAll()
-
-      //データを送信する
-      this.post();
+    //表示データを登録する
+    submit () {
+      // 参加候補日をvuexに追加
+      this.$refs.date_pick_view.provideEventAddDays();
+      // 削除候補日をvuexに追加
+      this.$refs.date_pick_view.provideEventDelDays();
+      // 検証
+      this.$refs.event_description.$validator.validateAll()
+      .then((result) => {
+        // 入力エラーあり
+        if (result === false) {
+          alert("不適切な項目があるため、入力項目を見直してください。");
+          return false;
+        }
+        this.post();
+      });
     },
-    
+
+    //表示データをクリアする
+    clear() {
+      this.$refs.event_description.clear();
+      this.$refs.date_pick_view.clear();
+      this.$refs.search_map.clear();
+    },
+
     //APIでデータ送信
-    post () {
-      var vm = this;
+    post() {
+      //var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
         'http://nikujaga.mybluemix.net/event/update', 
         querystring.stringify({
-          id: vm.eventid,
-          rev: vm.eventrev,
-          eventName: vm.eventname,
-          eventMemo: vm.comments,
-          //eventAddDays: this.datetimes.join(','),
-          eventAddDays: '',
-          eventDelDays: '',
-          storeId:  vm.storeId,                       //テスト:店のID固定
-          storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
-          storeLongitude: vm.storeLongitude,           //テスト:店の経度固定
-          storeName: vm.storeName,                      //テスト:店名固定
-          storeAddress: vm.storeAddress,                   //テスト:店の住所固定
-          storeUrl: vm.storeUrl                        //テスト:店のURL固定
+          id: this.$store.getters.eventId,
+          rev: this.$store.getters.eventRev,
+          eventName: this.$store.getters.eventName,
+          eventMemo: this.$store.getters.eventMemo,
+          eventAddDays: this.$store.getters.eventAddDays.join(","),
+          eventDelDays: this.$store.getters.eventDelDays.join(","),
+          storeId: this.$store.getters.storeId,
+          storeLatitude: this.$store.getters.storeLatitude,
+          storeLongitude: this.$store.getters.storeLongitude,
+          storeName: this.$store.getters.storeName,
+          storeAddress: this.$store.getters.storeAddress,
+          storeUrl: this.$store.getters.storeUrl
         })
       )
       .then(
         response => {
-          vm.eventId = response.data.id;
-          vm.eventrev = response.data.rev;
+          let event_id = response.data.id;
+          let eventHistoryMap = Object.assign({}, this.$store.getters.eventHistoryMap);
+
+          eventHistoryMap[event_id] = {
+            id: event_id,
+            eventName: this.$store.getters.eventName,
+            eventAddDays: this.$store.getters.eventAddDays
+          };
+
+          this.$localStorage.set("eventHistoryMap", eventHistoryMap);
+          
+          this.$store.dispatch("setEventHistoryMap", {
+            eventHistoryMap: eventHistoryMap
+          });
+
+          this.$router.push('/ReferEvent/' + event_id);
         }
       )
       .catch(function (error) {
           alert(error);
+
       });
     },
 
-    //APIでデータ取得
-    get () {
-      var vm = this;
-      this.$axios.get(
-        'https://nikujaga.mybluemix.net/event/get',{
-          params: {
-            id: vm.eventId //URLから取得したIDでイベントをリクエスト
-          }
-      })
+    deleteEvent() {
+      //APIで登録データをポストする
+      this.$axios.post(
+        'http://nikujaga.mybluemix.net/event/delete', 
+        querystring.stringify({
+          id: this.$store.getters.eventId,
+          rev: this.$store.getters.eventRev,
+        })
+      )
       .then(
         response => {
-          //データ取得できたら取得したデータを変数に格納（ストア）
-          vm.eventrev = response.data.rev;
-          vm.eventname = response.data.eventName;
-          vm.comments = response.data.eventMemo;
 
-          //datepicker用に連想配列を配列に変換
-          var obj = response.data.eventAddDays;
-          var datetimes = [];
-          for(var eventday in obj){
-            datetimes.push(obj[eventday]);
+          if (response.data.ok === false) {
+            alert(response.data.errors);
+            return;
           }
-          vm.datetimes = datetimes.concat();
 
-          vm.storeId = response.data.storeId;
-          vm.storeLatitude = response.data.storeLatitude;
-          vm.storeLongitude = response.data.storeLongitude;
-          vm.storeName = response.data.storeName;
-          vm.storeAddress = response.data.storeAddress;
-          vm.storeUrl = response.data.storeUrl;
+          let event_id = response.data.id;
+          let eventHistoryMap = Object.assign({}, this.$store.getters.eventHistoryMap);
+          delete eventHistoryMap[event_id];
+
+          this.$localStorage.set("eventHistoryMap", eventHistoryMap);
+          
+          this.$store.dispatch("setEventHistoryMap", {
+            eventHistoryMap: eventHistoryMap
+          });
+
+          this.$router.push('/');
         }
       )
       .catch(function (error) {
-        //エラー処理
-        alert(error);
-      }) 
-    },
+          alert(error);
+
+      });
+    }
 
   },
 
@@ -243,5 +206,4 @@ export default {
 .footer{
   background:rgba(0,0,0,0.3)
 }
-
 </style>

@@ -81,7 +81,9 @@ export default {
   methods: { 
     //表示データを登録する
     submit () {
-      //検証
+      // 候補日をvuexに設定する
+      this.$refs.date_pick_view.provideEventAddDays();
+      // 検証
       this.$refs.event_description.$validator.validateAll()
       .then((result) => {
         // 入力エラーあり
@@ -123,6 +125,7 @@ export default {
           let event_id = response.data.id;
           let eventHistoryMap = Object.assign({}, this.$store.getters.eventHistoryMap);
 
+          // ナビゲーションに追加
           eventHistoryMap[event_id] = {
             id: event_id,
             eventName: this.$store.getters.eventName,
@@ -135,7 +138,8 @@ export default {
             eventHistoryMap: eventHistoryMap
           });
 
-          //vm.$router.push('/UpdateEvent/?id=' + event_id);
+          // 参照画面に遷移
+          this.$router.push('/ReferEvent/' + event_id);
         }
       )
       .catch(function (error) {

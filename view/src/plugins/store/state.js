@@ -4,6 +4,7 @@ export const state = {
     eventName: '',
     eventMemo: '',    
     eventAddDays: [],
+    eventDelDays: [],
     storeId:  '',
     storeLatitude: '',
     storeLongitude: '',

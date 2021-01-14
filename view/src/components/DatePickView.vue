@@ -85,19 +85,27 @@ export default {
     return {
       dialog: false,
       selected_date_index: 0,
-      picker_time: null
+      picker_time: null,
+      eventTempDays: []
     }
   },
   
+  created() {
+    for (let dayN in this.$store.getters.eventDays) {
+      this.eventTempDays.push(this.$store.getters.eventDays[dayN]);
+    }
+  },
 
   computed: {
     //vuexわけわからん
     datetimes:{
       get() {
-        return this.$store.state.eventAddDays;
+        //return this.$store.state.eventAddDays;
+        return this.eventTempDays;
       },
       set(val) {
-        this.$store.dispatch('setEventAddDays', {eventAddDays: val});
+        //this.$store.dispatch('setEventAddDays', {eventAddDays: val});
+        this.eventTempDays = val;
       }
     },
 
@@ -234,6 +242,45 @@ export default {
     clear() {
       this.datetimes = [];
       this.selected_date_index = 0;
+    },
+
+    // TODO: 登録時に呼び出し実装→済
+    // 仮の候補日から追加候補日を抽出
+    provideEventAddDays() {
+      let ret = [];
+      for (let datetime of this.eventTempDays) {
+        let is_found = false;
+        for (let dayN in this.$store.getters.eventDays) {
+          if (datetime == this.$store.getters.eventDays[dayN]) {
+            is_found = true;
+            break;
+          }
+        }
+        if (!is_found) {
+          ret.push(datetime);
+        }
+      }
+      this.$store.dispatch('setEventAddDays', {eventAddDays: ret});
+    },
+
+    // TODO:更新時に呼び出し実装→済
+    // 仮の候補日から削除日を抽出
+    provideEventDelDays() {
+      let ret = [];
+      for (let dayN in this.$store.getters.eventDays) {
+        let is_found = false;
+        for (let datetime of this.eventTempDays) {
+          if (this.$store.getters.eventDays[dayN] == datetime) {
+            is_found = true;
+            break;
+          }
+        }
+        if (!is_found) {
+          ret.push(dayN);
+        }
+      }
+      console.log("provideEventDelDays ", ret);
+      this.$store.dispatch('setEventDelDays', {eventDelDays: ret});
     }
     
   }

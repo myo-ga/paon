@@ -4,6 +4,7 @@ export const getters = {
     eventName: state => state.eventName,
     eventMemo: state => state.eventMemo,    
     eventAddDays: state => state.eventAddDays,
+    eventDelDays: state => state.eventDelDays,
     storeId: state => state.storeId,
     storeLatitude: state => state.storeLatitude,
     storeLongitude: state => state.storeLongitude,
