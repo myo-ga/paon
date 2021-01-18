@@ -129,7 +129,8 @@ export default {
           eventHistoryMap[event_id] = {
             id: event_id,
             eventName: this.$store.getters.eventName,
-            eventAddDays: this.$store.getters.eventAddDays
+            //eventDays: this.$store.getters.eventAddDays // TODO: e更新を考慮するとventDaysにしたほうがよいか？ 
+            eventTempDays: this.$refs.date_pick_view.eventTempDays
           };
 
           this.$localStorage.set("eventHistoryMap", eventHistoryMap);

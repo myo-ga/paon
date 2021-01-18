@@ -133,6 +133,18 @@ export default {
       .then(function (response) {
         if (response.data["ok"] !== void 0 && response.data["ok"] === false) {
           alert("選択されたイベントはすでに削除/変更され、参照できません");
+          
+          let eventHistoryMap = Object.assign({}, vm.$store.getters.eventHistoryMap);
+
+          delete eventHistoryMap[event_id];
+
+          vm.$localStorage.set("eventHistoryMap", eventHistoryMap);
+          
+          vm.$store.dispatch("setEventHistoryMap", {
+            eventHistoryMap: eventHistoryMap
+          });
+
+          vm.$router.push("/");
         } else {
           // vuexにevent情報設定  
           vm.$store.dispatch("setEvent", {

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import RegistEvent from './components/RegistEvent.vue'
 import UpdateEvent from './components/UpdateEvent.vue'
+import Top from './components/Top.vue'
 
 Vue.use(Router)
 
@@ -11,6 +12,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'Top',
+      component: Top
+    },
+    {
+      path: '/RegisterEvent',
       name: 'RegistEvent',
       component: RegistEvent
     },

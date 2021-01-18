@@ -11,7 +11,9 @@
 
     <v-toolbar height=35 color="gradient" dark app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title class="font-weight-light">paon</v-toolbar-title>
+      <v-toolbar-title class="font-weight-light">
+        <router-link to="/" style="color: white; text-decoration: none;">paon</router-link>
+      </v-toolbar-title>
     </v-toolbar>
     
     <v-content>

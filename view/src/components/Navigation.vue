@@ -2,21 +2,13 @@
   <v-list>
 
     <template v-for="(link, index) in links">
-      <!-- <v-list-tile 
-        color="teal"
-        ripple 
-        v-bind:to="link.path"
-        @click="viewing=index" 
-        :key="index"> -->
+
       <v-list-tile 
         color="teal"
         ripple 
         v-bind:to="link.path"
         :key="index">
-        <!-- <v-list-tile-action>
-          <v-icon v-if="viewing==index" color="primary">{{link.icon}}</v-icon>
-          <v-icon v-else>{{link.icon}}</v-icon>
-        </v-list-tile-action> -->
+
         <v-list-tile-content>
           <v-list-tile-title v-html="link.title"></v-list-tile-title>
         </v-list-tile-content>
@@ -24,24 +16,18 @@
     </template>
     
     <template v-for="(eventHistory, index) in eventHistoryList">
-      <!-- <v-list-tile 
-        color="teal"
-        ripple 
-        v-bind:to="'/ReferEvent?id=' + eventHistory.id" 
-        @click="viewing=(index+links.length)" 
-        :key="index+links.length"> -->
+
         <v-list-tile 
         color="purple"
         ripple
         :replace="true"
         :to="'/ReferEvent/' + eventHistory.id"
         :key="index+links.length">
-        <!-- <v-list-tile-action>
-          <v-icon v-if="viewing==(index+links.length)" color="primary">assignment</v-icon>
-          <v-icon v-else>assignment</v-icon>
-        </v-list-tile-action> -->
+
         <v-list-tile-content>
-          <v-list-tile-title>{{eventHistory.eventName}}</v-list-tile-title>
+          <v-list-tile-title>
+            {{textEventHistory(eventHistory)}}
+          </v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
     </template>
@@ -56,8 +42,8 @@ export default {
   data: () => ({
     // drawer: false,
     links:[
-      {title: "イベントを登録する", icon: "assignment", path: "/" },
-      {title: "イベントに参加する", icon: "today", path: "/AdjustEvent" },
+      {title: "イベントを計画する", icon: "assignment", path: "/RegisterEvent" },
+      // {title: "イベントに参加する", icon: "today", path: "/AdjustEvent" },
       // {title: "テスト", icon: "assignment", path: "/VueTest" },
       // {title: "テスト２", icon: "assignment", path: "/VueTest2" },
     ],
@@ -90,7 +76,18 @@ export default {
 
   
   methods: {
-
+    textEventHistory(eventHistory) {
+      let ret = "";
+      if (eventHistory.eventTempDays.length == 0) {
+        ret += "日付未定　";
+      } else if (eventHistory.eventTempDays.length == 1) {
+        ret += eventHistory.eventTempDays[0] + "～ ";
+      } else {
+        ret += eventHistory.eventTempDays[0] + "～ 他　"
+      }
+      ret += eventHistory.eventName;
+      return ret;
+    }
   }
   
 }
