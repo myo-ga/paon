@@ -1,6 +1,9 @@
 <template>
   <v-container>
     <v-layout column justify-center>
+      <v-flex align-self-end>
+        <v-btn @click="deleteMember" dark color="red">削除する</v-btn>
+      </v-flex>
       <v-flex>
         <v-text-field
           label="氏名"
@@ -45,7 +48,6 @@
       <v-flex align-self-center>
         <template v-if="memberN != 'memberX'">
           <v-btn @click="updateMember">出欠を更新する</v-btn>
-          <v-btn @click="deleteMember">削除する</v-btn>
         </template>
         <template v-else>
           <v-btn @click="registerMember">出欠を登録する</v-btn>
