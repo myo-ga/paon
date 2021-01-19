@@ -31,7 +31,7 @@
             <tr>
               <td :key="0">{{ props.item.datetime }}</td>
               <template v-for="(memberIndex, index) in memberIndexes">
-                <td class="text-xs-left" :key="index+1">{{ props.item[memberIndex] }}</td>    
+                <td class="text-xs-left" :key="index+1">{{ textAttend(props.item[memberIndex]) }}</td>    
               </template>
               <!-- <td class="text-xs-left">{{ props.item.member0 }}</td>
               <td class="text-xs-left">{{ props.item.member1 }}</td>
@@ -171,6 +171,27 @@
     methods: {
       selectedMember(memberN) {
         this.$emit("selected-member", memberN)
+      },
+      textAttend(attend) {
+        let ret = '';
+        switch (attend) {
+          case 'OK':
+            ret = '参加';
+            break;
+          case 'NG':
+            ret = '欠席';
+            break;
+          case 'UnKnown':
+            ret = '未定'
+            break;
+          case 'None':
+            ret = ' ';
+            break;
+          default:
+            // 2020-01-01 18:00など日付が入る
+            ret = attend;
+        }
+        return ret;
       },
       initialize () {
         this.desserts = [
