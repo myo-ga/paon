@@ -99,6 +99,7 @@ export default {
     $route(to, from){
       console.log("to:", to, "from:",from);
       let event_id = to.params.id;
+      this.selected_memberN = null; // 候補者のフォームを消す
       this.get(event_id);
     }
   },
