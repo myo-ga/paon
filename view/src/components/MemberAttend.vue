@@ -1,8 +1,14 @@
 <template>
   <v-container>
     <v-layout column justify-center>
-      <v-flex align-self-end>
-        <v-btn @click="deleteMember" dark color="red">削除する</v-btn>
+
+      <v-flex align-self-end v-if="memberN != 'memberX'">
+        <v-btn
+          @click="deleteMember"
+          color="red"
+          v-bind="getButtonStatus()">
+          削除する
+        </v-btn>
       </v-flex>
       <v-flex>
         <v-text-field
@@ -11,6 +17,7 @@
           v-validate="'required|max:25'" :counter="25"
           data-vv-name="memberName"
           data-vv-as="氏名"
+          :error-messages="errors.first('memberName')"
         >
         </v-text-field>
       </v-flex>
@@ -18,9 +25,10 @@
         <v-text-field
           label="コメント"
           v-model="memberComment"
-          v-validate="'required|max:25'" :counter="25"
+          v-validate="'max:25'" :counter="25"
           data-vv-name="memberComment"
           data-vv-as="コメント"
+          :error-messages="errors.first('memberComment')"
         >
         </v-text-field>
       </v-flex>
@@ -47,10 +55,10 @@
       </v-flex>
       <v-flex align-self-center>
         <template v-if="memberN != 'memberX'">
-          <v-btn @click="updateMember">出欠を更新する</v-btn>
+          <v-btn v-bind="getButtonStatus()" color="teal lighten-1" @click="updateMember">出欠を更新する</v-btn>
         </template>
         <template v-else>
-          <v-btn @click="registerMember">出欠を登録する</v-btn>
+          <v-btn v-bind="getButtonStatus()" color="teal lighten-1" @click="registerMember">出欠を登録する</v-btn>
         </template>
       </v-flex>
     </v-layout>
@@ -60,14 +68,29 @@
 
 <script>
 
+import Vue from 'vue'
+import VeeValidate from 'vee-validate'
+import ja from 'vee-validate/dist/locale/ja'
+
+Vue.use(VeeValidate, {
+  locale: "ja",
+  dictionary: {
+    "ja": ja
+  }
+})
+
+
+import CommonButton from './mixins/CommonButton'
+
 //Axios（APIに使用）
 const querystring = require('querystring');
 
 export default {
+  mixins: [CommonButton],
   data: () => ({
     memberName: "", // 登録/更新用
     memberDays: {}, // 登録/更新用
-    memberComment: "" // 登録/更新用、TODO:実装を盛り込むこと
+    memberComment: "", // 登録/更新用、TODO:実装を盛り込むこと
   }),
   props: {
     memberN: {
@@ -163,15 +186,19 @@ export default {
           } else {
             alert(ret);
           }
+          vm.isLoading = false;
         }
       )
       .catch(
         error => {
           alert(error);
+          vm.isLoading = false;
         }
+        
       )
     },
     deleteMember() {
+      this.isLoading = true;
       let url = 'http://nikujaga.mybluemix.net/member/delete';
       let query_param = Object.assign(
         {
@@ -183,6 +210,8 @@ export default {
       this.sendRequestMember(url, query_param);
     },
     updateMember() {
+      this.isLoading = true;
+
       let url = 'http://nikujaga.mybluemix.net/member/update';
       let query_param = Object.assign(
         {
@@ -193,10 +222,25 @@ export default {
         },
         this.memberDays
       );
-      this.sendRequestMember(url, query_param);
+
+      let vm = this;
+      this.$validator.validate()
+      .then((result) => {
+        
+        if (result === false) {
+          alert("不適切な項目があるため、入力項目を見直してください。");
+          vm.isLoading = false;
+          return;
+        }
+
+        vm.sendRequestMember(url, query_param);
+      });
+
     },
-    // TODO: updateと処理を共通化する→済
+    // TODO: updateと処理を共通化する
     registerMember() {
+      this.isLoading = true;
+
       let url = 'http://nikujaga.mybluemix.net/member/create';
       let query_param = Object.assign(
         {
@@ -206,7 +250,20 @@ export default {
         },
         this.memberDays
       );
-      this.sendRequestMember(url, query_param);
+
+      let vm = this;
+      this.$validator.validate()
+      .then((result) => {
+        
+        if (result === false) {
+          alert("不適切な項目があるため、入力項目を見直してください。");
+          vm.isLoading = false;
+          return;
+        }
+
+        vm.sendRequestMember(url, query_param);
+      });
+
       // let vm = this;
       // this.$axios.post(
       //   'http://nikujaga.mybluemix.net/member/create',
@@ -237,7 +294,8 @@ export default {
       //     alert(error);
       //   }
       // )
-    }
+    },
+
   }
 
 }

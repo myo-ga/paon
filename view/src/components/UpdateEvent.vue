@@ -9,7 +9,7 @@
 
         <!-- カード0）削除ボタン -->
         <v-flex class="mb-3" align-self-end>
-          <v-btn dark color="red" @click="deleteEvent">イベントを削除する</v-btn>
+          <v-btn v-bind="getButtonStatus()" color="red" @click="deleteEvent">イベントを削除する</v-btn>
         </v-flex>
         <!--カード１）イベント情報登録-->
         <v-flex class="mb-3">
@@ -47,7 +47,7 @@
       <v-footer height="auto" color="rgba(120,120,120,0.3)" fixed>
         <v-layout justify-center row wrap>
           <v-flex shrink>
-            <v-btn @click="submit" color="purple darken-4 white--text">更新</v-btn>
+            <v-btn :disabled="isUpdateProcessing" @click="submit" color="purple darken-4 white--text">更新</v-btn>
           </v-flex>
         </v-layout>
       </v-footer>
@@ -61,11 +61,14 @@
 import SerchMap from './SearchMap'        //地図表示
 import DatePickView from './DatePickView' //カレンダー
 import EventDescription from './EventDescription'
+import CommonButton from './mixins/CommonButton'
 
 //Axios（APIに使用）
 const querystring = require('querystring');
 
 export default {
+  mixins: [CommonButton],
+
   components: {
     SerchMap,     //地図コンポーネント
     DatePickView,
@@ -73,6 +76,7 @@ export default {
   },
 
   data: () => ({
+    isUpdateProcessing: false
   }),
 
   mounted() {
@@ -90,6 +94,7 @@ export default {
   methods: { 
     //表示データを登録する
     submit () {
+      this.isUpdateProcessing = true;
       // 参加候補日をvuexに追加
       this.$refs.date_pick_view.provideEventAddDays();
       // 削除候補日をvuexに追加
@@ -100,6 +105,7 @@ export default {
         // 入力エラーあり
         if (result === false) {
           alert("不適切な項目があるため、入力項目を見直してください。");
+          this.isUpdateProcessing = false;
           return false;
         }
         this.post();
@@ -151,16 +157,20 @@ export default {
             eventHistoryMap: eventHistoryMap
           });
 
+          this.isUpdateProcessing = false;
           this.$router.push('/ReferEvent/' + event_id);
         }
       )
       .catch(function (error) {
+          this.isUpdateProcessing = false;
           alert(error);
 
       });
     },
 
     deleteEvent() {
+      this.isLoading = true;
+      let vm = this;
       //APIで登録データをポストする
       this.$axios.post(
         'http://nikujaga.mybluemix.net/event/delete', 
@@ -174,6 +184,8 @@ export default {
 
           if (response.data.ok === false) {
             alert(response.data.errors);
+            alert("hoge");
+            vm.isLoading = false;
             return;
           }
 
@@ -181,18 +193,19 @@ export default {
           let eventHistoryMap = Object.assign({}, this.$store.getters.eventHistoryMap);
           delete eventHistoryMap[event_id];
 
-          this.$localStorage.set("eventHistoryMap", eventHistoryMap);
+          vm.$localStorage.set("eventHistoryMap", eventHistoryMap);
           
-          this.$store.dispatch("setEventHistoryMap", {
+          vm.$store.dispatch("setEventHistoryMap", {
             eventHistoryMap: eventHistoryMap
           });
 
-          this.$router.push('/');
+          vm.$router.push('/');
+          vm.isLoading = false;
         }
       )
       .catch(function (error) {
           alert(error);
-
+          vm.isLoading = false;
       });
     }
 

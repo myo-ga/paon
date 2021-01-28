@@ -59,7 +59,7 @@
         </v-data-table>
       </v-flex>
       <v-flex align-self-center>
-        <v-btn @click="selectedMember('memberX')">参加の入力をする</v-btn>
+        <v-btn color="teal lighten-1" dark @click="selectedMember('memberX')">参加の入力をする</v-btn>
       </v-flex>
     </v-layout>
   </v-container>

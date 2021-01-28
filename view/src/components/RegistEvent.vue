@@ -39,12 +39,19 @@
 
       </v-layout>
       
+      <!-- TODO: 登録 -> 解決 -->
+      <!-- TODO: 更新 -> 解決 -->
+      <!-- TODO: メンバー削除する -> 解決 -->
+      <!-- TODO: イベントを削除する -> 解決 -->
+      <!-- TODO: 出欠を登録する -> 解決-->
+      <!-- TODO: 出欠を更新する -> 解決 -->
+      <!-- TODO: isRegisterProcessingはmixinのisLoadingと置き換え -->
       <!--登録ボタンはわかりやすいようにフッターで表示する（フッターは後ろも見えるように半透明）-->
       <v-footer height="auto" color="rgba(120,120,120,0.3)" fixed>
         <v-layout justify-center row wrap>
           <v-flex shrink>
             <v-btn @click="clear">クリア</v-btn>
-            <v-btn @click="submit" color="purple darken-4 white--text">登録</v-btn>
+            <v-btn :disabled="isRegisterProcessing" @click="submit" color="purple darken-4 white--text">登録</v-btn>
           </v-flex>
         </v-layout>
       </v-footer>
@@ -70,6 +77,7 @@ export default {
   },
 
   data: () => ({
+    isRegisterProcessing: false
   }),
 
   mounted() {
@@ -81,6 +89,8 @@ export default {
   methods: { 
     //表示データを登録する
     submit () {
+      this.isRegisterProcessing = true;
+
       // 候補日をvuexに設定する
       this.$refs.date_pick_view.provideEventAddDays();
       // 検証
@@ -89,6 +99,7 @@ export default {
         // 入力エラーあり
         if (result === false) {
           alert("不適切な項目があるため、入力項目を見直してください。");
+          this.isRegisterProcessing = false;
           return false;
         }
         this.post();
@@ -139,13 +150,14 @@ export default {
             eventHistoryMap: eventHistoryMap
           });
 
+          this.isRegisterProcessing = false;
           // 参照画面に遷移
           this.$router.push('/ReferEvent/' + event_id);
         }
       )
       .catch(function (error) {
           alert(error);
-
+          this.isRegisterProcessing = false;
       });
     },
 
