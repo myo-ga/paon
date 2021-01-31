@@ -42,7 +42,6 @@ export const actions = {
     },
 
     setEvent({commit}, {event}) {
-        console.log(event);
         commit('setEvent', event);
     }
 

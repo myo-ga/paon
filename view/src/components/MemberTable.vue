@@ -118,14 +118,6 @@
               sortable: false
             });
           }
-          // if (ret.length > 0) {
-          //   ret.unshift({
-          //     text: "日程",
-          //     align: "left",
-          //     sortable: false
-          //   });
-          // }
-          console.log(ret);
           return ret;
         }
       },
@@ -145,7 +137,6 @@
             }
             ret.push(row);
           }
-          console.log(ret);
           return ret;
         }
       },
