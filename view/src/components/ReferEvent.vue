@@ -156,7 +156,11 @@ export default {
             lat: response.data.storeLatitude,
             lng: response.data.storeLongitude
           };
-          vm.$refs.search_map.zoomSelectManualMarker(latlng);
+          if (latlng.lat !== "" || latlng.lng !== "") {
+            vm.$refs.search_map.zoomSelectManualMarker(latlng);
+          } else {
+            vm.$refs.search_map.clearMarker();
+          }
         }
       }) 
       .catch(function (error) {

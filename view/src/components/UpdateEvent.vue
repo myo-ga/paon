@@ -87,7 +87,11 @@ export default {
       lat: this.$store.getters.storeLatitude,
       lng: this.$store.getters.storeLongitude
     };
-    this.$refs.search_map.zoomSelectManualMarker(latlng);
+    if (latlng.lat !== "" || latlng.lng !== "") {
+      this.$refs.search_map.zoomSelectManualMarker(latlng);
+    } else {
+      this.$refs.search_map.clearMarker();
+    }
   },
 
 

@@ -445,9 +445,18 @@ export default {
       this.storeName = "";
       this.storeAddress = "";
       this.storeUrl = "";
+      this.clearMarker();
+      this.query = "";
+    },
+
+    // マーカーなし、地図のズームを初期状態に戻す
+    clearMarker() {
       this.deleteCandidateMarker();
       this.deleteManualMarker();
-      this.query = "";
+      this.map.setView(
+        L.latLng(DEF_LAT, DEF_LNG),
+        DEF_ZOOM
+      );
     }
   }
 };
