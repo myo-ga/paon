@@ -159,7 +159,7 @@ export default {
       var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
-        'http://nikujaga.mybluemix.net/event/create', 
+        'http://localhost:3000/event/create', 
         querystring.stringify({
           eventName: vm.name,
           eventMemo: vm.comments,

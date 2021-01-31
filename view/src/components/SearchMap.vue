@@ -91,6 +91,7 @@ const CREDENTIAL = require('../../credentials.json');
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+
 const YOLP_APPID = CREDENTIAL.yolp.appid
 
 // デフォルトのマーカー画像設定

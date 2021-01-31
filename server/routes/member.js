@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { check, validationResult } = require('express-validator');
 const config = require('config');
-var cloudant = require('../model/cloudant.js');
+var model = require('../model/couchdb.js');
 var memberValidator = require('../validator/member_validator.js');
 
 router.post('/create', [
@@ -28,7 +28,7 @@ router.post('/create', [
         let memberComment = req.body.memberComment;
 
         // dbより読み込み、idよりevent照会
-        let db = new cloudant.DB();
+        let db = new model.DB();
         db.init('paon');
 
         let currentEvent = await db.getOneRecord(id);
@@ -112,7 +112,7 @@ router.post('/update', [
         let memberComment = req.body.memberComment;
 
         // dbより読み込み、idよりevent照会
-        let db = new cloudant.DB();
+        let db = new model.DB();
         db.init('paon');
 
         let currentEvent = await db.getOneRecord(id);
@@ -188,7 +188,7 @@ router.post('/delete', [
         let memberId = req.body.memberId;
 
         // dbより読み込み、idよりevent照会
-        let db = new cloudant.DB();
+        let db = new model.DB();
         db.init('paon');
 
         let currentEvent = await db.getOneRecord(id);

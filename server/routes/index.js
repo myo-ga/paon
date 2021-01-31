@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var cloudant = require('../model/cloudant.js');
+var model = require('../model/couchdb.js');
 var config = require('config');
 
 /* GET home page. */
@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 /* GET users listing. */
 router.get('/debug', async function(req, res, next) {
   try {
-    let db = new cloudant.DB();
+    let db = new model.DB();
     db.init('paon');
     let all_record = await db.getAllRecord();
     let id_list = [];
@@ -28,7 +28,7 @@ router.get('/debug', async function(req, res, next) {
 
 router.get('/debug/getall', async function(req, res, next) {
   try {
-    let db = new cloudant.DB();
+    let db = new model.DB();
     db.init('paon');
     let all_record = await db.getAllRecord();
     let id_list = [];
