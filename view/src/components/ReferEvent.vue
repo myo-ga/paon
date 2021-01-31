@@ -122,6 +122,8 @@ export default {
 
   methods: {
     get(event_id) {
+      // 非同期で結果が帰ってきたとき、リクエスト発行元の画面に位置するかチェック用
+      let current_path = this.$router.currentRoute.path;
       let vm = this;
       this.$axios.get(
         'http://nikujaga.mybluemix.net/event/get',
@@ -146,8 +148,15 @@ export default {
           });
 
           vm.$router.push("/");
+
         } else {
-          // vuexにevent情報設定  
+          // 他画面移動済みであれば何もしない
+          if (current_path !== vm.$router.currentRoute.path) {
+            console.log("page already moved!!!");
+            return;
+          }
+
+          // vuexにevent情報設定
           vm.$store.dispatch("setEvent", {
             event: response.data
           });
@@ -156,7 +165,11 @@ export default {
             lat: response.data.storeLatitude,
             lng: response.data.storeLongitude
           };
+
           if (latlng.lat !== "" || latlng.lng !== "") {
+            // TODO: バグ。getメソッド呼び出した後、ここが呼ばれず画面遷移すると、
+            // そのときにはserach_mapのコンポーネントは破棄されているので、zoomSelectManualMarkerは呼べない
+            // →解決
             vm.$refs.search_map.zoomSelectManualMarker(latlng);
           } else {
             vm.$refs.search_map.clearMarker();

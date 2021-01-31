@@ -54,6 +54,6 @@ import Navigation from './components/Navigation.vue'
 <style lang="stylus" scoped>
   .gradient{
     background: linear-gradient(90deg, teal 30%, purple 150%);
-    z-index: 1000 !important;
+    // z-index: 1000 !important;
   }
 </style>

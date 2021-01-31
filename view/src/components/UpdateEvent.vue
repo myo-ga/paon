@@ -82,7 +82,7 @@ export default {
   mounted() {
     // refsを参照しているので、子コンポーネントが生成された後にclearは参照できる
     // createdではなくmountedにやる
-    //this.clear();
+    // this.clear();
     let latlng = {
       lat: this.$store.getters.storeLatitude,
       lng: this.$store.getters.storeLongitude
