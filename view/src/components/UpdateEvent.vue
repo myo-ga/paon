@@ -166,7 +166,7 @@ export default {
       var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
-        'http://localhost:3000/event/update', 
+        'http://nikujaga.mybluemix.net/event/update', 
         querystring.stringify({
           id: vm.eventid,
           rev: vm.eventrev,
@@ -198,7 +198,7 @@ export default {
     get () {
       var vm = this;
       this.$axios.get(
-        'https://localhost:3000/event/get',{
+        'https://nikujaga.mybluemix.net/event/get',{
           params: {
             id: vm.eventId //URLから取得したIDでイベントをリクエスト
           }

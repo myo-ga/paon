@@ -14,7 +14,10 @@
     "express": "~4.16.1",
     "express-validator": "^6.1.1",
     "http-errors": "~1.6.3",
-    "morgan": "~1.9.1",
-    "nano": "^8.1.0"
+    "morgan": "~1.9.1"
+  },
+  "engines": {
+    "node": "10.16.0",
+    "npm": "6.9.0"
   }
 }
