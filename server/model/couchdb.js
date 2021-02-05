@@ -14,7 +14,7 @@ var DB = function() {
 
     // 初期化
     this.init = function (dbName) {
-        nano.config.url = this.readCredentialUrl();
+        nano.config.url = readCredentialUrl();
         
         //console.log('URL:' + nano.url);
         nano.db.list(
