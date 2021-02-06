@@ -8,17 +8,21 @@
       <v-layout row wrap>
 
         <!--カード１）イベント情報登録-->
-        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
-            <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
+        <v-flex xs12 sm8 offset-sm2 shrink>
+          <v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">あなたのイベントについて教えてください。</v-toolbar>
             <v-layout column justify-center class="pa-3">
-              <v-flex class="mx-3"><v-text-field
+              <v-flex class="mx-3">
+                <v-text-field
                   label="イベント名"
                   v-model="eventname"
                   v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('eventname')"
                   data-vv-name="eventname"
                   required>
-              </v-text-field></v-flex>
-              <v-flex class="mx-3"><v-textarea
+                </v-text-field>
+              </v-flex>
+              <v-flex class="mx-3">
+                <v-textarea
                   label="イベントの説明"
                   v-model="comments"
                   v-validate="'max:120'"
@@ -26,20 +30,21 @@
                   rows="10"
                   row-height="35"
                   counter full-width solo>
-              </v-textarea></v-flex>
+                </v-textarea>
+              </v-flex>
             </v-layout>
           </v-card>
         </v-flex>
 
         <!--カード２）候補日選択-->
         <v-flex xs12 sm8 offset-sm2 shrink><v-card>
-            <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">候補日を選択してください。</v-toolbar>
             <DatePickView/>
         </v-card></v-flex>
 
         <!--カード３）地図-->
         <v-flex xs12 sm8 offset-sm2 shrink><v-card>
-            <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">どこに行きますか。</v-toolbar>
             <SerchMap/>
         </v-card></v-flex>
 
@@ -135,6 +140,10 @@ export default {
       get(){return this.$store.state.storeAddress},
       set(val){this.$store.commit('storeAddress', val)}
     },
+    storeUrl:{
+      get(){return this.$store.state.storeUrl},
+      set(val){this.$store.commit('storeUrl', val)}
+    },
 
   },
   
@@ -168,19 +177,18 @@ export default {
       this.$axios.post(
         'http://localhost:3000/event/update', 
         querystring.stringify({
-          id: vm.eventid,
+          id: vm.eventId,
           rev: vm.eventrev,
           eventName: vm.eventname,
           eventMemo: vm.comments,
-          //eventAddDays: this.datetimes.join(','),
-          eventAddDays: '',
-          eventDelDays: '',
+          eventAddDays: vm.datetimes.join(','),
+          eventDelDays: 'day0,day1,day2,day3,day4',
           storeId:  vm.storeId,                       //テスト:店のID固定
           storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
-          storeLongitude: vm.storeLongitude,           //テスト:店の経度固定
-          storeName: vm.storeName,                      //テスト:店名固定
-          storeAddress: vm.storeAddress,                   //テスト:店の住所固定
-          storeUrl: vm.storeUrl                        //テスト:店のURL固定
+          storeLongitude: vm.storeLongitude,          //テスト:店の経度固定
+          storeName: vm.storeName,                    //テスト:店名固定
+          storeAddress: vm.storeAddress,              //テスト:店の住所固定
+          storeUrl: vm.storeUrl                       //テスト:店のURL固定
         })
       )
       .then(
@@ -198,7 +206,7 @@ export default {
     get () {
       var vm = this;
       this.$axios.get(
-        'https://localhost:3000/event/get',{
+        'http://localhost:3000/event/get',{
           params: {
             id: vm.eventId //URLから取得したIDでイベントをリクエスト
           }

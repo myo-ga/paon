@@ -25,6 +25,7 @@ export const mutations = {
     storeLongitude(state,val){state.storeLongitude=val},
     storeName(state,val){state.storeName=val},
     storeAddress(state,val){state.storeAddress=val},
+    storeUrl(state,val){state.storeUrl=val},
     dates(state,val){state.dates=val.concat();},
 
     submit(state, payload){

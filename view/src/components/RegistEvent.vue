@@ -166,10 +166,10 @@ export default {
           eventAddDays: vm.dates.join(','),
           storeId:  vm.storeId,                       //テスト:店のID固定
           storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
-          storeLongitude: vm.storeLongitude,           //テスト:店の経度固定
-          storeName: vm.storeName,                      //テスト:店名固定
-          storeAddress: vm.storeAddress,                   //テスト:店の住所固定
-          storeUrl: vm.storeUrl                        //テスト:店のURL固定
+          storeLongitude: vm.storeLongitude,          //テスト:店の経度固定
+          storeName: vm.storeName,                    //テスト:店名固定
+          storeAddress: vm.storeAddress,              //テスト:店の住所固定
+          storeUrl: vm.storeUrl                       //テスト:店のURL固定
         })
       )
       .then(
