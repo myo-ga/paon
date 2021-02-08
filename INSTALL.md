@@ -64,3 +64,6 @@ docker-compose up -d
 docker-compose down
 ```
 
+## 備考
+- serverはexpressで動いているが、ソース修正ごとに再起動必要。nodemon導入したほうがいい
+- couchdbにpaon DBがないので、初回の処理は失敗する（失敗後作成されるので2回目以降はOK）
