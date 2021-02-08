@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { check, validationResult } = require('express-validator');
 const config = require('config');
-var cloudant = require('../model/cloudant.js');
+var model = require('../model/couchdb.js');
 var eventValidator = require('../validator/event_validator.js');
 
 // イベント生成
@@ -65,7 +65,7 @@ router.post('/create', [
       storeUrl
     };
 
-    let db = new cloudant.DB();
+    let db = new model.DB();
     db.init('paon');
     let body = await db.insertOneRecord(data);
     res.send(body);
@@ -124,7 +124,7 @@ router.post('/update', [
     let storeUrl = req.body.storeUrl;
 
     // _id, _revよりメンバーを取得する
-    let db = new cloudant.DB();
+    let db = new model.DB();
     db.init('paon');
 
     let currentEvent = await db.getOneRecord(_id);
@@ -240,7 +240,7 @@ router.get('/get', [
 
     let id = req.query.id;
 
-    let db = new cloudant.DB();
+    let db = new model.DB();
     db.init('paon');
     let currentEvent = await db.getOneRecord(id);
     if (currentEvent === void 0) {
@@ -289,7 +289,7 @@ router.post('/delete', [
     let _id = req.body.id;
     let _rev = req.body.rev;
 
-    let db = new cloudant.DB();
+    let db = new model.DB();
     db.init('paon');
 
     let body = await db.deleteOneRecord(_id, _rev);
