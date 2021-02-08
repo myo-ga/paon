@@ -65,6 +65,7 @@
 import SerchMap from './SearchMap'        //地図表示
 import DatePickView from './DatePickView' //カレンダー
 import EventDescription from './EventDescription'
+import serverurl from '../const/serverurl'
 
 //Axios（APIに使用）
 const querystring = require('querystring');
@@ -118,7 +119,7 @@ export default {
       //var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
-        'http://nikujaga.mybluemix.net/event/create', 
+        serverurl.EVENT_CREATE_URL, 
         querystring.stringify({
           eventName: this.$store.getters.eventName,
           eventMemo: this.$store.getters.eventMemo,

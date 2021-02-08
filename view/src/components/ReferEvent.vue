@@ -75,7 +75,7 @@ import SerchMap from './SearchMap'        //地図表示
 import EventDescription from './EventDescription'
 import MemberTable from './MemberTable'
 import MemberAttend from './MemberAttend'
-
+import serverurl from '../const/serverurl'
 
 
 export default {
@@ -126,7 +126,7 @@ export default {
       let current_path = this.$router.currentRoute.path;
       let vm = this;
       this.$axios.get(
-        'http://nikujaga.mybluemix.net/event/get',
+        serverurl.EVENT_GET_URL,
         {
           params: {
             id: event_id

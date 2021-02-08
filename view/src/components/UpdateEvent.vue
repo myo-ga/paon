@@ -62,6 +62,7 @@ import SerchMap from './SearchMap'        //地図表示
 import DatePickView from './DatePickView' //カレンダー
 import EventDescription from './EventDescription'
 import CommonButton from './mixins/CommonButton'
+import serverurl from '../const/serverurl'
 
 //Axios（APIに使用）
 const querystring = require('querystring');
@@ -128,7 +129,7 @@ export default {
       //var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
-        'http://nikujaga.mybluemix.net/event/update', 
+        serverurl.EVENT_UPDATE_URL, 
         querystring.stringify({
           id: this.$store.getters.eventId,
           rev: this.$store.getters.eventRev,
@@ -177,7 +178,7 @@ export default {
       let vm = this;
       //APIで登録データをポストする
       this.$axios.post(
-        'http://nikujaga.mybluemix.net/event/delete', 
+        serverurl.EVENT_DELETE_URL, 
         querystring.stringify({
           id: this.$store.getters.eventId,
           rev: this.$store.getters.eventRev,

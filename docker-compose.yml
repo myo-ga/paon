@@ -20,4 +20,16 @@ services:
       COUCHDB_PASSWORD: password
     ports:
       - 5984:5984
+    tty: true
 
+  view:
+    container_name: dev_view
+    build:
+      context: ./
+      dockerfile: ./view/Dockerfile
+    volumes:
+      - ./view:/view
+    command: bash -c "npm install && npm run serve"
+    ports:
+      - 8080:80
+    tty: true

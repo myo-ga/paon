@@ -71,6 +71,7 @@
 import Vue from 'vue'
 import VeeValidate from 'vee-validate'
 import ja from 'vee-validate/dist/locale/ja'
+import serverurl from '../const/serverurl'
 
 Vue.use(VeeValidate, {
   locale: "ja",
@@ -199,7 +200,7 @@ export default {
     },
     deleteMember() {
       this.isLoading = true;
-      let url = 'http://nikujaga.mybluemix.net/member/delete';
+      let url = serverurl.MEMBER_DELETE_URL;
       let query_param = Object.assign(
         {
           id: this.$store.getters.eventId,
@@ -212,7 +213,7 @@ export default {
     updateMember() {
       this.isLoading = true;
 
-      let url = 'http://nikujaga.mybluemix.net/member/update';
+      let url = serverurl.MEMBER_UPDATE_URL;
       let query_param = Object.assign(
         {
           id: this.$store.getters.eventId,
@@ -241,7 +242,7 @@ export default {
     registerMember() {
       this.isLoading = true;
 
-      let url = 'http://nikujaga.mybluemix.net/member/create';
+      let url = serverurl.MEMBER_CREATE_URL;
       let query_param = Object.assign(
         {
           id: this.$store.getters.eventId,
