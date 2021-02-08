@@ -26,19 +26,9 @@ export default new Router({
       component: UpdateEvent
     },
     {
-      path: '/AdjustEvent',
-      name: 'AdjustEvent',
-      component: () => import('./components/AdjustEvent.vue')
-    },
-    {
       path: '/ReferEvent/:id',
       name: 'ReferEvent',
       component: () => import('./components/ReferEvent.vue'),
-    },
-    {
-      path: '/VueTest',
-      name: 'VueTest',
-      component: () => import('./components/testlist.vue')
-    },
+    }
   ]
 })
