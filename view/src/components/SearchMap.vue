@@ -36,7 +36,6 @@
               </v-card>
             </v-flex>
             <v-flex v-else-if="!loading" v-cloak>
-<<<<<<< HEAD
               <v-card class="mb-2">
                 <v-list two-line style="max-height: 300px;" class="scroll-y">
                   <template v-for="(location,index) in list">
@@ -57,25 +56,6 @@
                   </template>
                 </v-list>
               </v-card>
-=======
-              <v-list two-line style="max-height: 300px; max-width: 500px" class="scroll-y">
-                <template v-for="(location,index) in list">
-                  <v-list-tile :key="index" ripple @click="selectPos(index)">
-                    
-                    <v-list-action>
-                      <v-icon v-if="index != selected" color="grey lighten-2" medium>room</v-icon>
-                      <v-icon v-else color="teal" large>room</v-icon>
-                    </v-list-action>
-
-                    <v-list-tile-content>
-                      <v-list-tile-title v-html="location.Name"></v-list-tile-title>
-                      <v-list-tile-sub-title v-html="location.Address"></v-list-tile-sub-title>
-                    </v-list-tile-content>
-
-                  </v-list-tile>
-                </template>
-              </v-list>
->>>>>>> master
             </v-flex>
 
           </v-layout>
@@ -138,10 +118,6 @@ const CREDENTIAL = require('../../credentials.json');
 const LOCAL_SEARCH_URL = 'https://map.yahooapis.jp/search/local/V1/localSearch?'
 const OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 const OSM_ATTR = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 const YOLP_APPID = CREDENTIAL.yolp.appid
 
 // デフォルトのマーカー画像設定
@@ -177,7 +153,6 @@ export default {
       list: [], 
 
       selectedIcon: L.icon({
-<<<<<<< HEAD
         iconUrl: require("@/assets/marker-teal.png"),
         iconRetinaUrl: require("@/assets/marker-teal.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
@@ -186,16 +161,6 @@ export default {
         iconUrl: require("@/assets/marker-grey.png"),
         iconRetinaUrl: require("@/assets/marker-grey.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
-=======
-        iconUrl: require("../assets/marker-teal.png"),
-        iconRetinaUrl: require("../assets/marker-teal.png"),
-        iconSize: [36, 36], iconAnchor: [18, 35], popupAnchor: [0, -35]
-      }),
-      icon: L.icon({
-        iconUrl: require("../assets/marker-grey.png"),
-        iconRetinaUrl: require("../assets/marker-grey.png"),
-        iconSize: [30, 30], iconAnchor: [15, 29], popupAnchor: [0, -30]
->>>>>>> master
       }),
     };
   },
@@ -210,15 +175,8 @@ export default {
 
   computed:{
     storeId:{
-<<<<<<< HEAD
       get(){return this.$store.getters.storeId},
       set(val){this.$store.dispatch('setStoreId', {storeId: val})}
-=======
-      get(){
-        return this.$store.state.storeId
-      },
-      set(val){this.$store.commit('storeId', val)}
->>>>>>> master
     },
     storeLatitude:{
       get(){return this.$store.getters.storeLatitude},
@@ -248,30 +206,10 @@ export default {
       return this.map.getCenter();
     }
   },
-<<<<<<< HEAD
-=======
-
-  watch:{
-    storeId: function(val){
-      //storeIdの値が変わったらストア情報更新
-      if(val && this.selected == -1){
-        this.get(val);
-      }
-    }
-  },
->>>>>>> master
 
   mounted: function() {
     //地図を表示
     this.viewMap();
-<<<<<<< HEAD
-=======
-    
-    //ストア情報更新
-    if(this.storeId){
-      this.get(this.storeId);
-    }
->>>>>>> master
   },
 
 
@@ -324,7 +262,6 @@ export default {
         loco_mode: true,
       })
       .then(json => {
-<<<<<<< HEAD
         this.localinfo = json["Feature"];
         this.dispCandidate();
       })
@@ -506,101 +443,6 @@ export default {
       this.storeName = this.localinfo[index].Name;
       this.storeAddress = this.localinfo[index].Property.Address;
     },
-=======
-        vm.localinfo = json["Feature"];
-        vm.dispCanditate();
-      })
-      .catch(err => {(vm.errored = true), (vm.error = err);})
-      .finally(() => (vm.loading = false));      
-
-      this.selectPos(-1);
-    },
-
-    //YOLPローカルサーチでストア情報を取得
-    get(val){
-      this.loading=true;
-      this.errored=false;
-      var vm = this;
-      this.$jsonp(LOCAL_SEARCH_URL,{
-        output: 'json',
-        appid: YOLP_APPID,
-        query: vm.query,
-        uid: val,
-        start: 0,
-        results: 1,
-      })
-      .then(json => {
-        vm.localinfo = json["Feature"];
-        vm.selectPos(0);
-      })
-      .catch(err => {(vm.errored = true), (vm.error = err);})
-      .finally(() => (vm.loading = false));      
-    },
-    
-    //場所を選択する
-    selectPos(index){
-      this.selected = index;        
-      this.storeId = this.localinfo[index].Property.Uid;
-      this.storeName = this.localinfo[index].Name;
-      this.storeAddress = this.localinfo[index].Property.Address;
-      var coordinates = [];
-      coordinates = this.localinfo[index].Geometry.Coordinates.split(',');
-      this.storeLatitude = parseFloat(coordinates[0]);
-      this.storeLongitude = parseFloat(coordinates[1]);
-      
-      //選択を地図に反映
-      this.dispCanditate(index);
-    },
-
-    //検索候補の地図・リスト表示
-    dispCanditate(index){
-      var vm = this;
-
-      //表示更新前にクリア
-      if(vm.markers) vm.markers.clearLayers();
-      if(vm.bounds) vm.bounds = null;//消し方微妙。メモリリーク？
-      if(vm.list) vm.list = [];
-
-      //地図にローカルサーチ結果をピン打ち
-      var i = 0;
-      for(var item in vm.localinfo){
-        //店名と住所をリストに追加
-        vm.list.push({
-          Name: vm.localinfo[item].Name, 
-          Address: vm.localinfo[item].Property.Address
-        });
-
-        //緯度経度取得
-        var coordinates = vm.localinfo[item].Geometry.Coordinates.split(',');
-        var lng = parseFloat(coordinates[0]);
-        var lat = parseFloat(coordinates[1]);
-        
-        //ピン設定
-        var marker = L.marker([lat,lng],{id: item});//ピンのアイコン設定
-        marker.bindTooltip(vm.localinfo[item].Name).openPopup();
-        if(index == i){
-          //選択されたピンのアイコン
-          marker.setIcon(vm.selectedIcon);
-          marker.setZIndexOffset(1000);//一番前に表示
-        }
-        else{
-          //通常のピンのアイコン
-          marker.setIcon(vm.icon);
-          //クリックされたら選択する
-          marker.on('click', function(e){vm.selectPos(e.target.options.id)});
-        }
-        vm.markers.addLayer(marker);
-
-        //地図範囲設定
-        if(vm.bounds == null) vm.bounds = L.latLngBounds([lat,lng],[lat,lng]);
-        else vm.bounds.extend([lat,lng]);
-        i++;
-      }
-      vm.map.addLayer(vm.markers);
-      vm.map.fitBounds(vm.bounds);  //ピンに合わせて範囲を表示
-    },
-
->>>>>>> master
 
     clear() {
       this.storeId = "";

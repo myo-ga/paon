@@ -1,5 +1,4 @@
 export const mutations = {
-<<<<<<< HEAD
     setEventId(state, val){
         state.eventId=val;
     },
@@ -36,19 +35,6 @@ export const mutations = {
     setStoreUrl(state,val){
         state.storeUrl = val;
     },
-=======
-    eventid(state,val){state.eventid=val},
-    eventrev(state,val){state.eventrev=val},
-    eventname(state,val){state.eventname=val},
-    comments(state,val){state.comments=val},
-    storeId(state,val){state.storeId=val},
-    storeLatitude(state,val){state.storeLatitude=val},
-    storeLongitude(state,val){state.storeLongitude=val},
-    storeName(state,val){state.storeName=val},
-    storeAddress(state,val){state.storeAddress=val},
-    storeUrl(state,val){state.storeUrl=val},
-    dates(state,val){state.dates=val.concat();},
->>>>>>> master
 
     setEventHistoryMap(state, val) {
         state.eventHistoryMap = val;
