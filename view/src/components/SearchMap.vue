@@ -28,7 +28,6 @@
       <v-flex>
         <v-container class="pa-0 ma-0">
           <v-layout column class="pa-0 ma-0">
-            <!-- TODO: 検索0件のときはエラーにならない、例外発生したときのみ -->
             <v-flex v-if="errored" v-cloak>
               <v-card class="py-2 mb-2">
               <div style="text-align:center">
@@ -154,7 +153,6 @@ export default {
       list: [], 
 
       selectedIcon: L.icon({
-        // TODO: marker-tealは自前で用意しないと存在しないため、leaflet同梱のmarker-icon-2xで検討する(50x82)
         iconUrl: require("@/assets/marker-teal.png"),
         iconRetinaUrl: require("@/assets/marker-teal.png"),
         iconSize: [32, 32], iconAnchor: [16, 31], popupAnchor: [0, -32]
@@ -208,10 +206,6 @@ export default {
   mounted: function() {
     //地図を表示
     this.viewMap();
-
-    // TODO: 登録後の表示で使用する可能性あり
-    // YOLP
-    // if(this.storeId) this.get(this.storeId);
   },
 
   methods: {
@@ -382,6 +376,12 @@ export default {
     dispCandidate() {
       // 検索済みの削除
       this.deleteCandidateMarker();
+
+      // 検索結果ない場合は終了
+      if (this.localinfo === void 0) {
+        this.errored = true; // 検索結果が見つかりませんでしたを表示
+        return;
+      }
 
       // 地図に検索結果をマーカーでピン打ち
       let vm = this;

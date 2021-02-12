@@ -46,7 +46,6 @@
         </v-flex>
 
         <!-- カード５）出欠入力 -->
-        <!-- TODO: selected_memberNの初期値はnullではなく空文字にしたほうがよい、プロパティで渡し、string型のため -->
         <v-flex v-if="selected_memberN !== null">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">参加可否を入力する</v-toolbar>
@@ -104,17 +103,6 @@ export default {
     }
   },
 
-  computed: {
-    isClicked: {
-      get() {
-        // TODO: 名前クリックしてmemberの出欠が変更されるフォーム
-        // refs経由では設定できない？vuexを使わないとダメ？
-        return true;
-        //return this.$refs.member_table.clicked_member != null;
-      }
-    }
-  },
-
   created() {
     let event_id = this.$route.params.id;
     this.get(event_id);
@@ -167,9 +155,6 @@ export default {
           };
 
           if (latlng.lat !== "" || latlng.lng !== "") {
-            // TODO: バグ。getメソッド呼び出した後、ここが呼ばれず画面遷移すると、
-            // そのときにはserach_mapのコンポーネントは破棄されているので、zoomSelectManualMarkerは呼べない
-            // →解決
             vm.$refs.search_map.zoomSelectManualMarker(latlng);
           } else {
             vm.$refs.search_map.clearMarker();

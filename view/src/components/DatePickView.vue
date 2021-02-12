@@ -244,7 +244,6 @@ export default {
       this.selected_date_index = 0;
     },
 
-    // TODO: 登録時に呼び出し実装→済
     // 仮の候補日から追加候補日を抽出
     provideEventAddDays() {
       let ret = [];
@@ -263,7 +262,6 @@ export default {
       this.$store.dispatch('setEventAddDays', {eventAddDays: ret});
     },
 
-    // TODO:更新時に呼び出し実装→済
     // 仮の候補日から削除日を抽出
     provideEventDelDays() {
       let ret = [];

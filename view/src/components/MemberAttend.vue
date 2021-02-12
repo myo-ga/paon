@@ -2,7 +2,7 @@
   <v-container>
     <v-layout column justify-center>
 
-      <v-flex align-self-end v-if="memberN != 'memberX'">
+      <v-flex align-self-end v-if="memberN != NEW_MEMBER">
         <v-btn
           @click="deleteMember"
           color="red"
@@ -54,7 +54,7 @@
         </template>
       </v-flex>
       <v-flex align-self-center>
-        <template v-if="memberN != 'memberX'">
+        <template v-if="memberN != NEW_MEMBER">
           <v-btn v-bind="getButtonStatus()" color="teal lighten-1" @click="updateMember">出欠を更新する</v-btn>
         </template>
         <template v-else>
@@ -72,6 +72,7 @@ import Vue from 'vue'
 import VeeValidate from 'vee-validate'
 import ja from 'vee-validate/dist/locale/ja'
 import serverurl from '../const/serverurl'
+import define from '../const/define'
 
 Vue.use(VeeValidate, {
   locale: "ja",
@@ -91,7 +92,8 @@ export default {
   data: () => ({
     memberName: "", // 登録/更新用
     memberDays: {}, // 登録/更新用
-    memberComment: "", // 登録/更新用、TODO:実装を盛り込むこと
+    memberComment: "", // 登録/更新用
+    NEW_MEMBER: define.NEW_MEMBER
   }),
   props: {
     memberN: {
@@ -99,23 +101,7 @@ export default {
     }
   },
   created() {
-    // TODO: memberXを定数かする。MmeberTableにも使っているので、定義は別ファイルにしたほうがよい
-    // 更新時
-    if (this.memberN !== 'memberX') {
-      this.memberName = this.$store.getters.eventMembers[this.memberN].memberName;
-      this.memberComment = this.$store.getters.eventMembers[this.memberN].memberComment;
-      for (let dayN in this.$store.getters.eventMembers[this.memberN].memberDays) {
-        this.$set(this.memberDays, dayN, this.$store.getters.eventMembers[this.memberN].memberDays[dayN]);
-      }
-    } else {
-      // 登録時
-      this.memberName = "";
-      this.memberComment = "";
-      for (let dayN in this.$store.getters.eventDays) {
-        this.$set(this.memberDays, dayN, "None");
-      }
-    }
-
+    this.setMemberData(this.memberN);
   },
   computed: {
     // eventMembers: {
@@ -134,8 +120,13 @@ export default {
   // プロパティの変更を検知して、氏名を選択したものに変更する
   watch: {
     memberN(val) {
-      if (val !== 'memberX') {
-        // TODO: createdの部分と重複なので関数かすること
+      this.setMemberData(val);
+    }
+  },
+
+  methods: {
+    setMemberData(val) {
+      if (val !== this.NEW_MEMBER) {
         this.memberName = this.$store.getters.eventMembers[val].memberName;
         this.memberComment = this.$store.getters.eventMembers[val].memberComment;
         // Object型なdataに対して、リアクティブ性を持たせつつ扱う場合は、$setで値の更新は行う
@@ -149,14 +140,10 @@ export default {
           this.$set(this.memberDays, dayN, "None");
         }
       }
-    }
-  },
-
-  methods: {
+    },
     setAttend(dayN, attend) {
       this.$set(this.memberDays, dayN, attend);
     },
-   // TODO: ボタンクリックで色を切り替える方法。→解決済
     getColor(dayN, attend) {
         if (this.memberDays[dayN] === attend) {
           return {
@@ -182,7 +169,6 @@ export default {
         response => {
           let ret = response.data;
           if (ret.ok) {
-            // TODO: 同じパスだとrouter経由だと画面の再描画が行われない→解決：goで現在ページを再リロード
             vm.$router.go();
           } else {
             alert(ret);
@@ -238,7 +224,6 @@ export default {
       });
 
     },
-    // TODO: updateと処理を共通化する
     registerMember() {
       this.isLoading = true;
 
@@ -264,37 +249,6 @@ export default {
 
         vm.sendRequestMember(url, query_param);
       });
-
-      // let vm = this;
-      // this.$axios.post(
-      //   'http://nikujaga.mybluemix.net/member/create',
-      //   querystring.stringify(
-      //     Object.assign(
-      //       {
-      //         id: this.$store.getters.eventId,
-      //         memberName: this.memberName,
-      //         memberComment: this.memberComment
-      //       },
-      //       this.memberDays
-      //     )
-      //   )
-      // )
-      // .then(
-      //   response => {
-      //     let ret = response.data;
-      //     if (ret.ok) {
-      //       // TODO: 同じパスだとrouter経由だと画面の再描画が行われない→解決：goで現在ページを再リロード
-      //       vm.$router.go();
-      //     } else {
-      //       alert(ret);
-      //     }
-      //   }
-      // )
-      // .catch(
-      //   error => {
-      //     alert(error);
-      //   }
-      // )
     },
 
   }

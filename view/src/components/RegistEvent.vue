@@ -39,13 +39,6 @@
 
       </v-layout>
       
-      <!-- TODO: 登録 -> 解決 -->
-      <!-- TODO: 更新 -> 解決 -->
-      <!-- TODO: メンバー削除する -> 解決 -->
-      <!-- TODO: イベントを削除する -> 解決 -->
-      <!-- TODO: 出欠を登録する -> 解決-->
-      <!-- TODO: 出欠を更新する -> 解決 -->
-      <!-- TODO: isRegisterProcessingはmixinのisLoadingと置き換え -->
       <!--登録ボタンはわかりやすいようにフッターで表示する（フッターは後ろも見えるように半透明）-->
       <v-footer height="auto" color="rgba(120,120,120,0.3)" fixed>
         <v-layout justify-center row wrap>
@@ -116,7 +109,7 @@ export default {
 
     //APIでデータ送信
     post() {
-      //var vm = this;
+      let vm = this;
       //APIで登録データをポストする
       this.$axios.post(
         serverurl.EVENT_CREATE_URL, 
@@ -135,30 +128,29 @@ export default {
       .then(
         response => {
           let event_id = response.data.id;
-          let eventHistoryMap = Object.assign({}, this.$store.getters.eventHistoryMap);
+          let eventHistoryMap = Object.assign({}, vm.$store.getters.eventHistoryMap);
 
           // ナビゲーションに追加
           eventHistoryMap[event_id] = {
             id: event_id,
-            eventName: this.$store.getters.eventName,
-            //eventDays: this.$store.getters.eventAddDays // TODO: e更新を考慮するとventDaysにしたほうがよいか？ 
-            eventTempDays: this.$refs.date_pick_view.eventTempDays
+            eventName: vm.$store.getters.eventName,
+            eventTempDays: vm.$refs.date_pick_view.eventTempDays
           };
 
-          this.$localStorage.set("eventHistoryMap", eventHistoryMap);
+          vm.$localStorage.set("eventHistoryMap", eventHistoryMap);
           
-          this.$store.dispatch("setEventHistoryMap", {
+          vm.$store.dispatch("setEventHistoryMap", {
             eventHistoryMap: eventHistoryMap
           });
 
-          this.isRegisterProcessing = false;
+          vm.isRegisterProcessing = false;
           // 参照画面に遷移
-          this.$router.push('/ReferEvent/' + event_id);
+          vm.$router.push('/ReferEvent/' + event_id);
         }
       )
       .catch(function (error) {
           alert(error);
-          this.isRegisterProcessing = false;
+          vm.isRegisterProcessing = false;
       });
     },
 
