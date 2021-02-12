@@ -8,14 +8,43 @@
       <v-layout column wrap style="max-width: 800px" class="mx-auto">
 
         <!--カード１）イベント情報登録-->
+<<<<<<< HEAD
         <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
             <EventDescription ref="event_description"/>
+=======
+        <v-flex xs12 sm8 offset-sm2 shrink>
+          <v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">あなたのイベントについて教えてください。</v-toolbar>
+            <v-layout column justify-center class="pa-3">
+              <v-flex class="mx-3">
+                <v-text-field
+                  label="イベント名"
+                  v-model="name"
+                  v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('name')"
+                  data-vv-name="name"
+                  required>
+                </v-text-field>
+              </v-flex>
+              <v-flex class="mx-3">
+                <v-textarea
+                  label="イベントの説明"
+                  v-model="comments"
+                  v-validate="'max:120'"
+                  maxlength="120"
+                  rows="10"
+                  row-height="35"
+                  counter full-width solo>
+                </v-textarea>
+              </v-flex>
+            </v-layout>
+>>>>>>> master
           </v-card>
         </v-flex>
 
         <!--カード２）候補日選択-->
+<<<<<<< HEAD
         <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
@@ -27,6 +56,17 @@
         <v-flex><v-card>
             <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
             <SerchMap ref="search_map"/>
+=======
+        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">候補日を選択してください。</v-toolbar>
+            <DatePickView/>
+        </v-card></v-flex>
+
+        <!--カード３）地図-->
+        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">どこに行きますか。</v-toolbar>
+            <SerchMap/>
+>>>>>>> master
         </v-card></v-flex>
 
         <!--カード４）テスト：フッターに地図が隠れちゃうから残してる。後でなんとかする。-->
@@ -83,6 +123,7 @@ export default {
   methods: { 
     //表示データを登録する
     submit () {
+<<<<<<< HEAD
       this.isRegisterProcessing = true;
 
       // 候補日をvuexに設定する
@@ -98,6 +139,27 @@ export default {
         }
         this.post();
       });
+=======
+
+      //検証
+      this.$validator.validateAll()
+
+      //vuexのstoreに表示データをコミットする
+      this.$store.commit('eventname', this.name);
+      this.$store.commit('comments', this.comments);
+      
+      //vuexからcomponentの値を取得
+      this.dates = this.$store.state.dates;
+      this.storeId = this.$store.state.storeId;
+      this.storeLatitude = this.$store.state.storeLatitude;
+      this.storeLongitude = this.$store.state.storeLongitude;
+      this.storeName = this.$store.state.storeName;
+      this.storeAddress = this.$store.state.storeAddress;
+      this.storeUrl = this.$store.state.storeUrl;
+
+      //データを送信する
+      this.post();
+>>>>>>> master
     },
 
     //表示データをクリアする
@@ -112,6 +174,7 @@ export default {
       let vm = this;
       //APIで登録データをポストする
       this.$axios.post(
+<<<<<<< HEAD
         serverurl.EVENT_CREATE_URL, 
         querystring.stringify({
           eventName: this.$store.getters.eventName,
@@ -123,6 +186,19 @@ export default {
           storeName: this.$store.getters.storeName,
           storeAddress: this.$store.getters.storeAddress,
           storeUrl: this.$store.getters.storeUrl
+=======
+        'http://localhost:3000/event/create', 
+        querystring.stringify({
+          eventName: vm.name,
+          eventMemo: vm.comments,
+          eventAddDays: vm.dates.join(','),
+          storeId:  vm.storeId,                       //テスト:店のID固定
+          storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
+          storeLongitude: vm.storeLongitude,          //テスト:店の経度固定
+          storeName: vm.storeName,                    //テスト:店名固定
+          storeAddress: vm.storeAddress,              //テスト:店の住所固定
+          storeUrl: vm.storeUrl                       //テスト:店のURL固定
+>>>>>>> master
         })
       )
       .then(

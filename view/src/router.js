@@ -26,9 +26,16 @@ export default new Router({
       component: UpdateEvent
     },
     {
+<<<<<<< HEAD
       path: '/ReferEvent/:id',
       name: 'ReferEvent',
       component: () => import('./components/ReferEvent.vue'),
     }
+=======
+      path: '/AdjustEvent',
+      name: 'AdjustEvent',
+      component: () => import('./components/AdjustEvent.vue')
+    },
+>>>>>>> master
   ]
 })

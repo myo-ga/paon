@@ -12,14 +12,43 @@
           <v-btn v-bind="getButtonStatus()" color="red" @click="deleteEvent">イベントを削除する</v-btn>
         </v-flex>
         <!--カード１）イベント情報登録-->
+<<<<<<< HEAD
         <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
             <EventDescription ref="event_description"/>
+=======
+        <v-flex xs12 sm8 offset-sm2 shrink>
+          <v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">あなたのイベントについて教えてください。</v-toolbar>
+            <v-layout column justify-center class="pa-3">
+              <v-flex class="mx-3">
+                <v-text-field
+                  label="イベント名"
+                  v-model="eventname"
+                  v-validate="'required|max:25'" :counter="25" :error-messages="errors.collect('eventname')"
+                  data-vv-name="eventname"
+                  required>
+                </v-text-field>
+              </v-flex>
+              <v-flex class="mx-3">
+                <v-textarea
+                  label="イベントの説明"
+                  v-model="comments"
+                  v-validate="'max:120'"
+                  maxlength="120"
+                  rows="10"
+                  row-height="35"
+                  counter full-width solo>
+                </v-textarea>
+              </v-flex>
+            </v-layout>
+>>>>>>> master
           </v-card>
         </v-flex>
 
         <!--カード２）候補日選択-->
+<<<<<<< HEAD
         <v-flex class="mb-3">
           <v-card>
             <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
@@ -31,6 +60,17 @@
         <v-flex><v-card>
             <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
             <SerchMap ref="search_map"/>
+=======
+        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">候補日を選択してください。</v-toolbar>
+            <DatePickView/>
+        </v-card></v-flex>
+
+        <!--カード３）地図-->
+        <v-flex xs12 sm8 offset-sm2 shrink><v-card>
+            <v-toolbar dense dark color="teal lighten-1" class="subheading">どこに行きますか。</v-toolbar>
+            <SerchMap/>
+>>>>>>> master
         </v-card></v-flex>
 
         <!--カード４）テスト：フッターに地図が隠れちゃうから残してる。後でなんとかする。-->
@@ -80,6 +120,7 @@ export default {
     isUpdateProcessing: false
   }),
 
+<<<<<<< HEAD
   mounted() {
     // refsを参照しているので、子コンポーネントが生成された後にclearは参照できる
     // createdではなくmountedにやる
@@ -93,6 +134,62 @@ export default {
     } else {
       this.$refs.search_map.clearMarker();
     }
+=======
+  computed:{
+    eventrev:{
+      get(){return this.$store.state.eventrev},
+      set(val){this.$store.commit('eventrev', val)}
+    },
+    eventname:{
+      get(){return this.$store.state.eventname},
+      set(val){this.$store.commit('eventname', val)}
+    },
+    comments:{
+      get(){return this.$store.state.comments},
+      set(val){this.$store.commit('comments', val)}
+    },
+    datetimes:{
+      get(){return this.$store.state.dates},
+      set(val){this.$store.commit('dates', val)}
+    },
+    storeId:{
+      get(){return this.$store.state.storeId},
+      set(val){this.$store.commit('storeId', val)}
+    },
+    storeLatitude:{
+      get(){return this.$store.state.storeLatitude},
+      set(val){this.$store.commit('storeLatitude', val)}
+    },
+    storeLongitude:{
+      get(){return this.$store.state.storeLongitude},
+      set(val){this.$store.commit('storeLongitude', val)}
+    },
+    storeName:{
+      get(){return this.$store.state.storeName},
+      set(val){this.$store.commit('storeName', val)}
+    },
+    storeAddress:{
+      get(){return this.$store.state.storeAddress},
+      set(val){this.$store.commit('storeAddress', val)}
+    },
+    storeUrl:{
+      get(){return this.$store.state.storeUrl},
+      set(val){this.$store.commit('storeUrl', val)}
+    },
+
+  },
+  
+  created () {
+    //バリデーション設定
+    this.$validator.localize('ja', this.validate_dictionary);
+    
+    //URLからパラメータを取得
+    this.eventId = this.$route.query.id;
+
+    //画面表示時にデータを取得。なければ登録画面に遷移。
+    if(this.eventId){ this.get(); }
+    else{this.$router.push('/');}
+>>>>>>> master
   },
 
 
@@ -129,6 +226,7 @@ export default {
       //var vm = this;
       //APIで登録データをポストする
       this.$axios.post(
+<<<<<<< HEAD
         serverurl.EVENT_UPDATE_URL, 
         querystring.stringify({
           id: this.$store.getters.eventId,
@@ -143,6 +241,22 @@ export default {
           storeName: this.$store.getters.storeName,
           storeAddress: this.$store.getters.storeAddress,
           storeUrl: this.$store.getters.storeUrl
+=======
+        'http://localhost:3000/event/update', 
+        querystring.stringify({
+          id: vm.eventId,
+          rev: vm.eventrev,
+          eventName: vm.eventname,
+          eventMemo: vm.comments,
+          eventAddDays: vm.datetimes.join(','),
+          eventDelDays: 'day0,day1,day2,day3,day4',
+          storeId:  vm.storeId,                       //テスト:店のID固定
+          storeLatitude: vm.storeLatitude,            //テスト:店の緯度固定
+          storeLongitude: vm.storeLongitude,          //テスト:店の経度固定
+          storeName: vm.storeName,                    //テスト:店名固定
+          storeAddress: vm.storeAddress,              //テスト:店の住所固定
+          storeUrl: vm.storeUrl                       //テスト:店のURL固定
+>>>>>>> master
         })
       )
       .then(
@@ -173,6 +287,7 @@ export default {
       });
     },
 
+<<<<<<< HEAD
     deleteEvent() {
       this.isLoading = true;
       let vm = this;
@@ -184,6 +299,17 @@ export default {
           rev: this.$store.getters.eventRev,
         })
       )
+=======
+    //APIでデータ取得
+    get () {
+      var vm = this;
+      this.$axios.get(
+        'http://localhost:3000/event/get',{
+          params: {
+            id: vm.eventId //URLから取得したIDでイベントをリクエスト
+          }
+      })
+>>>>>>> master
       .then(
         response => {
 

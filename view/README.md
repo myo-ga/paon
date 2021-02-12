@@ -1,3 +1,27 @@
+## 概要
+paonのUI
+
+## セットアップ
+- credentials.jsonを作成してyolp.appidを設定する。
+credentials.json
+```
+{
+    "yolp": {
+        "appid": "***"
+    }
+}
+
+```
+- インストール
+```
+npm install
+```
+- 起動
+```
+npm run serve
+```
+
+
 # my-vuetify
 
 ## Project setup
@@ -27,3 +51,4 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
