@@ -2,12 +2,18 @@
 <template>
 <!--画面：イベント登録-->
 
-  <v-container grid-list-xl>
+  <v-container>
 
       <!--カードを縦に並べる-->
-      <v-layout row wrap>
+      <v-layout column wrap style="max-width: 800px" class="mx-auto">
 
         <!--カード１）イベント情報登録-->
+<<<<<<< HEAD
+        <v-flex class="mb-3">
+          <v-card>
+            <v-toolbar dense dark color="teal lighten-1">あなたのイベントについて教えてください。</v-toolbar>
+            <EventDescription ref="event_description"/>
+=======
         <v-flex xs12 sm8 offset-sm2 shrink>
           <v-card>
             <v-toolbar dense dark color="teal lighten-1" class="subheading">あなたのイベントについて教えてください。</v-toolbar>
@@ -33,10 +39,24 @@
                 </v-textarea>
               </v-flex>
             </v-layout>
+>>>>>>> master
           </v-card>
         </v-flex>
 
         <!--カード２）候補日選択-->
+<<<<<<< HEAD
+        <v-flex class="mb-3">
+          <v-card>
+            <v-toolbar dense dark color="teal lighten-1">候補日を選択してください。</v-toolbar>
+            <DatePickView ref="date_pick_view"/>
+          </v-card>
+        </v-flex>
+
+        <!--カード３）地図-->
+        <v-flex><v-card>
+            <v-toolbar dense dark color="teal lighten-1">どこに行きますか。</v-toolbar>
+            <SerchMap ref="search_map"/>
+=======
         <v-flex xs12 sm8 offset-sm2 shrink><v-card>
             <v-toolbar dense dark color="teal lighten-1" class="subheading">候補日を選択してください。</v-toolbar>
             <DatePickView/>
@@ -46,15 +66,16 @@
         <v-flex xs12 sm8 offset-sm2 shrink><v-card>
             <v-toolbar dense dark color="teal lighten-1" class="subheading">どこに行きますか。</v-toolbar>
             <SerchMap/>
+>>>>>>> master
         </v-card></v-flex>
 
         <!--カード４）テスト：フッターに地図が隠れちゃうから残してる。後でなんとかする。-->
-        <v-flex xs12 sm8 offset-sm2 shrink fixed>
+        <!-- <v-flex xs12 sm12 md10 lg7 class="mx-auto">
           <v-card>
             <v-toolbar>
             </v-toolbar>
           </v-card>
-        </v-flex>
+        </v-flex> -->
 
       </v-layout>
       
@@ -63,7 +84,7 @@
         <v-layout justify-center row wrap>
           <v-flex shrink>
             <v-btn @click="clear">クリア</v-btn>
-            <v-btn @click="submit" color="purple darken-4 white--text">登録</v-btn>
+            <v-btn :disabled="isRegisterProcessing" @click="submit" color="purple darken-4 white--text">登録</v-btn>
           </v-flex>
         </v-layout>
       </v-footer>
@@ -74,57 +95,51 @@
 
 
 <script>
-import Vue from 'vue'
-import VeeValidate from 'vee-validate'    //バイデーション
 import SerchMap from './SearchMap'        //地図表示
 import DatePickView from './DatePickView' //カレンダー
-
-Vue.use(VeeValidate)
+import EventDescription from './EventDescription'
+import serverurl from '../const/serverurl'
 
 //Axios（APIに使用）
 const querystring = require('querystring');
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
   components: {
     SerchMap,     //地図コンポーネント
     DatePickView,
+    EventDescription
   },
-  data: () => ({
-    eventId: '',  //イベントID
-    name: '',     //イベント名
-    comments: '', //イベントのコメント
-    dates: [],  //日付配列
-    date: '',   //日付 YYYY-MM-DD
-    storeId:  '',                 //テスト:店のID固定
-    storeLatitude: '',            //テスト:店の緯度固定
-    storeLongitude: '',           //テスト:店の経度固定
-    storeName: '',                //テスト:店名固定
-    storeAddress: '',             //テスト:店の住所固定
-    storeUrl: '',                  //テスト:店のURL固定
 
-    //バイデーション情報
-    validate_dictionary: {
-      custom: {
-        name: {
-          required: () => '必ず入力してください',
-          max: '25文字まで入力可能です。'
-        }
-      }
-    },
+  data: () => ({
+    isRegisterProcessing: false
   }),
 
-  //画面表示時前処理
-  created () {
-    //バリデーション設定
-    this.$validator.localize('ja', this.validate_dictionary);
+  mounted() {
+    // refsを参照しているので、子コンポーネントが生成された後にclearは参照できる
+    // createdではなくmountedにやる
+    this.clear();
   },
 
   methods: { 
     //表示データを登録する
     submit () {
+<<<<<<< HEAD
+      this.isRegisterProcessing = true;
+
+      // 候補日をvuexに設定する
+      this.$refs.date_pick_view.provideEventAddDays();
+      // 検証
+      this.$refs.event_description.$validator.validateAll()
+      .then((result) => {
+        // 入力エラーあり
+        if (result === false) {
+          alert("不適切な項目があるため、入力項目を見直してください。");
+          this.isRegisterProcessing = false;
+          return false;
+        }
+        this.post();
+      });
+=======
 
       //検証
       this.$validator.validateAll()
@@ -144,21 +159,34 @@ export default {
 
       //データを送信する
       this.post();
+>>>>>>> master
     },
 
     //表示データをクリアする
-    clear () {
-      this.name = ''
-      this.comments = ''
-      this.dates = ''
-      this.$validator.reset()
+    clear() {
+      this.$refs.event_description.clear();
+      this.$refs.date_pick_view.clear();
+      this.$refs.search_map.clear();
     },
 
     //APIでデータ送信
-    post () {
-      var vm = this;
+    post() {
+      let vm = this;
       //APIで登録データをポストする
       this.$axios.post(
+<<<<<<< HEAD
+        serverurl.EVENT_CREATE_URL, 
+        querystring.stringify({
+          eventName: this.$store.getters.eventName,
+          eventMemo: this.$store.getters.eventMemo,
+          eventAddDays: this.$store.getters.eventAddDays.join(","),
+          storeId: this.$store.getters.storeId,
+          storeLatitude: this.$store.getters.storeLatitude,
+          storeLongitude: this.$store.getters.storeLongitude,
+          storeName: this.$store.getters.storeName,
+          storeAddress: this.$store.getters.storeAddress,
+          storeUrl: this.$store.getters.storeUrl
+=======
         'http://localhost:3000/event/create', 
         querystring.stringify({
           eventName: vm.name,
@@ -170,18 +198,35 @@ export default {
           storeName: vm.storeName,                    //テスト:店名固定
           storeAddress: vm.storeAddress,              //テスト:店の住所固定
           storeUrl: vm.storeUrl                       //テスト:店のURL固定
+>>>>>>> master
         })
       )
       .then(
         response => {
-          vm.eventId = response.data.id;
+          let event_id = response.data.id;
+          let eventHistoryMap = Object.assign({}, vm.$store.getters.eventHistoryMap);
+
+          // ナビゲーションに追加
+          eventHistoryMap[event_id] = {
+            id: event_id,
+            eventName: vm.$store.getters.eventName,
+            eventTempDays: vm.$refs.date_pick_view.eventTempDays
+          };
+
+          vm.$localStorage.set("eventHistoryMap", eventHistoryMap);
           
-          //update画面に遷移
-          vm.$router.push('/UpdateEvent/?id=' + vm.eventId);
+          vm.$store.dispatch("setEventHistoryMap", {
+            eventHistoryMap: eventHistoryMap
+          });
+
+          vm.isRegisterProcessing = false;
+          // 参照画面に遷移
+          vm.$router.push('/ReferEvent/' + event_id);
         }
       )
       .catch(function (error) {
           alert(error);
+          vm.isRegisterProcessing = false;
       });
     },
 

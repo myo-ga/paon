@@ -6,29 +6,14 @@
       v-model="drawer"
       app
     >
-      <v-list>
-        <template v-for="(link,index) in links">
-            <v-list-tile 
-              color="teal" 
-              ripple 
-              v-bind:to="link.path"
-              @click="viewing=index" 
-              :key="index">
-              <v-list-action>
-                <v-icon v-if="viewing==index" color="primary">{{link.icon}}</v-icon>
-                <v-icon v-else>{{link.icon}}</v-icon>
-              </v-list-action>
-              <v-list-tile-content>
-                <v-list-tile-title v-html="link.title"></v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-        </template>
-      </v-list>
+      <Navigation/>
     </v-navigation-drawer>
 
     <v-toolbar height=35 color="gradient" dark app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title class="font-weight-light">paon</v-toolbar-title>
+      <v-toolbar-title class="font-weight-light">
+        <router-link to="/" style="color: white; text-decoration: none;">paon</router-link>
+      </v-toolbar-title>
     </v-toolbar>
     
     <v-content>
@@ -43,17 +28,22 @@
 
 <script>
 
+import Navigation from './components/Navigation.vue'
+
   export default {
     name: "App",
+    components: {
+      Navigation
+    },
     data: () => ({
       drawer: false,
-      links:[
-        {title: "イベントを登録する", icon: "assignment", path: "/" },
-        {title: "イベントに参加する", icon: "today", path: "/AdjustEvent" },
-        {title: "テスト", icon: "assignment", path: "/VueTest" },
-        {title: "テスト２", icon: "assignment", path: "/VueTest2" },
-      ],
-      viewing: 0,
+      // links:[
+      //   {title: "イベントを登録する", icon: "assignment", path: "/" },
+      //   {title: "イベントに参加する", icon: "today", path: "/AdjustEvent" },
+      //   {title: "テスト", icon: "assignment", path: "/VueTest" },
+      //   {title: "テスト２", icon: "assignment", path: "/VueTest2" },
+      // ],
+      // viewing: 0,
     }),
     props: {
       source: String
@@ -64,6 +54,6 @@
 <style lang="stylus" scoped>
   .gradient{
     background: linear-gradient(90deg, teal 30%, purple 150%);
-    z-index: 1000 !important;
+    // z-index: 1000 !important;
   }
 </style>

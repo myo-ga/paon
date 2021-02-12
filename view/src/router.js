@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import RegistEvent from './components/RegistEvent.vue'
 import UpdateEvent from './components/UpdateEvent.vue'
+import Top from './components/Top.vue'
 
 Vue.use(Router)
 
@@ -11,18 +12,30 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'Top',
+      component: Top
+    },
+    {
+      path: '/RegisterEvent',
       name: 'RegistEvent',
       component: RegistEvent
     },
     {
-      path: '/UpdateEvent',
+      path: '/UpdateEvent/:id',
       name: 'UpdateEvent',
       component: UpdateEvent
     },
     {
+<<<<<<< HEAD
+      path: '/ReferEvent/:id',
+      name: 'ReferEvent',
+      component: () => import('./components/ReferEvent.vue'),
+    }
+=======
       path: '/AdjustEvent',
       name: 'AdjustEvent',
       component: () => import('./components/AdjustEvent.vue')
     },
+>>>>>>> master
   ]
 })

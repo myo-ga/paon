@@ -1,21 +1,42 @@
-export const state = {
-    eventid: '',
-    eventrev: '',
-    eventname: '',
-    comments: '',
-
-    dates: [],
-    times: [],
-
-    storeId:  '',
-    storeLatitude: '',
-    storeLongitude: '',
-    storeName: '',
-    storeAddress: '',
-    storeUrl: ''
-};
-
 export const mutations = {
+<<<<<<< HEAD
+    setEventId(state, val){
+        state.eventId=val;
+    },
+    setEventRev(state,val){
+        state.eventRev = val;
+    },
+    setEventName(state,val){
+        state.eventName = val;
+    },
+    setEventAddDays(state, val) {
+        state.eventAddDays = val;
+    },
+    setEventDelDays(state, val) {
+        state.eventDelDays = val;
+    },
+    setEventMemo(state,val){
+        state.eventMemo = val;
+    },
+    setStoreId(state, val){
+        state.storeId = val;
+    },
+    setStoreLatitude(state, val){
+        state.storeLatitude = val;
+    },
+    setStoreLongitude(state, val){
+        state.storeLongitude = val;
+    },
+    setStoreName(state, val){
+        state.storeName = val;
+    },
+    setStoreAddress(state, val){
+        state.storeAddress = val;
+    },
+    setStoreUrl(state,val){
+        state.storeUrl = val;
+    },
+=======
     eventid(state,val){state.eventid=val},
     eventrev(state,val){state.eventrev=val},
     eventname(state,val){state.eventname=val},
@@ -27,20 +48,29 @@ export const mutations = {
     storeAddress(state,val){state.storeAddress=val},
     storeUrl(state,val){state.storeUrl=val},
     dates(state,val){state.dates=val.concat();},
+>>>>>>> master
 
-    submit(state, payload){
-        state.eventid = payload.eventid;
-        state.eventname = payload.eventname;
-        state.comments = payload.comments;
+    setEventHistoryMap(state, val) {
+        state.eventHistoryMap = val;
     },
+    setEvent(state, event) {
+        state.eventName = event.eventName;
+        state.eventMemo = event.eventMemo;
+        state.storeId = event.storeId;
+        state.storeLatitude = event.storeLatitude;
+        state.storeLongitude = event.storeLongitude;
+        state.storeName = event.storeName;
+        state.storeAddress = event.storeAddress;
+        state.storeUrl = event.storeUrl;
+        state.eventId = event.id;
+        state.eventRev = event.rev;
+        state.eventMembers = event.eventMembers;
+        state.eventDays = event.eventDays;
+    },
+
+
     updaterev(state, payload){
         state.eventrev = payload.eventrev;
-    },
-    setDates(state, payload){  
-        state.dates = payload.dates;
-    },
-    setTimes(state, payload){  
-        state.times = payload.times;
     },
     storeSelect(state, payload){
         state.storeId = payload.storeId;

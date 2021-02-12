@@ -1,0 +1,35 @@
+version: '3'
+services:
+  server:
+    container_name: dev_server
+    build: 
+        context: ./
+        dockerfile: ./server/Dockerfile
+    volumes:
+      - ./server:/server
+    command: bash -c "npm install && npm start"
+    ports:
+      - 8081:3000
+    tty: true
+
+  couchdb:
+    container_name: dev_couchdb
+    image: couchdb:3.1.1
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: password
+    ports:
+      - 5984:5984
+    tty: true
+
+  view:
+    container_name: dev_view
+    build:
+      context: ./
+      dockerfile: ./view/Dockerfile
+    volumes:
+      - ./view:/view
+    command: bash -c "npm install && npm run serve"
+    ports:
+      - 8080:80
+    tty: true
