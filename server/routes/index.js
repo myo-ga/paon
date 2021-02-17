@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 router.get('/debug', async function(req, res, next) {
   try {
     let db = new model.DB();
-    db.init('paon');
+    await db.init('paon');
     let all_record = await db.getAllRecord();
     let id_list = [];
     for (let record of all_record.rows) {
@@ -29,7 +29,7 @@ router.get('/debug', async function(req, res, next) {
 router.get('/debug/getall', async function(req, res, next) {
   try {
     let db = new model.DB();
-    db.init('paon');
+    await db.init('paon');
     let all_record = await db.getAllRecord();
     let id_list = [];
     for (let record of all_record.rows) {

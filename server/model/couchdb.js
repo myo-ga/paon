@@ -1,4 +1,4 @@
-readCredentialUrl = function () {
+function readCredentialUrl() {
     let appEnv = null;
     appEnv= require('../couchdb.json');
     let url = 'http://'
@@ -8,27 +8,34 @@ readCredentialUrl = function () {
         + appEnv.credentials.port;
     return url;
 }
+
 var nano = require('nano')(readCredentialUrl());
 
 var DB = function() {
 
     // 初期化
-    this.init = function (dbName) {
-        nano.config.url = readCredentialUrl();
-        
-        //console.log('URL:' + nano.url);
-        nano.db.list(
-            (err, body) => {
-                if(err){
-                    return console.log('Failed to initialize Couchdb: ' + err.message);
-                }
-                else if(body.indexOf(dbName) == -1){
-                    nano.db.create(dbName);
-                    console.log('*****test');
-                }
+    this.init = async function (dbName) {
+
+        let db_list = [];
+
+        try {
+            db_list = await nano.db.list();
+        } catch (err) {
+            console.log('Failed to initialize Couchdb: ' + err.message);
+            throw err;
+        }
+
+        if (db_list.indexOf(dbName) === -1) {
+            try {
+                await nano.db.create(dbName);
+            } catch (err) {
+                console.log('Failed to create Couchdb: ' + err.message);
+                throw err;
             }
-        );
+        }
+
         this.dbIf = nano.db.use(dbName);
+        return true;
     };
 
     // id検索

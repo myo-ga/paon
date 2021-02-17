@@ -66,7 +66,7 @@ router.post('/create', [
     };
 
     let db = new model.DB();
-    db.init('paon');
+    await db.init('paon');
     let body = await db.insertOneRecord(data);
     res.send(body);
 
@@ -125,7 +125,7 @@ router.post('/update', [
 
     // _id, _revよりメンバーを取得する
     let db = new model.DB();
-    db.init('paon');
+    await db.init('paon');
 
     let currentEvent = await db.getOneRecord(_id);
     if (currentEvent === void 0) {
@@ -241,7 +241,7 @@ router.get('/get', [
     let id = req.query.id;
 
     let db = new model.DB();
-    db.init('paon');
+    await db.init('paon');
     let currentEvent = await db.getOneRecord(id);
     if (currentEvent === void 0) {
       let ret = {
@@ -290,7 +290,7 @@ router.post('/delete', [
     let _rev = req.body.rev;
 
     let db = new model.DB();
-    db.init('paon');
+    await db.init('paon');
 
     let body = await db.deleteOneRecord(_id, _rev);
     res.send(body);

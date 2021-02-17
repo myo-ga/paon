@@ -29,7 +29,7 @@ router.post('/create', [
 
         // dbより読み込み、idよりevent照会
         let db = new model.DB();
-        db.init('paon');
+        await db.init('paon');
 
         let currentEvent = await db.getOneRecord(id);
         if (currentEvent === void 0) {
@@ -113,7 +113,7 @@ router.post('/update', [
 
         // dbより読み込み、idよりevent照会
         let db = new model.DB();
-        db.init('paon');
+        await db.init('paon');
 
         let currentEvent = await db.getOneRecord(id);
         if (currentEvent === void 0) {
@@ -189,7 +189,7 @@ router.post('/delete', [
 
         // dbより読み込み、idよりevent照会
         let db = new model.DB();
-        db.init('paon');
+        await db.init('paon');
 
         let currentEvent = await db.getOneRecord(id);
         if (currentEvent === void 0) {
