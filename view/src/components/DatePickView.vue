@@ -277,7 +277,6 @@ export default {
           ret.push(dayN);
         }
       }
-      console.log("provideEventDelDays ", ret);
       this.$store.dispatch('setEventDelDays', {eventDelDays: ret});
     }
     

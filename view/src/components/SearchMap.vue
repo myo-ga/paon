@@ -198,10 +198,6 @@ export default {
       get(){return this.$store.getters.storeUrl},
       set(val){this.$store.dispatch('setStoreUrl', {storeUrl: val})}
     },
-    storeUrl:{
-      get(){return this.$store.state.storeUrl},
-      set(val){this.$store.commit('storeUrl', val)}
-    },
     center: function(){
       return this.map.getCenter();
     }
