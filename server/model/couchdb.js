@@ -46,7 +46,7 @@ class DB {
             return result;
         } catch(err) {
             throw err;
-        };
+        }
     }
     // 挿入
     // awaitでinsertを同期処理する

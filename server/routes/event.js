@@ -218,7 +218,7 @@ router.post('/update', [
       type: config.get('common.error.updateRecord'),
       errors: [{msg:err.message}]
     };
-    res.send(ret);
+    res.status(422).json(ret);
   }
 });
 
@@ -252,6 +252,7 @@ router.get('/get', [
       return res.status(422).json(ret);
     }
     
+    currentEvent["ok"] = true;
     currentEvent["id"] = currentEvent._id;
     currentEvent["rev"] = currentEvent._rev;
     delete currentEvent._id;
@@ -266,6 +267,8 @@ router.get('/get', [
       type: config.get('common.error.referRecord'),
       errors: [{msg:err.message}]
     };
+    // dbから取得できない場合は、422にしない。現状レコードがないものとして扱う。
+    // errorのmsg見て、deletedのときのみview側でキャッシュ削除したほうがよいかも
     res.send(ret);
   }
 });
