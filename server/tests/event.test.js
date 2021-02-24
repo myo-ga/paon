@@ -358,5 +358,172 @@ describe("Integration Test", () => {
 
     });
 
-  })
+  });
+
+
+
+  describe("POST /event/delete", () => {
+    var event_id = "";
+    var event_rev = "";
+
+    beforeAll(async () => {
+      // 前処理として、db削除テスト用途に1レコード登録する
+      let data = {
+        eventName: "飲み会",
+        eventMemo: "のみましょう",
+        eventAddDays: "2021-01-01 18:00,2021-01-01 21:00",
+        storeId: "1234567890",
+        storeLatitude: "23.12",
+        storeLongitude: "135.12",
+        storeName: "鳥貴族",
+        storeAddress: "東京都新宿区東口",
+        storeUrl: "http://sp.torikizoku.co.jp"
+      };
+      try {
+        let response = await request(app).post("/event/create").send(data);
+        if (response.body.ok === false) {
+          throw new Error("response ok field fail.");
+        }
+        event_id = response.body.id;
+        event_rev = response.body.rev;
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    afterAll(async () => {
+      // 後処理として、db削除用途に登録したレコードを削除する
+      try {
+        let data = {
+          id: event_id,
+          rev: event_rev
+        };
+        let response = await request(app).post("/event/delete").send(data);
+        if (response.body.ok === false) {
+          throw new Error("response ok field fail.");
+        }
+      } catch (err) {
+        console.log("A test record of /event/delete is already deleted !");
+      }
+    });
+
+    // idの文字数超過のバリデーションエラー
+    test("idの文字数超過によりバリデーションが失敗する", (done) => {
+      let id = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+      let rev = "12345";
+      event = {id, rev};
+      postValidateFailTest(done, "/event/delete", "id");
+    });
+
+    // revの文字数超過のバリデーションエラー
+    test("revの文字数超過によりバリデーションが失敗する", (done) => {
+      let id = "12345";
+      let rev = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+      event = {id, rev};
+      postValidateFailTest(done, "/event/delete", "rev");
+    });
+
+    // 指定されたidが正しくない
+    test("idのフォーマットが正しくないため削除に失敗する", (done) => {
+      let data = {
+        id: "",
+        rev: ""
+      };
+      request(app).post("/event/delete")
+      .send(data)
+      .expect(422)
+      .expect((res) => {
+        let ret = {
+          ok: false,
+          type: "record delete error",
+          errors: [{msg: "Invalid doc id"}]
+        }
+        expect(res.body).toEqual(ret);
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(res);
+          return done(err);
+        }
+        else  done();
+      })
+    });
+
+    // 指定されたrevが正しくない
+    test("revのフォーマットが正しくないため削除に失敗する", (done) => {
+      let data = {
+        id: event_id,
+        rev: "123"
+      };
+      request(app).post("/event/delete")
+      .send(data)
+      .expect(422)
+      .expect((res) => {
+        let ret = {
+          ok: false,
+          type: "record delete error",
+          errors: [{msg: "Invalid rev format"}]
+        }
+        expect(res.body).toEqual(ret);
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(res);
+          return done(err);
+        }
+        else  done();
+      })
+    });
+
+    // 指定されたidのレコードが存在しない
+    test("idが存在しないため削除に失敗する", (done) => {
+      let data = {
+        id: "0a1945a9296c62d2867d1d77d7000010",
+        rev: "123"
+      };
+      request(app).post("/event/delete")
+      .send(data)
+      .expect(422)
+      .expect((res) => {
+        let ret = {
+          ok: false,
+          type: "record delete error",
+          errors: [{msg: "missing"}]
+        }
+        expect(res.body).toEqual(ret);
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(res);
+          return done(err);
+        }
+        else  done();
+      })
+    });
+
+    // 削除成功
+    test("dbからレコード削除に成功する", (done) => {
+      let data = {
+        id: event_id,
+        rev: event_rev
+      };
+      request(app).post("/event/delete")
+      .send(data)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.ok).toBe(true);
+        expect(typeof res.body.id).toBe("string");
+        expect(typeof res.body.rev).toBe("string");
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(res);
+          return done(err);
+        }
+        else  done();
+      })
+    });
+
+
+  });
 });
