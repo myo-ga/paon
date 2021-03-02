@@ -46,7 +46,7 @@ router.post('/create', [
         let eventDays = currentEvent.eventDays;
 
         // eventDaysのdayNをキーに候補日を設定
-        for (dayN in eventDays) {
+        for (let dayN in eventDays) {
             memberDays[dayN] = config.get("member.candidate.None");
             if (req.body[dayN] !== void 0 &&
                 memberValidator.validateCandidate(req.body[dayN])) {
@@ -56,7 +56,7 @@ router.post('/create', [
 
         // memberNの最大値を取得
         let maxN = -1;
-        for (memberN in currentEvent.eventMembers) {
+        for (let memberN in currentEvent.eventMembers) {
             let curN = parseInt(memberN.replace("member", ""));
             maxN = Math.max(maxN, curN)
         }
@@ -141,7 +141,7 @@ router.post('/update', [
         member.memberComment = memberComment;
 
         // 候補日を更新
-        for (dayN in member.memberDays) {
+        for (let dayN in member.memberDays) {
             if (req.body[dayN] !== void 0 &&
                 memberValidator.validateCandidate(req.body[dayN])) {
                 member.memberDays[dayN] = req.body[dayN];
