@@ -23,23 +23,6 @@ describe("Integration Test", () => {
     })
   }
 
-  function getValidateFailTest(done, uri, field) {
-    request(app).get(uri)
-    .send(event)
-    .expect(422)
-    .expect((res) => {
-      expect(res.body.ok).toBe(false);
-      expect(res.body.type).toBe("validation error");
-      expect(res.body.errors[0].param).toBe(field);})
-    .end((err, res) => {
-      if (err) {
-        console.log(res);
-        return done(err);
-      }
-      else  done();
-    })
-  }
-
   describe("POST /event/create", () => {
 
     beforeEach(() => {
