@@ -78,10 +78,11 @@ router.post('/create', [
         console.log(err);
         let ret = {
           ok: false,
-          type: config.get('common.error.createRecord'),
+          type: config.get('common.error.updateRecord'),
           errors: [{msg:err.message}]
         };
-        res.send(ret);
+        return res.status(422).json(ret);
+
     }
 
 });
@@ -161,7 +162,7 @@ router.post('/update', [
           type: config.get('common.error.updateRecord'),
           errors: [{msg:err.message}]
         };
-        res.send(ret);
+        return res.status(422).json(ret);
     }
 });
 
@@ -226,9 +227,8 @@ router.post('/delete', [
           type: config.get('common.error.deleteRecord'),
           errors: [{msg:err.message}]
         };
-        res.send(ret);
+        return res.status(422).json(ret);
     }
-    return true;
 });
 
 
