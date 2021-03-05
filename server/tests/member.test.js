@@ -80,7 +80,7 @@ describe("Integration Test", () => {
         day2: "UnKnown",
         day3: "None"
       };
-    })
+    });
 
     test("idの文字数超過でバリデーションに失敗する", (done) => {
       let id = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
@@ -181,7 +181,7 @@ describe("Integration Test", () => {
       .expect(422)
       .expect((res) => {
         expect(res.body.ok).toBe(false);
-        expect(res.body.type).toBe("record update error");
+        expect(res.body.type).toBe("record create error");
       })
       .end((err, res) => {
         spy.mockRestore();
@@ -242,6 +242,201 @@ describe("Integration Test", () => {
 
   
   describe("POST /member/update", () => {
+
+    beforeAll(async () => {
+      member = {
+        id: event_id,
+        memberName: "田中",
+        memberComment: "たなか",
+        day0: "OK",
+        day1: "NG",
+        day2: "UnKnown",
+        day3: "None"
+      };
+      await request(app).post("/member/create")
+      .send(member);
+    });
+
+    afterAll(async () => {
+      member = {
+        id: event_id,
+        memberId: "member0"
+      };
+      await request(app).post("/member/delete")
+      .send(member);
+    });
+
+    beforeEach(() => {
+      member = {
+        id: event_id,
+        memberId: "member0",
+        memberName: "田中",
+        memberComment: "たなか",
+        day0: "OK",
+        day1: "NG",
+        day2: "UnKnown",
+        day3: "None"
+      };
+    });
+
+    test("idの文字数超過でバリデーションに失敗する", (done) => {
+      let id = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+      member.id = id;
+      postValidateFailTest(done, "/member/update", "id");
+    });
+
+    test("memberIdの文字数超過でバリデーションに失敗する", (done) => {
+      let memberId = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+      member.memberId = memberId;
+      postValidateFailTest(done, "/member/update", "memberId");
+    });
+
+    test("memberNameの文字数超過でバリデーションに失敗する", (done) => {
+      let memberName = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+      member.memberName = memberName;
+      postValidateFailTest(done, "/member/update", "memberName");
+    });
+
+    test("memberCommentの文字数超過でバリデーションに失敗する", (done) => {
+      let memberComment = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+      member.memberComment = memberComment;
+      postValidateFailTest(done, "/member/update", "memberComment");
+    });
+
+    test("idが空のためdbのイベントレコード取得に失敗する", (done) => {
+      member.id = "";
+      request(app).post("/member/update")
+      .send(member)
+      .expect(422)
+      .expect((res) => {
+        let ret = {
+          ok: false,
+          type: "record update error",
+          errors: [{msg: "Empty id"}]
+        };
+        expect(res.body).toEqual(ret);
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(res.body);
+          done(err);
+        }
+        done();
+      });
+    });
+
+    test("idが誤っているため、dbのイベントレコード取得に失敗する", (done) => {
+      member.id = "12345";
+      request(app).post("/member/update")
+      .send(member)
+      .expect(422)
+      .expect((res) => {
+        let ret = {
+          ok: false,
+          type: "record update error",
+          errors: [{msg: "missing"}]
+        };
+        expect(res.body).toEqual(ret);
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(res.body);
+          done(err);
+        }
+        done();
+      });
+    });
+
+    test("memberIdが誤っているため、レコードの取得に失敗する", (done) => {
+      member.id = event_id;
+      member.memberId = "member1";
+      request(app).post("/member/update")
+      .send(member)
+      .expect(422)
+      .expect((res) => {
+        let ret = {
+          ok: false,
+          type: "record update error",
+          errors: [{msg: "memberId does not exist"}]
+        };
+        expect(res.body).toEqual(ret);
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(res.body);
+          done(err);
+        }
+        done();
+      });
+    });
+
+    test("dbのイベントレコードの更新中に処理が失敗する", (done) => {
+
+      let model = require("../model/couchdb.js");
+      let spy = jest.spyOn(model.DB.prototype, "updateOneRecord").mockImplementation((currentEvent) => {
+        throw new Error("member update error.");
+      });
+
+      let data = {
+        id: event_id,
+        memberId: "member0",
+        memberName: "田中",
+        memberComment: "たなか",
+        day0: "OK",
+        day1: "NG",
+        day2: "UnKnown",
+        day3: "None"
+      };
+      request(app).post("/member/update")
+      .send(data)
+      .expect(422)
+      .expect((res) => {
+        expect(res.body.ok).toBe(false);
+        expect(res.body.type).toBe("record update error");
+      })
+      .end((err, res) => {
+        spy.mockRestore();
+        if (err) {
+          console.log(res);
+          return done(err);
+        }
+        else  {
+          done();
+        }
+      });
+    });
+
+    test("dbのイベントレコードから指定したメンバーの更新に成功する", async () => {
+      member = {
+        id: event_id,
+        memberId: "member0",
+        memberName: "山田",
+        memberComment: "やまだ",
+        day0: "None",
+        day1: "NG",
+        day2: "UnKnown",
+        day3: "OK"
+      };
+      let response = await request(app).post("/member/update").send(member);
+      expect(response.res.statusCode).toBe(200);
+      expect(response.body.ok).toBe(true);
+
+
+      // 更新されたかチェック
+      let event = {id: event_id};
+      response = await request(app).get("/event/get").query(event);
+      let ret_correct= {
+        memberName: "山田",
+        memberComment: "やまだ",
+        memberDays: {
+          day0: "None",
+          day1: "NG",
+          day2: "UnKnown",
+          day3: "OK"
+        }
+      };
+      expect(response.body.eventMembers.member0).toEqual(ret_correct);
+    });
 
   });
 
