@@ -24,7 +24,8 @@ describe("Integration Test", () => {
   }
 
   describe("POST /event/create", () => {
-
+    var event_id = "";
+    var event_rev = "";
     beforeEach(() => {
       event = {
         eventName: "飲み会",
@@ -38,6 +39,18 @@ describe("Integration Test", () => {
         storeUrl: "http://sp.torikizoku.co.jp"
       };
     });
+
+    afterEach(async () => {
+      if (event_id === "") return;
+      if (event_rev === "") return;
+      let data = {
+        id: event_id,
+        rev: event_rev
+      }
+      await request(app).post("/event/delete").send(data);
+      event_id = "";
+      event_rev = "";
+    })
 
     // eventNameのバリデーションエラー
     test("eventNameの文字数超過によりバリデーションが失敗する",  (done) => {
@@ -139,6 +152,8 @@ describe("Integration Test", () => {
         expect(res.body.ok).toBe(true);
         expect(typeof res.body.id).toBe("string");
         expect(typeof res.body.rev).toBe("string");
+        event_id = res.body.id;
+        event_rev = res.body.rev;
       })
       .end((err, res) => {
         if (err) {
@@ -158,6 +173,8 @@ describe("Integration Test", () => {
         expect(res.body.ok).toBe(true);
         expect(typeof res.body.id).toBe("string");
         expect(typeof res.body.rev).toBe("string");
+        event_id = res.body.id;
+        event_rev = res.body.rev;
       })
       .end((err, res) => {
         if (err) {
@@ -377,11 +394,16 @@ describe("Integration Test", () => {
     afterAll(async () => {
       // 後処理として、db削除用途に登録したレコードを削除する
       try {
-        let data = {
+        let data = {id: event_id};
+        let response = await request(app).get("/event/get").query(data);
+        if (response.body.ok === false) {
+          return;
+        }
+        data = {
           id: event_id,
           rev: event_rev
         };
-        let response = await request(app).post("/event/delete").send(data);
+        response = await request(app).post("/event/delete").send(data);
         if (response.body.ok === false) {
           throw new Error("response ok field fail.");
         }
@@ -539,7 +561,7 @@ describe("Integration Test", () => {
       }
     });
 
-    afterAll(async () => {
+    afterEach(async () => {
       // 後処理として、db削除用途に登録したレコードを削除する
       try {
         let event = {
@@ -747,8 +769,8 @@ describe("Integration Test", () => {
       .end((err, res) => {
         spy.mockRestore();
         if (err) {
-          console.log(res);
-          return done(err);
+          //console.log(res);
+          done(err);
         }
         else  done();
       });
