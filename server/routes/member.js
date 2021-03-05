@@ -78,7 +78,7 @@ router.post('/create', [
         console.log(err);
         let ret = {
           ok: false,
-          type: config.get('common.error.updateRecord'),
+          type: config.get('common.error.createRecord'),
           errors: [{msg:err.message}]
         };
         return res.status(422).json(ret);
