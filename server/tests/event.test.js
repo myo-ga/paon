@@ -777,7 +777,7 @@ describe("Integration Test", () => {
     });
 
     // dbのイベント更新に成功する
-    test("dbの更新に成功する", async () => {
+    test("dbのイベント更新に成功する", async () => {
 
       // メンバーを追加1
       let data = {
@@ -865,6 +865,82 @@ describe("Integration Test", () => {
                 day1: "UnKnown",
                 day2: "None",
                 day3: "None"
+              }
+            }
+          },
+          storeId: "1234567890",
+          storeLatitude: "23.12",
+          storeLongitude: "135.12",
+          storeName: "鳥貴族",
+          storeAddress: "東京都新宿区東口",
+          storeUrl: "http://sp.torikizoku.co.jp"
+        };
+        expect(res.body).toEqual(ret_event);
+      });
+
+    });
+
+    test("dbのイベント追加日、削除日なしにイベント更新に成功する", async () => {
+
+      // メンバー1人いる状態,
+      // メンバーいる状態で、日付追加がスキップされるルートを通すため
+      let data = {
+        id: event_id,
+        memberName: "佐藤",
+        memberComment: "さとう",
+      };
+      let response = await request(app).post("/member/create").send(data);
+      expect(response.body.ok).toBe(true);
+      event_id = response.body.id;
+      event_rev = response.body.rev;
+
+      // イベント更新処理
+      data = {
+        id: event_id,
+        rev: event_rev,
+        eventName: "忘年会",
+        eventMemo: "ぼうねんかいです",
+        eventAddDays: "",
+        eventDelDays: "",
+        storeId: "1234567890",
+        storeLatitude: "23.12",
+        storeLongitude: "135.12",
+        storeName: "鳥貴族",
+        storeAddress: "東京都新宿区東口",
+        storeUrl: "http://sp.torikizoku.co.jp"
+      };
+      response = await request(app).post("/event/update")
+      .send(data)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.ok).toBe(true);
+        event_id = res.body.id;
+        event_rev = res.body.rev;
+      });
+
+      // 更新確認
+      data = {id: event_id};
+      response = await request(app).get("/event/get")
+      .query(data)
+      .expect(200)
+      .expect((res) => {
+        let ret_event = {
+          ok: true,
+          id: event_id,
+          rev: event_rev,
+          eventName: "忘年会",
+          eventMemo: "ぼうねんかいです",
+          eventDays: {
+            day0: "2021-01-01 18:00",
+            day1: "2021-01-01 21:00",
+          },
+          eventMembers: {
+            member0: {
+              memberName: "佐藤",
+              memberComment: "さとう",
+              memberDays: {
+                day0: "None",
+                day1: "None"
               }
             }
           },

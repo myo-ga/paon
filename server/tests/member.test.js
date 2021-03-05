@@ -370,6 +370,38 @@ describe("Integration Test", () => {
       });
     });
 
+    test("dayNでOK/NG/UnKnown/None以外の値のため、dayNの設定がスキップされる", async () => {
+      member = {
+        id: event_id,
+        memberId: "member0",
+        memberName: "田中",
+        memberComment: "たなか",
+        day0: "OK", // 正常
+        daa1: "NG", // 異常、スキップ
+        dab2: "UnKnown",  // 異常、スキップ
+        dac3: "None", // 異常、スキップ
+        day3: "OK" // 正常
+      };
+      let response = await request(app).post("/member/update").send(member);
+      expect(response.body.ok).toBe(true);
+
+      let event = {id: event_id};
+      response = await request(app).get("/event/get").query(event);
+      
+      let ret = {
+        memberName: "田中",
+        memberComment: "たなか",
+        memberDays: {
+          day0: "OK",
+          day1: "NG", // Noneのまま
+          day2: "UnKnown", // Noneのまま
+          day3: "OK"
+        }
+      }
+      expect(response.body.ok).toBe(true);
+      expect(response.body.eventMembers.member0).toEqual(ret);
+    });
+
     test("dbのイベントレコードの更新中に処理が失敗する", (done) => {
 
       let model = require("../model/couchdb.js");
@@ -467,14 +499,14 @@ describe("Integration Test", () => {
       let id = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
       member.id = id;
       member.memberId = "member0";
-      postValidateFailTest(done, "/member/update", "id");
+      postValidateFailTest(done, "/member/delete", "id");
     });
 
     test("memberIdが文字数超過のためバリデーションに失敗する", (done) => {
       let memberId = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
       member.id = event_id;
       member.memberId = memberId;
-      postValidateFailTest(done, "/member/update", "memberId");
+      postValidateFailTest(done, "/member/delete", "memberId");
     });
 
     test("idが空のためdbのイベントレコード取得に失敗する", (done) => {
