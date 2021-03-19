@@ -2,7 +2,7 @@
 paonのUI
 
 ## セットアップ
-- credentials.jsonを作成してyolp.appidを設定する。
+credentials.jsonを作成してyolp.appidを設定する。  
 credentials.json
 ```
 {
@@ -12,15 +12,38 @@ credentials.json
 }
 
 ```
-- インストール
+インストール
 ```
 npm install
 ```
-- 起動
+
+起動（開発）
 ```
 npm run serve
 ```
 
+ビルド（デプロイ向け）  
+vue.config.jsにpublicPathを設定する  
+ドメインのルート直下の場合は"/"を設定する  
+```
+module.exports = {
+    ...,
+    publicPath: "/"
+};
+```
+buildコマンドでビルドする  
+distディレクトリが作成される  
+```
+npm run build
+```
+ローカルで確認する場合は、ローカルにサーバーを立てる  
+serveコマンドの実行はdistディレクトリで行う  
+-lはリスニングポート  
+http://localhost:9090/でアクセス可能  
+```
+npm install -g serve
+serve -l 9090
+```
 
 # my-vuetify
 

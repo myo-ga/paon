@@ -3,4 +3,5 @@ module.exports = {
         port: 80,
         disableHostCheck: true,
     },
+    publicPath: "/"
 };
