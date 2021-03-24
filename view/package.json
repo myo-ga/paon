@@ -8,7 +8,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "jest"
+    "test": "jest",
+    "vue": "vue"
   },
   "main": "babel.config.js",
   "dependencies": {
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.13.10",
+    "@vue/cli": "^4.5.12",
     "@vue/cli-plugin-babel": "^3.12.1",
     "@vue/cli-plugin-eslint": "^3.12.1",
     "@vue/cli-service": "^3.12.1",
@@ -73,7 +75,6 @@
     "> 1%",
     "last 2 versions"
   ],
-  "license": "ISC",
   "jest": {
     "moduleFileExtensions": [
       "js",
@@ -87,5 +88,6 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
     }
-  }
+  },
+  "license": "ISC"
 }

@@ -12,7 +12,7 @@ credentials.json
 }
 
 ```
-インストール
+## インストール
 ```
 npm install
 ```
@@ -22,7 +22,7 @@ npm install
 npm run serve
 ```
 
-ビルド（デプロイ向け）  
+## ビルド（デプロイ向け）  
 vue.config.jsにpublicPathを設定する  
 ドメインのルート直下の場合は"/"を設定する  
 ```
@@ -44,6 +44,13 @@ http://localhost:9090/でアクセス可能
 npm install -g serve
 serve -l 9090
 ```
+
+## デプロイ
+### viewのデプロイ
+生成されたdistをS3バケットに手動でアップロード
+* バケット直下にdist配下の内容をアップロードする
+* プロパティ＞静的Webホスティングを有効にし、インデックスドキュメントをindex.htmlにする
+* アクセス許可＞ブロックパブリックアクセスのすべてブロックをオフにする
 
 # my-vuetify
 
