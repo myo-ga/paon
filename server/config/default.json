@@ -36,5 +36,9 @@
             "deleteRecord": "record delete error",
             "referRecord" : "record refer error"
         }
+    },
+    "env": {
+        "//": "コメント db_type: cloudant or couchdb",
+        "db_type": "cloudant"
     }
 }

@@ -1,9 +1,9 @@
 var Cloudant = require('@cloudant/cloudant');
 
-var DB = function() {
+class DB {
 
     // 資格情報読み込み
-    this.readCredentialUrl = function () {
+    readCredentialUrl() {
         let appEnv = null;
         if (process.env.VCAP_SERVICES) {
             appEnv = JSON.parse(process.env.VCAP_SERVICES);
@@ -16,7 +16,7 @@ var DB = function() {
 
 
     // 初期化
-    this.init = function (dbName) {
+    init(dbName) {
         let url = this.readCredentialUrl();
         this.cloudant = Cloudant(url,
             (err, cloudant, pong) => {
@@ -28,7 +28,7 @@ var DB = function() {
         this.dbIf = this.cloudant.use(dbName);
     };
     // id検索
-    this.getOneRecord = async function (id) {
+    async getOneRecord(id) {
         // id check
         try {
             let result = await this.dbIf.get(id);
@@ -43,7 +43,7 @@ var DB = function() {
     // throwはPromiseを返し、rejectの引数にする
     // awaitはpromiseがresolveされるまで待つ。その結果(resolveされた結果）を返す
     // ※Promiseは非同期する処理を記述し、成功時、失敗時にコールバック関数を定義できる
-    this.insertOneRecord = async function (data, param) {
+    async insertOneRecord(data, param) {
         try {
             let result = await this.dbIf.insert(data, param);
             return result;
@@ -52,7 +52,7 @@ var DB = function() {
         }
     }
     // 更新
-    this.updateOneRecord = async function (data, param) {
+    async updateOneRecord(data, param) {
         try {
             // _id, _revも合わせて指定すること
             let result = await this.dbIf.insert(data, param);
@@ -62,7 +62,7 @@ var DB = function() {
         }
     }
     // 削除
-    this.deleteOneRecord = async function (id, rev) {
+    async deleteOneRecord(id, rev) {
         try {
             let result = await this.dbIf.destroy(id, rev);
             return result;
@@ -72,7 +72,7 @@ var DB = function() {
     }
 
     // リスト全て
-    this.getAllRecord = async function () {
+    async getAllRecord() {
         try {
             let result = await this.dbIf.list();
             return result;

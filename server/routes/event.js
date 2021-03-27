@@ -2,7 +2,12 @@ var express = require('express');
 var router = express.Router();
 const { check, validationResult } = require('express-validator');
 const config = require('config');
-var model = require('../model/couchdb.js');
+var model = null;
+if (config.get("env.db_type") === "cloudant") {
+  model = require('../model/cloudant.js');
+} else {
+  model = require('../model/couchdb.js');
+}
 var eventValidator = require('../validator/event_validator.js');
 
 // イベント生成

@@ -1,8 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var model = require('../model/couchdb.js');
 var config = require('config');
-
+var model = null;
+if (config.get("env.db_type") === "cloudant") {
+  model = require('../model/cloudant.js');
+} else {
+  model = require('../model/couchdb.js');
+}
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
