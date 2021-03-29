@@ -42,10 +42,10 @@
     "webpack": "^5.28.0"
   },
   "config": {
-    "s3BucketName": "sls-xpress-edge0325",
+    "s3BucketName": "paon-express-http",
     "region": "us-east-1",
     "cloudFormationStackName": "ServerlessExpressHttpApiStack",
-    "functionName": "",
+    "functionName": "PaonServerFunction",
     "domain": ""
   }
 }

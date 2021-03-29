@@ -3,3 +3,4 @@ vcap-local.json
 node_modules/
 coverage/
 dist/
+sam-template.packaged.yaml
