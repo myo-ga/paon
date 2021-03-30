@@ -80,12 +80,31 @@ CloudFrontではレスポンスコードの書き換え、およびステータ�
 1.生成されたdistをS3バケットに手動でアップロードする
 * バケット直下にdist配下の内容を任意に作成したs3パケットにアップロードする
 * プロパティ＞静的Webホスティングを有効にし、インデックスドキュメントをindex.htmlにする
-* アクセス許可＞ブロックパブリックアクセスのすべてブロックをオフにする
+* アクセス許可＞ブロックパブリックアクセスのすべてブロックをオフにする  
+
+上記はpackage.configを設定し、viewディレクトリ内で2コマンド実行で実施できる  
+
+package.jsonはconfigでバケット名とcloudformationのスタック名を任意の名前で設定する
+```json
+  "config": {
+    "s3BucketName": "s3-bucket-sample-2021-03-293",
+    "cloudFormationStackName": "MyS3Stack"
+  }
+```
+
+package.json設定後、コマンドを実行する
+```sh
+# S3バケット作成
+npm run create-stack
+
+# S3へファイルアップロード
+npm run s3-upload
+```
   
 2.S3のホスティングのエンドポイントを確認後、CloudFrontを設定する。
 * S3のホスティングのエンドポイントをCloudFrontディストリビューションのOrigin Domain Nameにする
 * Origin Pathは/に設定(index.htmlを示す)し、他は初期値でディストリビューションを作成する。
-* ディストリビューション設定のError Pagesで403エラー時に、ResponsePath:/、HTTPステータス200を返すように設定する
+* ディストリビューション設定のError Pagesで403エラー時に、ResponsePath:/、HTTPステータス200を返すように設定する  
 
 CloudFrontで払いだされるエンドポイントでブラウザからアクセスし、アクセスできることを確認する  
 
