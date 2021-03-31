@@ -81,6 +81,13 @@ CloudFrontではレスポンスコードの書き換え、およびステータ�
 * バケット直下にdist配下の内容を任意に作成したs3パケットにアップロードする
 * プロパティ＞静的Webホスティングを有効にし、インデックスドキュメントをindex.htmlにする
 * アクセス許可＞ブロックパブリックアクセスのすべてブロックをオフにする  
+  
+2.S3のホスティングのエンドポイントを確認後、CloudFrontを設定する。
+* S3のホスティングのエンドポイントをCloudFrontディストリビューションのOrigin Domain Nameにする
+* Origin Pathは/に設定(index.htmlを示す)し、他は初期値でディストリビューションを作成する。
+* ディストリビューション設定のError Pagesで403エラー時に、ResponsePath:/、HTTPステータス200を返すように設定する  
+
+CloudFrontで払いだされるエンドポイントでブラウザからアクセスし、アクセスできることを確認する  
 
 上記はpackage.configを設定し、viewディレクトリ内で2コマンド実行で実施できる  
 
@@ -93,20 +100,45 @@ package.jsonはconfigでバケット名とcloudformationのスタック名を任
 ```
 
 package.json設定後、コマンドを実行する
-```sh
-# S3バケット作成
-npm run create-stack
 
+```sh
+# S3バケット作成とCloudFront作成
+npm run create-stack
+```
+
+S3とCloudFrontの作成には時間がかかる。  
+完了しているかは下記コマンドを実行して確認できる。  
+```sh
+# スタックの進捗表示
+ aws cloudformation describe-stacks --stack-name MyS3Stack
+```
+下記が表示される（一部）  
+StackStatusがCREATE_COMPLETEになっていればOK.  
+OutputsでCloduFrontのURLが表示される。  
+```js
+  "StackStatus": "CREATE_COMPLETE",
+  "DisableRollback": false,
+  "NotificationARNs": [],
+  "Outputs": [
+      {
+          "OutputKey": "CloudFrontWebsiteURL",
+          "OutputValue": "https://xxxxxxxxxx.cloudfront.net",
+          "Description": "URL for website hosted on CloudFront"
+      },
+      {
+          "OutputKey": "S3WebsiteURL",
+          "OutputValue": "http://xxxxxxxxxx.s3-website-<region>.amazonaws.com",
+          "Description": "URL for website hosted on S3"
+      }
+  ],
+```
+S3へファイルをアップロードする。  
+CloudFrontのURLでアクセスできればOK.
+```sh
 # S3へファイルアップロード
 npm run s3-upload
 ```
-  
-2.S3のホスティングのエンドポイントを確認後、CloudFrontを設定する。
-* S3のホスティングのエンドポイントをCloudFrontディストリビューションのOrigin Domain Nameにする
-* Origin Pathは/に設定(index.htmlを示す)し、他は初期値でディストリビューションを作成する。
-* ディストリビューション設定のError Pagesで403エラー時に、ResponsePath:/、HTTPステータス200を返すように設定する  
 
-CloudFrontで払いだされるエンドポイントでブラウザからアクセスし、アクセスできることを確認する  
 
 オプション.CloudFrontのエンドポイントに対して、Route53でドメインを設定する。  
 CloudFrontのエンドポイントに対して、ドメインをCNAME設定するときドメインに対してSSL証明書を発行する必要がある。    

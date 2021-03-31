@@ -27,18 +27,49 @@ Resources:
             - - 'arn:aws:s3:::'
               - !Ref S3Bucket
               - /*
+  
+  CfDiscribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - DomainName: !GetAtt S3Bucket.DomainName
+          Id: myCfOrigin
+          CustomOriginConfig:
+            OriginProtocolPolicy: http-only
+        Enabled: 'true'
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - GET
+          - HEAD
+          TargetOriginId: myCfOrigin
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          ViewerProtocolPolicy: allow-all
+        PriceClass: PriceClass_200
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: 'true'
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /
+            ErrorCachingMinTTL: 10
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /
+            ErrorCachingMinTTL: 10
 
 Outputs:
-  WebsiteURL:
+  S3WebsiteURL:
     Value: !GetAtt 
       - S3Bucket
       - WebsiteURL
     Description: URL for website hosted on S3
-  S3BucketSecureURL:
+  CloudFrontWebsiteURL:
     Value: !Join 
       - ''
       - - 'https://'
         - !GetAtt 
-          - S3Bucket
+          - CfDiscribution
           - DomainName
-    Description: Name of S3 bucket to hold website content
+    Description: URL for website hosted on CloudFront

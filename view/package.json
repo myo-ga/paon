@@ -11,7 +11,7 @@
     "test": "jest",
     "vue": "vue",
     "create-stack": "aws cloudformation create-stack --stack-name $npm_package_config_cloudFormationStackName --template-body file://aws-view-template.yaml --parameters ParameterKey=s3BucketName,ParameterValue=$npm_package_config_s3BucketName",
-    "delete-stack": "aws s3 rm s3://$npm_package_config_s3BucketName/ --recursive && aws cloudformation delete-stack --stack-name $npm_package_config_cloudFormationStackName",
+    "delete-stack": "aws s3 rm s3://$npm_package_config_s3BucketName/ --recursive; aws cloudformation delete-stack --stack-name $npm_package_config_cloudFormationStackName",
     "s3-upload": "aws s3 sync dist/ s3://$npm_package_config_s3BucketName/ --include '*'"
   },
   "main": "babel.config.js",
@@ -94,7 +94,7 @@
   },
   "license": "ISC",
   "config": {
-    "s3BucketName": "s3-bucket-sample-2021-03-293",
-    "cloudFormationStackName": "MyS3Stack"
+    "s3BucketName": "paonbucket0401",
+    "cloudFormationStackName": "PaonStack0401"
   }
 }
